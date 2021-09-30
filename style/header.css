@@ -1,0 +1,49 @@
+header{
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+    min-height: 50px;
+    background: var(--main-color);
+    position: fixed;
+    transition: .2s 0s transform ease-out;
+    align-items: center;
+    justify-content: space-around;
+    z-index: 10;
+}
+
+.effectMove{
+    transition: .6s 0s transform ease-in;
+    transform: translateY(-50px);
+}
+
+#icone{
+    flex: 0 0 auto;
+    height: 50px;
+    display: flex;
+    align-items: center;
+}
+
+#botoes{
+    height: 100%;
+    display: flex;
+    overflow-y: visible;
+}
+
+#botoes > span{
+    margin: 0 7px;
+    float: left;
+    display: block;
+    color: var(--text-extra);
+    text-decoration: none;
+}
+
+#botoes > span > div{
+    position: relative;
+    font-size: 0;
+    display: block;
+    height: 2px;
+    top: 5px;
+    z-index: 2;
+    background-color: var(--secondary-color);
+}
+
