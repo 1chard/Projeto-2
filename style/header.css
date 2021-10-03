@@ -3,6 +3,7 @@ header{
     flex-flow: row wrap;
     width: 100%;
     min-height: 50px;
+
     background: var(--main-color);
     position: fixed;
     transition: .2s 0s transform ease-out;
@@ -18,32 +19,66 @@ header{
 
 #icone{
     flex: 0 0 auto;
-    height: 50px;
+    height: 44px;
     display: flex;
     align-items: center;
+    font-size: 1.4em;
+    font-weight: bolder;
+
+    text-shadow: 1px 1px var(--secondary-extra);
 }
 
 #botoes{
-    height: 100%;
+    height: 52px;
     display: flex;
     overflow-y: visible;
 }
 
-#botoes > span{
-    margin: 0 7px;
+#botoes > a{
     float: left;
     display: block;
     color: var(--text-extra);
     text-decoration: none;
+    font-size: 1.2em;
+    height: 100%;
+    font-weight: bold;
+    
+
+    padding: 13px 10px 10px 10px;
+    border-bottom: 3px solid var(--secondary-extra);
+
+    background-color: var(--background-color);
+
+    cursor: pointer;
 }
 
-#botoes > span > div{
-    position: relative;
-    font-size: 0;
-    display: block;
-    height: 2px;
-    top: 5px;
-    z-index: 2;
-    background-color: var(--secondary-color);
+#botoes > a:hover{
+    background-image: linear-gradient(to bottom, var(--secondary-color), var(--secondary-extra));
+    border-bottom-color: var(--secondary-color);
 }
 
+#mudaTema{
+    padding: 3px;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 730px) {
+    #icone{
+        order: 0;
+    }
+    #botoes{
+        order: 2;
+    }
+    header{
+        justify-content: space-around;
+        padding-bottom: 5px;
+    }
+
+    .effectMove{
+        transform: translateY(-101px);
+    }
+
+
+}

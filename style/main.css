@@ -1,26 +1,39 @@
-*{
+* {
     padding: 0;
     margin: 0;
     position: relative;
     box-sizing: border-box;
 }
 
-body{
-    width: 100vw;
-    height: 100vh;
+body {
     background-color: var(--background-color);
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    min-height: 200vh;
 }
 
-body *{
+body * {
     color: var(--text-color);
 }
 
 /*aqui vai a tema de cores, padrao escuro*/
-*:root{
+*:root {
+
     --main-color: #232a30;
     --background-color: #202629;
-    --secondary-color: red;
-    --secondary-extra: orangered;
+    --secondary-color: #701;
+    --secondary-extra: #730;
     --text-color: #eec;
     --text-extra: #da0;
+
+
+    /*
+    --main-color: #f4ef75;
+    --background-color: #ece470;
+    --secondary-color: #ec0;
+    --secondary-extra: #da0;
+    --text-color: #311;
+    --text-extra: #621;
+    */
 }

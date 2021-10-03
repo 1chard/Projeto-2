@@ -9,8 +9,9 @@ const efeitoSumir = (header) => {
 
         if (header.offsetHeight * 2 < window.scrollY) {
             //esconde ou nao
-            if (scrollTrack < window.scrollY)
+            if (scrollTrack < window.scrollY){
                 header.classList.add('effectMove')
+            }
             else
                 header.classList.remove('effectMove')
         }
@@ -32,6 +33,9 @@ class Menu {
         this.copiaHeader = document.createElement('div')
         this.copiaHeader.style.position = "relative"
         document.body.insertBefore(this.copiaHeader, this.header.nextSibling)
+        window.addEventListener("resize" ,() => {
+            this.updateCopy()
+        })
 
         //dinamico
         document.body.onscroll = (e) => {
@@ -45,6 +49,8 @@ class Menu {
         this.copiaHeader.style.width = this.header.offsetWidth.toString() + "px";
         this.copiaHeader.style.height = this.header.offsetHeight.toString() + "px";
     }
+
+
 }
 
 export default Menu;
