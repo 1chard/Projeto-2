@@ -19,8 +19,11 @@ const generateSubContainer = (arrayLinks) => {
 
 class Banner{
     isMoving = false;
+    isLocked = false;
+
     imageTracker = 0;
     container;
+
 
     constructor(banner) {
         this.container = banner
@@ -37,6 +40,7 @@ class Banner{
         //cria imagens
         for(const imageLink of this.imageLinkArray){
 
+
             let image = document.createElement("div")
 
             image.style.width = this.subcontainer.scrollWidth / this.imageLinkArray.length + 'px'
@@ -49,6 +53,10 @@ class Banner{
 
             this.subcontainer.appendChild(image)
         }
+
+        this.subcontainer.children[0].style.backgroundColor = 'red'
+        this.subcontainer.children[1].style.backgroundColor = 'blue'
+        this.subcontainer.children[2].style.backgroundColor = 'green'
 
         window.addEventListener("resize" ,() => {
             for(const child of this.subcontainer.children)
@@ -72,7 +80,7 @@ class Banner{
             let baseMove = parseInt(this.subcontainer.style.left.substring(0, this.subcontainer.style.left.length - 2))
 
 
-            if(this.isMoving)
+            if(this.isMoving && !this.isLocked)
                 this.subcontainer.style.left = (e.movementX + baseMove) + 'px'
 
 
@@ -106,8 +114,14 @@ class Banner{
 
         if(this.imageTracker < (this.subcontainer.children.length - 1)){ //se n for o ultimo elemento
 
-            this.subcontainer.style.transitionDuration = '2s'
+            this.subcontainer.style.transitionDuration = '1.5s'
             this.subcontainer.style.transitionProperty = 'left'
+            this.isLocked = true;
+
+            this.subcontainer.ontransitionend = () =>{
+                this.subcontainer.style.transitionDuration = '0s'
+                this.isLocked = false
+            }
 
             this.imageTracker++;
 
@@ -115,7 +129,7 @@ class Banner{
 
                 console.log(this.subcontainer.style.left = (baseMove - this.container.clientWidth) + 'px')
 
-            this.subcontainer.style.transitionDuration
+
         }
     }
 
