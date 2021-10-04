@@ -11,10 +11,10 @@ document.getElementById("mudaTema").onclick = event => {
         event.target.src = "./img/sun.svg"
         document.body.style.setProperty("--main-color", "#fea");
         document.body.style.setProperty("--background-color", "#ffefa0");
-        document.body.style.setProperty("--secondary-color", "#ec5");
-        document.body.style.setProperty("--secondary-extra", "#da4");
-        document.body.style.setProperty("--text-color", "#311");
-        document.body.style.setProperty("--text-extra", "#621");
+        document.body.style.setProperty("--secondary-color", "#51d");
+        document.body.style.setProperty("--secondary-extra", "#40b");
+        document.body.style.setProperty("--text-color", "#123");
+        document.body.style.setProperty("--text-extra", "#512");
     }
     else if(document.getElementById("mudaTema").src.includes("sun")){
         event.target.src = "./img/moon.svg"

@@ -59,8 +59,10 @@ class Banner{
         this.subcontainer.children[2].style.backgroundColor = 'green'
 
         window.addEventListener("resize" ,() => {
-            for(const child of this.subcontainer.children)
+            for(const child of this.subcontainer.children) {
                 child.style.width = this.subcontainer.clientWidth / this.imageLinkArray.length + 'px'
+                child.style.height = this.subcontainer.clientHeight + 'px'
+            }
         });
 
         //moveffect que segura as infos
