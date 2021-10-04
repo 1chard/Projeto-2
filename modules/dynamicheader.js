@@ -1,46 +1,30 @@
-'use strict'
-
 let scrollTrack = window.scrollY;
 
-const efeitoSumir = (header) => {
 
-        //so escondo quando tiver saindo do cabecalho, cuidado! pode esconder o texto
+const efeitoSumir = header => {
+    //so escondo quando tiver saindo do cabecalho, cuidado! pode esconder o texto
+    if( !(header.offsetHeight * 2 < window.scrollY) )
+        header.classList.remove('effectMove')
 
+    else
+        header.classList.add('effectMove')
 
-        if (header.offsetHeight * 2 < window.scrollY) {
-            //esconde ou nao
-            if (scrollTrack < window.scrollY){
-                header.classList.add('effectMove')
-            }
-            else
-                header.classList.remove('effectMove')
-        }
-        else
-            header.classList.remove('effectMove')
-
-        scrollTrack = window.scrollY
+    scrollTrack = window.scrollY
 
 }
 
 class Menu {
     constructor(header) {
-        if(!header instanceof Node || !header instanceof Element)
-            throw null;
-
         this.header = header;
 
         //criase um elemento da mesma autura para nao interferir no fluxo
         this.copiaHeader = document.createElement('div')
         this.copiaHeader.style.position = "relative"
         document.body.insertBefore(this.copiaHeader, this.header.nextSibling)
-        window.addEventListener("resize" ,() => {
-            this.updateCopy()
-        })
 
-        //dinamico
-        document.body.onscroll = (e) => {
-            efeitoSumir(this.header)
-        }
+        window.addEventListener("resize" ,() => { this.updateCopy() })
+        document.body.onscroll = () => efeitoSumir(this.header)
+
 
         this.updateCopy();
     }

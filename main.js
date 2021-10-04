@@ -1,5 +1,7 @@
 'use strict'
 
+
+
 import Menu from "./modules/dynamicheader.js";
 import Banner from "./modules/banner.js";
 
