@@ -1,34 +1,41 @@
 'use strict'
 
 class Banner{
+    //booleano que rastreia tudo
     isMoving = false;
     isLocked = false;
 
+    //rastreia imagem
     imageTracker = 0;
     imageCount = 0;
-    container;
 
+    //guarda tudo
+    container = null;
+    subcontainer = null
+
+    //rastreia movimento
+    transitionPosition = 0
 
     constructor(banner) {
         this.container = banner
         this.container.style.overflow = 'hidden'
 
-        let imageLinkArray = ["../img/hamburguer_classico.jpg", "../img/hamburguer_salada.jpg", "../img/hamburguer_salada.jpg"];
 
         //cria o container que se meche
         this.subcontainer = this.generateSubContainer()
 
         this.container.appendChild(this.subcontainer)
 
+        //let imageLinkArray = ["../img/hamburguer_classico.jpg", "../img/hamburguer_salada.jpg", "../img/hamburguer_salada.jpg"];
 
-        //cria imagens
-        this.generateImage(imageLinkArray)
+        this.generateImage('../img/hamburguer_classico.jpg')
+
 
         this.subcontainer.children[0].style.backgroundColor = 'red'
         //this.subcontainer.children[1].style.backgroundColor = 'blue'
         //this.subcontainer.children[2].style.backgroundColor = 'green'
 
-        window.addEventListener("resize" ,() => this.resizeImages());
+        window.addEventListener("resize" ,() => this.resize());
 
         //moveffect que segura as infos
         this.isMoving = false
@@ -43,15 +50,14 @@ class Banner{
         })
 
         this.container.addEventListener("mousemove", e => {
+            this.transitionPosition += e.clientX;
 
-            let baseMove = parseInt(this.subcontainer.style.left.substring(0, this.subcontainer.style.left.length - 2))
 
 
             if(this.isMoving && !this.isLocked)
-                this.subcontainer.style.left = (e.movementX + baseMove) + 'px'
+                this.subcontainer.style.left = (e.movementX +
+                    parseInt(this.subcontainer.style.left.substring(0, this.subcontainer.style.left.length - 2))) + 'px'
 
-
-            //console.log( e.offsetX + '/' + e.movementX + '/' + this.subcontainer.style.left)
 
         })
 
@@ -138,21 +144,21 @@ class Banner{
             this.subcontainer.appendChild(image)
 
             this.imageCount++;
-            this.resizeImages();
+            this.resize();
     }
 
-    resizeImages(){
+    resize(){
         for(const child of this.subcontainer.children) {
             child.style.width = this.subcontainer.clientWidth / this.imageCount + 'px'
             child.style.height = this.subcontainer.clientHeight + 'px'
         }
+
+        this.subcontainer.style.width = (this.imageCount * 100) + '%'
     }
 
     generateSubContainer(){
-
         let subcontainer = document.createElement("div");
 
-        subcontainer.style.width = (this.imageCount * 100) + '%'
         subcontainer.style.height = "100%"
         subcontainer.style.position = 'relative'
         subcontainer.style.left = '0px'
