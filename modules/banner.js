@@ -1,5 +1,22 @@
 'use strict'
 
+const moveImage = (banner, value) =>{
+    banner.transitionPosition += value;
+    banner.subcontainer.style.left = banner.transitionPosition + 'px'
+}
+
+const moveImageSafe = (banner, value) =>{
+    console.log(banner.transitionPosition + value )
+
+    if(banner.transitionPosition + value >= 0)
+        banner.transitionPosition = 0;
+   else if(banner.transitionPosition + value < (banner.container.clientWidth * (banner.imageCount - 1) * -1) )
+        banner.transitionPosition = (banner.container.clientWidth * (banner.imageCount - 1) * -1);
+    else
+        banner.transitionPosition += value;
+    banner.subcontainer.style.left = banner.transitionPosition + 'px'
+}
+
 class Banner{
     //booleano que rastreia tudo
     isMoving = false;
@@ -29,10 +46,11 @@ class Banner{
         //let imageLinkArray = ["../img/hamburguer_classico.jpg", "../img/hamburguer_salada.jpg", "../img/hamburguer_salada.jpg"];
 
         this.generateImage('../img/hamburguer_classico.jpg')
+        this.generateImage('../img/hamburguer_salada.jpg')
 
 
         this.subcontainer.children[0].style.backgroundColor = 'red'
-        //this.subcontainer.children[1].style.backgroundColor = 'blue'
+        this.subcontainer.children[1].style.backgroundColor = 'blue'
         //this.subcontainer.children[2].style.backgroundColor = 'green'
 
         window.addEventListener("resize" ,() => this.resize());
@@ -50,14 +68,12 @@ class Banner{
         })
 
         this.container.addEventListener("mousemove", e => {
-            this.transitionPosition += e.clientX;
+            if(this.isMoving && !this.isLocked) {
+                //if( (this.transitionPosition + e.movementX) <= 0 &&
+                    //(this.transitionPosition + e.movementX) >= (this.subcontainer.offsetWidth * -1))
 
-
-
-            if(this.isMoving && !this.isLocked)
-                this.subcontainer.style.left = (e.movementX +
-                    parseInt(this.subcontainer.style.left.substring(0, this.subcontainer.style.left.length - 2))) + 'px'
-
+                    moveImageSafe(this, e.movementX);
+            }
 
         })
 
@@ -99,11 +115,7 @@ class Banner{
 
             this.imageTracker--;
 
-            let baseMove = parseInt(this.subcontainer.style.left.substring(0, this.subcontainer.style.left.length - 2))
-
-            console.log(this.subcontainer.style.left =  + (baseMove + this.container.clientWidth) + 'px')
-
-
+            moveImage(this, this.container.clientWidth);
         }
     }
 
@@ -123,9 +135,7 @@ class Banner{
 
             this.imageTracker++;
 
-            let baseMove = parseInt(this.subcontainer.style.left.substring(0, this.subcontainer.style.left.length - 2))
-
-                console.log(this.subcontainer.style.left = (baseMove - this.container.clientWidth) + 'px')
+            moveImage(this, -this.container.clientWidth);
 
 
         }
@@ -134,7 +144,7 @@ class Banner{
     generateImage(imageLink){
             let image = document.createElement("div")
 
-            image.style.height = this.subcontainer.offsetHeight + 'px'
+            image.style.height = '100%'
             image.style.backgroundImage = "url('" + imageLink + "')";
             image.style.backgroundSize = 'cover'
             image.style.backgroundRepeat = 'no-repeat'
@@ -148,12 +158,12 @@ class Banner{
     }
 
     resize(){
-        for(const child of this.subcontainer.children) {
-            child.style.width = this.subcontainer.clientWidth / this.imageCount + 'px'
-            child.style.height = this.subcontainer.clientHeight + 'px'
-        }
 
         this.subcontainer.style.width = (this.imageCount * 100) + '%'
+
+        for(const child of this.subcontainer.children)
+            child.style.width = this.subcontainer.clientWidth / this.imageCount + 'px'
+
     }
 
     generateSubContainer(){
