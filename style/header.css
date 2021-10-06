@@ -6,15 +6,15 @@ header{
 
     background: var(--main-color);
     position: fixed;
-    transition: .2s 0s transform ease-out;
+    transition: .2s .1s transform ease-out;
     align-items: center;
     justify-content: space-around;
     z-index: 10;
 }
 
-.effectMove{
+.effectHeader{
     transition: .6s 0s transform ease-in;
-    transform: translateY(-50px);
+    transform: translateY(-52px);
 }
 
 #icone{
@@ -34,7 +34,9 @@ header{
     overflow-y: visible;
 }
 
-#botoes > a{
+#botoes > button{
+
+
     float: left;
     display: block;
     color: var(--text-extra);
@@ -45,14 +47,24 @@ header{
     
 
     padding: 13px 10px 10px 10px;
-    border-bottom: 3px solid var(--secondary-extra);
 
-    background-color: var(--background-color);
+    border: none;
+    outline: none;
+
+    background-color: var(--main-extra);
 
     cursor: pointer;
 }
 
-#botoes > a:hover{
+#botoes > button::after{
+    content: "";
+    display: block;
+    position: initial;
+    bottom: 1px;
+    border-bottom: 1px springgreen solid;
+}
+
+#botoes > button:hover{
     background-image: linear-gradient(to bottom, var(--secondary-color), var(--secondary-extra));
     border-bottom-color: var(--secondary-color);
 }
@@ -76,7 +88,7 @@ header{
         padding-bottom: 5px;
     }
 
-    .effectMove{
+    .effectHeader{
         transform: translateY(-101px);
     }
 

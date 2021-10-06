@@ -4,10 +4,10 @@ let scrollTrack = window.scrollY;
 const efeitoSumir = header => {
     //so escondo quando tiver saindo do cabecalho, cuidado! pode esconder o texto
     if( !(header.offsetHeight * 2 < window.scrollY) )
-        header.classList.remove('effectMove')
+        header.classList.remove('effectHeader')
 
     else
-        header.classList.add('effectMove')
+        header.classList.add('effectHeader')
 
     scrollTrack = window.scrollY
 
@@ -37,4 +37,4 @@ class Menu {
 
 }
 
-export default Menu;
+//export default Menu;
