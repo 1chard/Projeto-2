@@ -1,6 +1,6 @@
 header{
     display: flex;
-    flex-flow: row wrap;
+    flex-flow: column nowrap;
     width: 100%;
     min-height: 50px;
 
@@ -10,16 +10,38 @@ header{
     align-items: center;
     justify-content: space-around;
     z-index: 10;
+
+    will-change: transform;
+}
+
+#header_principal{
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    gap: 5%;
+    padding: 0 5%;
+
+    width: 100%;
+    align-items: center;
+}
+
+#header_principal > input{
+    flex: 2 1 40%;
+    height: 30px;
+}
+
+#header_principal > input:focus{
+   background-color: springgreen;
 }
 
 .effectHeader{
     transition: .6s 0s transform ease-in;
-    transform: translateY(-52px);
+    transform: translateY(-102px);
 }
 
 #icone{
     flex: 0 0 auto;
-    height: 44px;
+    height: 50px;
     display: flex;
     align-items: center;
     font-size: 1.4em;
@@ -35,8 +57,6 @@ header{
 }
 
 #botoes > button{
-
-
     float: left;
     display: block;
     color: var(--text-extra);
@@ -56,14 +76,6 @@ header{
     cursor: pointer;
 }
 
-#botoes > button::after{
-    content: "";
-    display: block;
-    position: initial;
-    bottom: 1px;
-    border-bottom: 1px springgreen solid;
-}
-
 #botoes > button:hover{
     background-image: linear-gradient(to bottom, var(--secondary-color), var(--secondary-extra));
     border-bottom-color: var(--secondary-color);
@@ -71,26 +83,23 @@ header{
 
 #mudaTema{
     padding: 3px;
-    width: 44px;
-    height: 44px;
+    width: 34px;
+    height: 34px;
     cursor: pointer;
 }
 
-@media screen and (max-width: 730px) {
-    #icone{
-        order: 0;
-    }
-    #botoes{
-        order: 2;
-    }
+@media screen and (max-width: 1024px) {
     header{
-        justify-content: space-around;
-        padding-bottom: 5px;
+        justify-content: center;
+        padding: 0 1%;
+        gap: 0;
     }
 
-    .effectHeader{
-        transform: translateY(-101px);
+    header > #mudaTema{
+        background-color: springgreen;
     }
 
-
+    #icone {
+        font-size: 0px;
+    }
 }

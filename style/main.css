@@ -16,9 +16,9 @@ body * {
     color: var(--text-color);
 }
 
+
 /*aqui vai a tema de cores, padrao escuro*/
 *:root {
-
     --main-color: white;
     --main-extra: white;
     --background-color: white;

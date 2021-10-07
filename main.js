@@ -16,10 +16,10 @@ const temaClaro = image => {
 
 const temaEscuro = image => {
     image.src = "./img/moon.svg"
-    document.body.style.setProperty("--main-color", "#24272b");
+    document.body.style.setProperty("--main-color", "#202328");
     document.body.style.setProperty("--main-extra", "#282c32");
-    document.body.style.setProperty("--background-color", "#202326");
-    document.body.style.setProperty("--background-extra", "#161920");
+    document.body.style.setProperty("--background-color", "#1e2226");
+    document.body.style.setProperty("--background-extra", "#161b20");
     document.body.style.setProperty("--secondary-color", "#701");
     document.body.style.setProperty("--secondary-extra", "#730");
     document.body.style.setProperty("--text-color", "#eec");

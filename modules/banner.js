@@ -1,12 +1,11 @@
 'use strict'
 
-const moveImage = (banner, value) =>{
+const moveImage =  async (banner, value) =>{
     banner.transitionPosition += value;
     banner.subcontainer.style.left = banner.transitionPosition + 'px'
 }
 
-const moveImageSafe = (banner, value) =>{
-    console.log(banner.transitionPosition + value )
+const moveImageSafe =  async (banner, value) =>{
 
     if(banner.transitionPosition + value >= 0)
         banner.transitionPosition = 0;
@@ -20,6 +19,7 @@ const moveImageSafe = (banner, value) =>{
 class Banner{
     //booleano que rastreia tudo
     isMoving = false;
+    isDragLocked = true;
     isLocked = false;
 
     //rastreia imagem
@@ -47,6 +47,8 @@ class Banner{
 
         this.generateImage('../img/hamburguer_classico.jpg')
         this.generateImage('../img/hamburguer_salada.jpg')
+        this.generateImage('../img/hamburguer_salada.jpg')
+        this.generateImage('../img/hamburguer_salada.jpg')
 
 
         this.subcontainer.children[0].style.backgroundColor = 'red'
@@ -56,8 +58,6 @@ class Banner{
         window.addEventListener("resize" ,() => this.resize());
 
         //moveffect que segura as infos
-        this.isMoving = false
-        this.imageTracker = 0
 
         this.container.addEventListener("mousedown", e => {
             this.isMoving = true
@@ -66,15 +66,19 @@ class Banner{
         this.container.addEventListener("mouseup", e => {
             this.isMoving = false
         })
+        this.container.addEventListener("mouseout", e => {
+            this.isMoving = false
+        })
 
         this.container.addEventListener("mousemove", e => {
-            if(this.isMoving && !this.isLocked) {
-                //if( (this.transitionPosition + e.movementX) <= 0 &&
-                    //(this.transitionPosition + e.movementX) >= (this.subcontainer.offsetWidth * -1))
-
+            if(this.isMoving && !this.isLocked){
                     moveImageSafe(this, e.movementX);
             }
 
+        })
+
+        this.container.addEventListener("touchmove", e => {
+            console.log(e.touches[0].screenX)
         })
 
         //cria os botoes
@@ -84,65 +88,73 @@ class Banner{
 
     generateButtons(){
         let buttonLeft = document.createElement("div");
-        buttonLeft.style.position = 'relative'
+      //  buttonLeft.style.position = 'relative'
         buttonLeft.textContent = '<<'
         buttonLeft.id = 'buttonBannerLeft'
-        this.container.appendChild(buttonLeft);
+        this.container.parentElement.insertBefore(buttonLeft, this.container);
 
 
         let buttonRight = document.createElement("div");
-        buttonRight.style.position = 'relative'
+        //buttonRight.style.position = 'relative'
         buttonRight.textContent = '>>'
         buttonRight.id = 'buttonBannerRight'
 
         buttonRight.onclick = () => this.moveRight();
         buttonLeft.onclick = () => this.moveLeft();
-        this.container.appendChild(buttonRight);
+        this.container.parentElement.appendChild(buttonRight);
+
     }
 
     moveLeft(){
-
-        if(this.imageTracker > 0 && !this.isLocked){ //se n for o ultimo elemento
-
-            this.subcontainer.style.transitionDuration = '1.5s'
-            this.subcontainer.style.transitionProperty = 'left'
+        if(!this.isLocked) {
             this.isLocked = true;
-
-            setTimeout( () => {
+            this.subcontainer.style.transitionDuration = '1.2s'
+            this.subcontainer.style.transitionProperty = 'left'
+            setTimeout(() => {
                 this.subcontainer.style.transitionDuration = '0s'
                 this.isLocked = false
-            }, 1500)
+            }, 1200)
 
-            this.imageTracker--;
 
-            moveImage(this, this.container.clientWidth);
+            if (this.imageTracker > 0) { //se n for o ultimo elemento
+                this.imageTracker--;
+
+                moveImage(this, this.container.clientWidth);
+            }
+            else {
+                this.imageTracker = (this.subcontainer.children.length - 1);
+
+                moveImage(this, -(this.container.clientWidth * (this.imageTracker - 1)));
+            }
         }
     }
 
 
     moveRight(){
-
-        if(this.imageTracker < (this.subcontainer.children.length - 1) && !this.isLocked){ //se n for o ultimo elemento
-
-            this.subcontainer.style.transitionDuration = '1.5s'
-            this.subcontainer.style.transitionProperty = 'left'
+        if(!this.isLocked) {
             this.isLocked = true;
-
-            setTimeout( () => {
+            this.subcontainer.style.transitionDuration = '1.2s'
+            this.subcontainer.style.transitionProperty = 'left'
+            setTimeout(() => {
                 this.subcontainer.style.transitionDuration = '0s'
                 this.isLocked = false
-            }, 1500)
+            }, 1200)
 
-            this.imageTracker++;
+            if (this.imageTracker < (this.subcontainer.children.length - 1)) { //se n for o ultimo elemento
+                this.imageTracker++;
 
-            moveImage(this, -this.container.clientWidth);
+                moveImage(this, -this.container.clientWidth);
 
+            } else {
+                this.imageTracker = 0;
 
+                moveImage(this, this.subcontainer.clientWidth - this.container.clientWidth);
+            }
         }
     }
 
     generateImage(imageLink){
-            let image = document.createElement("div")
+            let image = document.createElement("drag")
 
             image.style.height = '100%'
             image.style.backgroundImage = "url('" + imageLink + "')";
@@ -150,6 +162,7 @@ class Banner{
             image.style.backgroundRepeat = 'no-repeat'
             image.style.backgroundPosition = 'center'
             image.style.left = '0px'
+            image.draggable = "false"
 
             this.subcontainer.appendChild(image)
 

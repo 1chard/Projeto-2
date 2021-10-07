@@ -3,7 +3,7 @@ let scrollTrack = window.scrollY;
 
 const efeitoSumir = header => {
     //so escondo quando tiver saindo do cabecalho, cuidado! pode esconder o texto
-    if( !(header.offsetHeight * 2 < window.scrollY) )
+    if( !(header.offsetHeight * 2 < window.scrollY) || (scrollTrack > window.scrollY) )
         header.classList.remove('effectHeader')
 
     else

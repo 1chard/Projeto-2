@@ -1,27 +1,41 @@
+#banner{
+    display: block;
+    width: 90%;
+    height: 60vh;
+    min-height: 360px;
+    overflow: hidden;
+    display: flex;
+    min-width: 1024px;
+}
+
 banner{
     display: block;
-    width: 80%;
-    height: 70vh;
-    min-height: 360px;
-    border: 1px solid rebeccapurple;
-    overflow: hidden;
+    height: 100%;
+    flex: 1 0 auto;
+    width: 100%;
 }
 
 #buttonBannerLeft{
     background: var(--secondary-color);
-    border-radius: 100%;
     padding: 10px;
     z-index: 5;
-    display: inline;
-    top: -50px;
+    display: block;
+    position: absolute;
+    left: 0%;
 }
 
 #buttonBannerRight{
     background: var(--secondary-color);
-    border-radius: 100%;
     padding: 10px;
     z-index: 5;
-    display: inline;
-    top: -100px;
-}
+    display: block;
 
+    right: 0;
+    position: absolute;
+
+}
+@media screen and (max-width: 1024px){
+    #banner {
+        width: 100%;
+    }
+}
