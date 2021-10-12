@@ -1,8 +1,11 @@
+@import "main.css";
+
 #banner{
     display: block;
     width: 90%;
     height: 60vh;
     min-height: 360px;
+    border: 1px solid rebeccapurple;
     overflow: hidden;
     display: flex;
     min-width: 1024px;
@@ -17,6 +20,7 @@ banner{
 
 #buttonBannerLeft{
     background: var(--secondary-color);
+    border-radius: 100%;
     padding: 10px;
     z-index: 5;
     display: block;
@@ -26,6 +30,7 @@ banner{
 
 #buttonBannerRight{
     background: var(--secondary-color);
+    border-radius: 100%;
     padding: 10px;
     z-index: 5;
     display: block;
@@ -37,5 +42,10 @@ banner{
 @media screen and (max-width: 1024px){
     #banner {
         width: 100%;
+        min-width: 0;
+    }
+
+    body{
+        background-color: mediumvioletred;
     }
 }
