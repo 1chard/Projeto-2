@@ -24,13 +24,23 @@ const moveElements = (banner, direction, event) => {
         banner.subcontainer.style.transitionDuration = '1.2s'
         banner.subcontainer.style.transitionProperty = 'left'
 
-        if (banner.options.step === 1) {
+        if (banner.options.step !== 1) {
             switch (direction) {
                 case "LEFT":
                     moveElementsLeft(banner)
                     break;
                 case "RIGHT":
                     moveElementsRight(banner)
+                    break;
+            }
+        }
+        else{
+            switch (direction) {
+                case "LEFT":
+                    moveOneLeft(banner)
+                    break;
+                case "RIGHT":
+                    moveOneRight(banner)
                     break;
             }
         }
@@ -54,7 +64,7 @@ const moveElementsLeft = (banner) => {
 
 
 const moveElementsRight = (banner) => {
-        if (banner.elementPosition < (banner.elementCount - banner.options.step)) { //se n for o ultimo elemento
+        if (banner.elementPosition < (banner.elementCount - banner.options.step)) { //se n for o ultimo elemen
             banner.elementPosition += banner.options.step;
 
             moveImage(banner, -banner.subcontainer.children[0].clientWidth * banner.options.step);
@@ -62,54 +72,33 @@ const moveElementsRight = (banner) => {
 
 }
 
-/*
-moveOneLeft(){
-    if(!this.isLocked) {
 
-        this.isLocked = true;
-        this.subcontainer.style.transitionDuration = '1.2s'
-        this.subcontainer.style.transitionProperty = 'left'
-        setTimeout(() => {
-            this.subcontainer.style.transitionDuration = '0s'
-            this.isLocked = false
-        }, 1200)
+function moveOneLeft(banner){
+        if (banner.elementPosition > 0) { //se n for o ultimo elemento
+            banner.elementPosition--;
 
-
-        if (this.elementPosition > 0) { //se n for o ultimo elemento
-            this.elementPosition--;
-
-            moveImage(this, this.container.clientWidth);
+            moveImage(banner, banner.container.clientWidth);
         }
         else {
-            this.elementPosition = (this.elementCount - 1);
+            banner.elementPosition = (banner.elementCount - 1);
 
-            moveImage(this, -(this.container.clientWidth * (this.elementPosition)));
+            moveImage(banner, -(banner.container.clientWidth * (banner.elementPosition)));
         }
-    }
+    
 }
 
-moveOneRight(){
-    if(!this.isLocked) {
-        this.isLocked = true;
-        this.subcontainer.style.transitionDuration = '1.2s'
-        this.subcontainer.style.transitionProperty = 'left'
-        setTimeout(() => {
-            this.subcontainer.style.transitionDuration = '0s'
-            this.isLocked = false
-        }, 1200)
+function moveOneRight(banner){
+        if (banner.elementPosition < (banner.elementCount - 1)) { //se n for o ultimo elemento
+            banner.elementPosition += banner.options.step;
 
-        if (this.elementPosition < (this.elementCount - 1)) { //se n for o ultimo elemento
-            this.elementPosition += this.options.step;
-
-            moveImage(this, -this.subcontainer.children[0].clientWidth);
+            moveImage(banner, -banner.subcontainer.children[0].clientWidth);
 
         } else {
-            this.elementPosition = 0;
-            moveImage(this, this.subcontainer.clientWidth - this.subcontainer.children[0].clientWidth);
+            banner.elementPosition = 0;
+            moveImage(banner, banner.subcontainer.clientWidth - banner.subcontainer.children[0].clientWidth);
         }
-    }
 }
-*/
+
 
 class Banner{
     //booleano que permite checkar se esta movendo
@@ -137,6 +126,7 @@ class Banner{
 
     constructor(banner, optionsIn = { "size": "100%", "step": 1}) {
         this.container = banner
+        this.container.draggable = false
         this.container.style.overflow = 'hidden'
 
         this.options = optionsIn
@@ -209,7 +199,7 @@ class Banner{
         this.buttonRight = document.createElement("div");
 
         this.buttonLeft.textContent = '<<'
-        this.buttonLeft.id = 'buttonBannerLeft'
+        this.buttonLeft.classList.add('buttonBannerLeft')
 
 
         if (this.elementPosition === 0 && this.options.step !== 1)
@@ -240,14 +230,17 @@ class Banner{
 
         //buttonRight.style.position = 'relative'
         this.buttonRight.textContent = '>>'
-        this.buttonRight.id = 'buttonBannerRight'
+        this.buttonRight.classList.add('buttonBannerRight')
 
         this.container.parentElement.insertBefore(this.buttonLeft, this.container);
         this.container.parentElement.appendChild(this.buttonRight);
     }
 
     insertElement(element = document.createElement("div")){
+         this.subcontainer.appendChild(element)
 
+            this.elementCount++;
+            this.resize();
     }
 
     generateImage(imageLink = new String()){
@@ -262,10 +255,7 @@ class Banner{
             image.draggable = false
             image.style.float = "left"
 
-            this.subcontainer.appendChild(image)
-
-            this.elementCount++;
-            this.resize();
+           this.insertElement(image)
     }
 
     resize(){

@@ -18,7 +18,7 @@ banner{
     width: 100%;
 }
 
-#buttonBannerLeft{
+.buttonBannerLeft{
     background: var(--secondary-color);
     border-radius: 100%;
     padding: 10px;
@@ -28,7 +28,7 @@ banner{
     left: 0%;
 }
 
-#buttonBannerRight{
+.buttonBannerRight{
     background: var(--secondary-color);
     border-radius: 100%;
     padding: 10px;
