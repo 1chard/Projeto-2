@@ -9,7 +9,7 @@ body {
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
-    min-height: 200vh;
+    min-height: 100vh;
 }
 
 body * {
@@ -17,7 +17,7 @@ body * {
 }
 
 
-/*aqui vai a tema de cores, padrao escuro*/
+/*aqui vai a tema de cores, padrao escuro, determinado por js*/
 *:root {
     --main-color: white;
     --main-extra: white;

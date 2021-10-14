@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Dashboard</title>
+        <meta charset="UTF-8">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+              rel="stylesheet">
+        <link rel="stylesheet" href="style/main_dashboard.css"/>
+        <script src="modules/tema.js">
+        </script>
+
+    </head>
+    <body>
+        <header>
+            <img src="img/moon.svg" alt="sol" id="mudaTema">
+        </header>
+        <nav>
+            <button>
+                <span class="material-icons">
+                    receipt
+                </span>
+            </button>
+        </nav>
+        <main>
+
+        </main>
+        <footer>
+            <p>
+                &copy; 1chard
+            </p>
+        </footer>
+        <script defer>
+            temaClaro(document.getElementById("mudaTema"))
+
+            document.getElementById("mudaTema").onclick = e => {
+                if (document.getElementById("mudaTema").src.includes("moon"))
+                    temaClaro(e.target);
+                else
+                    temaEscuro(e.target);
+
+                console.log("fff");
+            }
+        </script>
+    </body>
+</html>
