@@ -3,6 +3,8 @@
 let menu = new Menu(document.querySelector("header"))
 let banner = new Banner(document.querySelector("banner"))
 
+banner.generateImage("img/hamburguer_classico.png")
+
 const temaClaro = image => {
     image.src = "./img/sun.svg"
     document.body.style.setProperty("--main-color", "#ffa100");

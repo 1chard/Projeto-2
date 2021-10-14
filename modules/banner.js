@@ -277,10 +277,10 @@ class Banner{
             subcontainer.id = 'containerBanner'
             subcontainer.draggable = false
 
-            return subcontainer
+            return subcontainer;
         }
         else
-            return null
+            return null;
     }
 }
 
