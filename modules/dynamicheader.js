@@ -10,7 +10,6 @@ const efeitoSumir = header => {
         header.classList.add('effectHeader')
 
     scrollTrack = window.scrollY
-
 }
 
 class Menu {

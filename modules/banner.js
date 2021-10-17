@@ -1,16 +1,17 @@
 'use strict'
 
-const moveImage = (banner, value) =>{
+const moveImage = (banner, value) => {
     banner.transitionPosition += value;
     banner.subcontainer.style.left = banner.transitionPosition + 'px'
 }
 
-const moveImageSafe =  (banner, value) =>{
-    if(banner.transitionPosition + value >= 0)
+const moveImageSafe = (banner, value) => {
+
+    if (banner.transitionPosition + value >= 0)
         banner.transitionPosition = 0;
 
-    else if(banner.transitionPosition + value < (banner.container.clientWidth * (banner.elementCount - 1) * -1) )
-        banner.transitionPosition = (banner.container.clientWidth * (banner.elementCount - 1) * -1);
+    else if (banner.transitionPosition + value < -(banner.subcontainer.children[0]?.clientWidth * (banner.elementCount - 1)))
+        banner.transitionPosition = -(banner.subcontainer.children[0]?.clientWidth * (banner.elementCount - 1));
 
     else
         banner.transitionPosition += value;
@@ -18,34 +19,25 @@ const moveImageSafe =  (banner, value) =>{
     banner.subcontainer.style.left = banner.transitionPosition + 'px'
 }
 
-const moveElements = (banner, direction, event) => {
-    if(!banner.isLocked) {
+const moveElements = (banner, direction = '') => {
+    if (!banner.isLocked) {
         banner.isLocked = true;
         banner.subcontainer.style.transitionDuration = '1.2s'
         banner.subcontainer.style.transitionProperty = 'left'
 
-        if (banner.options.step !== 1) {
-            switch (direction) {
-                case "LEFT":
-                    moveElementsLeft(banner)
-                    break;
-                case "RIGHT":
-                    moveElementsRight(banner)
-                    break;
-            }
-        }
-        else{
-            switch (direction) {
-                case "LEFT":
-                    moveOneLeft(banner)
-                    break;
-                case "RIGHT":
-                    moveOneRight(banner)
-                    break;
-            }
+        switch (direction.toUpperCase()) {
+            case "LEFT":
+                moveOneLeft(banner)
+                break;
+            case "RIGHT":
+                moveOneRight(banner)
+                break;
         }
 
-        console.log(39201392)
+        if(this.intervalTracker)
+            banner.autoMove()
+
+        banner.buttonSelect.children[banner.elementPosition].checked = 'true'
 
         setTimeout(() => {
             banner.subcontainer.style.transitionDuration = '0s'
@@ -54,53 +46,53 @@ const moveElements = (banner, direction, event) => {
     }
 }
 
-const moveElementsLeft = (banner) => {
-        if (banner.elementPosition > 0) { //se n for o primeiro elemento
-            banner.elementPosition--;
 
-            moveImage(banner, banner.container.clientWidth);
-        }
-}
+function moveOneLeft(banner) {
+    if (banner.elementPosition > 0) { //se n for o ultimo elemento
+        banner.elementPosition--;
 
-
-const moveElementsRight = (banner) => {
-        if (banner.elementPosition < (banner.elementCount - banner.options.step)) { //se n for o ultimo elemen
-            banner.elementPosition += banner.options.step;
-
-            moveImage(banner, -banner.subcontainer.children[0].clientWidth * banner.options.step);
-        }
+        moveImage(banner, banner.container.clientWidth);
+    }
+    else {
+        banner.elementPosition = (banner.elementCount - 1);
+        moveImage(banner, -(banner.container.clientWidth * (banner.elementPosition)));
+    }
 
 }
 
+function moveOneRight(banner) {
+    if (banner.elementPosition < (banner.elementCount - 1)) { //se n for o ultimo elemento
+        banner.elementPosition++;
+        moveImage(banner, -banner.subcontainer.children[0]?.clientWidth);
 
-function moveOneLeft(banner){
-        if (banner.elementPosition > 0) { //se n for o ultimo elemento
-            banner.elementPosition--;
+    } else {
+        banner.elementPosition = 0;
+        moveImage(banner, banner.subcontainer.clientWidth - banner.subcontainer.children[0]?.clientWidth);
+    }
+}
 
-            moveImage(banner, banner.container.clientWidth);
-        }
-        else {
-            banner.elementPosition = (banner.elementCount - 1);
-
-            moveImage(banner, -(banner.container.clientWidth * (banner.elementPosition)));
+const moveFromSelect = (banner, movePosition = 0) => {
+    if(movePosition >= 0 && movePosition < banner.elementCount && !banner.isLocked) {
+            banner.isLocked = true;
+            banner.subcontainer.style.transitionDuration = '1.2s'
+            banner.subcontainer.style.transitionProperty = 'left'
+    
+            moveImage(banner, (movePosition  - banner.elementPosition ) * banner.subcontainer.children[0]?.clientWidth * -1)
+            console.log(`moveposition: ${movePosition  - banner.elementPosition} + moved: ${(movePosition  - banner.elementPosition ) * banner.subcontainer.children[0]?.clientWidth}`)
+    
+            banner.elementPosition =  movePosition
+            
+    
+            setTimeout(() => {
+                banner.subcontainer.style.transitionDuration = '0s'
+                banner.isLocked = false
+            }, 1200)
         }
     
 }
 
-function moveOneRight(banner){
-        if (banner.elementPosition < (banner.elementCount - 1)) { //se n for o ultimo elemento
-            banner.elementPosition += banner.options.step;
 
-            moveImage(banner, -banner.subcontainer.children[0].clientWidth);
-
-        } else {
-            banner.elementPosition = 0;
-            moveImage(banner, banner.subcontainer.clientWidth - banner.subcontainer.children[0].clientWidth);
-        }
-}
-
-
-class Banner{
+class Banner {
     //booleano que permite checkar se esta movendo
     isMoving = false;
     isLocked = false;
@@ -109,33 +101,20 @@ class Banner{
     elementPosition = 0;
     elementCount = 0;
 
-    //containers, primeiro é o elemento, segundo é o slide
-    container = null;
-    subcontainer = null;
-
     //rastreia movimento
     transitionPosition = 0
     lastTouch = 0
 
-    //monta os movimentos
-    options = { "size": "100%", "step": 1};
 
-    //e os botoes que movem
-    buttonLeft = null;
-    buttonRight = null;
-
-    constructor(banner, optionsIn = { "size": "100%", "step": 1}) {
+    constructor(banner) {
         this.container = banner
         this.container.draggable = false
         this.container.style.overflow = 'hidden'
 
-        this.options = optionsIn
-
         //cria o container que se meche
-        this.subcontainer = this.generateSubContainer()
-        this.container.appendChild(this.subcontainer)
+        this.generateSubContainer()
 
-        window.addEventListener("resize" ,() => this.resize());
+        window.addEventListener("resize", () => this.resizeElements());
 
         this.generateImage('../img/hamburguer_classico.jpg')
         this.generateImage('../img/hamburguer_salada.jpg')
@@ -154,7 +133,7 @@ class Banner{
         })
 
         this.container.addEventListener("mousemove", e => {
-            if(this.isMoving && !this.isLocked){
+            if (this.isMoving && !this.isLocked) {
                 moveImageSafe(this, e.movementX);
             }
 
@@ -163,7 +142,7 @@ class Banner{
         this.container.addEventListener("touchstart", e => {
             this.isMoving = true
 
-            this.lastTouch =  e.touches[e.touches.length - 1].screenX;
+            this.lastTouch = e.touches[e.touches.length - 1].screenX;
         })
 
         this.container.addEventListener("touchend", e => {
@@ -182,8 +161,8 @@ class Banner{
 
             console.log(this.lastTouch)
 
-            if(this.isMoving && !this.isLocked){
-                moveImageSafe(this, (this.lastTouch - movimento) * -1);
+            if (this.isMoving && !this.isLocked) {
+                moveImageSafe(this, (this.lastTouch - movimento) * -1.5);
             }
 
 
@@ -191,96 +170,128 @@ class Banner{
         })
 
         //cria os botoes
-        this.generateButtons()
+        this.generateMoveButtons()
+        this.generateSelectButtons()
     }
 
-    generateButtons(){
+    generateSelectButtons(){
+        this.buttonSelect = document.createElement("div")
+        this.buttonSelect.classList.add('buttonSelect')
+        this.buttonSelect.id = `${Math.random()}`
+
+        for(let i = 0; i < this.elementCount; i++)
+            this.appendSelectButton(i)
+
+        this.container.parentElement.appendChild(this.buttonSelect)
+    }
+
+    appendSelectButton(i){
+        let select = document.createElement("input")
+        select.name = this.buttonSelect.name
+    
+        select.type = "radio"
+        
+        select.checked = this.buttonSelect.children.length === 0;
+        select.onchange = () => {
+            moveFromSelect(banner, i)
+        }
+
+        this.buttonSelect.appendChild(select)
+    }
+
+    generateMoveButtons() {
         this.buttonLeft = document.createElement("div");
         this.buttonRight = document.createElement("div");
 
-        this.buttonLeft.textContent = '<<'
+        this.buttonLeft.classList.add('buttonBanner')
         this.buttonLeft.classList.add('buttonBannerLeft')
 
-
-        if (this.elementPosition === 0 && this.options.step !== 1)
-            this.buttonLeft.style.visibility = "hidden"
+        this.buttonRight.classList.add('buttonBanner')
+        this.buttonRight.classList.add('buttonBannerRight')
 
         this.buttonLeft.onclick = () => {
             moveElements(this, 'LEFT');
-
-            if (banner.elementPosition === 0 && this.options.step !== 1)
-                this.buttonRight.style.visibility = "hidden"
-            else
-                this.buttonRight.style.visibility = "visible"
         }
-
-        if (this.elementPosition === (this.elementCount - this.options.step) && this.options.step !== 1)
-            this.buttonRight.style.visibility = "hidden"
 
         this.buttonRight.onclick = () => {
             moveElements(this, 'RIGHT');
-
-            if (this.elementPosition === (this.elementCount - this.options.step) && this.options.step !== 1)
-                this.buttonLeft.style.visibility = "hidden"
-            else
-                this.buttonLeft.style.visibility = "visible"
         }
-
-
-
-        //buttonRight.style.position = 'relative'
-        this.buttonRight.textContent = '>>'
-        this.buttonRight.classList.add('buttonBannerRight')
 
         this.container.parentElement.insertBefore(this.buttonLeft, this.container);
         this.container.parentElement.appendChild(this.buttonRight);
     }
 
-    insertElement(element = document.createElement("div")){
-         this.subcontainer.appendChild(element)
+    insertElement(element = document.createElement("div")) {
+        this.subcontainer.appendChild(element)
 
-            this.elementCount++;
-            this.resize();
+        this.elementCount++;
+        this.resizeElements();
     }
 
-    generateImage(imageLink = new String()){
-            let image = document.createElement("div")
+    generateImage(imageLink = new String()) {
+        let image = document.createElement("div")
 
-            image.style.height = '100%'
-            image.style.backgroundImage = `url('${imageLink}')`;
-            image.style.backgroundSize = 'cover'
-            image.style.backgroundRepeat = 'no-repeat'
-            image.style.backgroundPosition = 'center'
-            image.style.left = '0px'
-            image.draggable = false
-            image.style.float = "left"
+        image.style.height = '100%'
+        image.style.backgroundImage = `url('${imageLink}')`;
+        image.style.backgroundSize = 'cover'
+        image.style.backgroundRepeat = 'no-repeat'
+        image.style.backgroundPosition = 'center'
+        image.style.left = '0px'
+        image.draggable = false
+        image.style.float = "left"
 
-           this.insertElement(image)
+        this.insertElement(image)
     }
 
-    resize(){
-        this.subcontainer.style.width = (this.elementCount * parseInt(this.options.size)) + (this.options.size.endsWith('%')? '%' : "px");
+    resizeElements() {
+        this.isLocked = true;
+        
+        if(this.intervalTracker)
+            this.autoMove()
 
-        if(this.options.size.endsWith('%'))
-            for(const child of this.subcontainer.children)
-                child.style.width = parseFloat(this.options.size.substring(0, this.options.size.length)) / (this.elementCount || 1) + "%"
+        this.subcontainer.style.width = (this.elementCount || 1) * 100 + '%';
 
+        for (const child of this.subcontainer.children)
+            child.style.width = 100 / (this.elementCount || 1) + "%"
+    
+
+
+        console.log(999)
+        
+        this.transitionPosition = (this.elementPosition || 0) * (this.subcontainer.children[0]?.clientWidth ?? 0) * -1;
+        this.subcontainer.style.left = this.transitionPosition + 'px'
+        
+        this.isLocked = false;
     }
 
-    generateSubContainer(){
-        if(this.subcontainer === null) {
-            let subcontainer = document.createElement("div");
+    regenerateSelects(){
+        
+    }
 
-            subcontainer.style.height = "100%"
-            subcontainer.style.position = 'relative'
-            subcontainer.style.left = '0px'
-            subcontainer.id = 'containerBanner'
-            subcontainer.draggable = false
+    generateSubContainer() {
+        if (!this.subcontainer) {
+            this.subcontainer = document.createElement("div");
 
-            return subcontainer;
+            this.subcontainer.style.height = "100%"
+            this.subcontainer.style.position = 'relative'
+            this.subcontainer.style.left = '0px'
+            this.subcontainer.id = 'containerBanner'
+            this.subcontainer.draggable = false
+            this.subcontainer.style.backgroundColor = "blue"
+
+
+            this.container.appendChild(this.subcontainer)
         }
-        else
-            return null;
+    }
+
+    autoMove(timeInMS = 5000){
+        clearInterval(this.intervalTracker)
+
+        this.timeInterval = timeInMS ?? this.timeInterval
+
+        this.intervalTracker = setInterval(() => {
+            moveElements(this, 'RIGHT')
+        }, this.timeInterval)
     }
 }
 

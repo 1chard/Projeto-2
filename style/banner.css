@@ -1,0 +1,23 @@
+.buttonBanner{
+    z-index: 5;
+    display: block;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.buttonBannerLeft{
+    left: 0;
+}
+
+.buttonBannerRight{
+    right: 0;
+}
+
+.buttonSelect{
+    z-index: 5;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0;
+}

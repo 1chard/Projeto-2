@@ -1,15 +1,32 @@
 'use strict'
 
 let menu = new Menu(document.querySelector("header"))
-let banner = new Banner(document.querySelector("banner"))
+let banner = new Banner(document.getElementById("banner"))
 
-banner.generateImage("img/hamburguer_salada.jpg")
+// banner.autoMove(5000)
 
-temaEscuro(document.getElementById("mudaTema"))
+
+banner.buttonLeft.classList.add("material-icons")
+banner.buttonLeft.textContent = "arrow_back"
+banner.buttonRight.classList.add("material-icons")
+banner.buttonRight.textContent = "arrow_forward"
+
+let mudaTema = document.getElementById("mudaTema")
+
+
+temaEscuro()
 
 document.getElementById("mudaTema").onclick = e => {
-    if (document.getElementById("mudaTema").src.includes("moon"))
-        temaClaro(e.target);
-    else
-        temaEscuro(e.target);
+    switch(mudaTema.textContent){
+        case "dark_mode":
+            temaClaro()
+            mudaTema.textContent = "light_mode" 
+        break
+        case "light_mode":
+            temaEscuro()
+            mudaTema.textContent = "dark_mode" 
+        break
+        default:
+        throw null
+    }
 }
