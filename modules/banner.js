@@ -19,11 +19,20 @@ const moveImageSafe = (banner, value) => {
     banner.subcontainer.style.left = banner.transitionPosition + 'px'
 }
 
+const moveEffect = (banner) => {
+    banner.isLocked = true;
+    banner.subcontainer.style.transitionDuration = '1.2s'
+    banner.subcontainer.style.transitionProperty = 'left'
+
+    setTimeout(() => {
+        banner.subcontainer.style.transitionDuration = '0s'
+        banner.isLocked = false
+    }, 1200)
+}
+
 const moveElements = (banner, direction = '') => {
     if (!banner.isLocked) {
-        banner.isLocked = true;
-        banner.subcontainer.style.transitionDuration = '1.2s'
-        banner.subcontainer.style.transitionProperty = 'left'
+        moveEffect(banner)
 
         switch (direction.toUpperCase()) {
             case "LEFT":
@@ -34,15 +43,11 @@ const moveElements = (banner, direction = '') => {
                 break;
         }
 
-        if(this.intervalTracker)
+        if (this.intervalTracker)
             banner.autoMove()
 
         banner.buttonSelect.children[banner.elementPosition].checked = 'true'
 
-        setTimeout(() => {
-            banner.subcontainer.style.transitionDuration = '0s'
-            banner.isLocked = false
-        }, 1200)
     }
 }
 
@@ -71,24 +76,24 @@ function moveOneRight(banner) {
     }
 }
 
+
 const moveFromSelect = (banner, movePosition = 0) => {
-    if(movePosition >= 0 && movePosition < banner.elementCount && !banner.isLocked) {
-            banner.isLocked = true;
-            banner.subcontainer.style.transitionDuration = '1.2s'
-            banner.subcontainer.style.transitionProperty = 'left'
-    
-            moveImage(banner, (movePosition  - banner.elementPosition ) * banner.subcontainer.children[0]?.clientWidth * -1)
-            console.log(`moveposition: ${movePosition  - banner.elementPosition} + moved: ${(movePosition  - banner.elementPosition ) * banner.subcontainer.children[0]?.clientWidth}`)
-    
-            banner.elementPosition =  movePosition
-            
-    
-            setTimeout(() => {
-                banner.subcontainer.style.transitionDuration = '0s'
-                banner.isLocked = false
-            }, 1200)
-        }
-    
+    if (movePosition >= 0 && movePosition < banner.elementCount && !banner.isLocked) {
+        banner.isLocked = true;
+        banner.subcontainer.style.transitionDuration = '1.2s'
+        banner.subcontainer.style.transitionProperty = 'left'
+
+        moveImage(banner, (movePosition - banner.elementPosition) * banner.subcontainer.children[0]?.clientWidth * -1)
+       
+        banner.elementPosition = movePosition
+
+
+        setTimeout(() => {
+            banner.subcontainer.style.transitionDuration = '0s'
+            banner.isLocked = false
+        }, 1200)
+    }
+
 }
 
 
@@ -116,10 +121,64 @@ class Banner {
 
         window.addEventListener("resize", () => this.resizeElements());
 
-        this.generateImage('../img/hamburguer_classico.jpg')
-        this.generateImage('../img/hamburguer_salada.jpg')
-        this.generateImage('../img/hamburguer_salada.jpg')
-        this.generateImage('../img/hamburguer_salada.jpg')
+        this.generateImage('img/hamburguer_classico.jpg')
+        this.generateImage('img/hamburguer_salada.jpg')
+        this.generateImage('img/hamburguer_salada.jpg')
+        this.generateImage('img/hamburguer_salada.jpg')
+        //cria os botoes
+        this.generateMoveButtons()
+        this.generateSelectButtons()
+        this.generateTouchMovement()
+    }
+
+    generateTouchMovement() {
+
+        if (!this.touchable) {
+            this.touchable = true
+
+            this.container.addEventListener("touchstart", e => {
+                this.isMoving = true
+
+                this.lastTouch = e.touches[e.touches.length - 1].screenX;
+
+                this.beginMove = this.transitionPosition
+            })
+
+            this.container.addEventListener("touchend", e => {
+                this.isMoving = false
+
+                let endMove = (this.beginMove - this.transitionPosition)
+
+
+                moveEffect(this)
+
+                if (endMove > this.subcontainer.children[0]?.clientWidth / 4) {
+                    moveImage(this, (this.subcontainer.children[0]?.clientWidth - endMove) * -1)
+                    this.elementPosition++;
+                }
+                else if (endMove < (this.subcontainer.children[0]?.clientWidth / 4 * -1)) {
+                    moveImage(this, this.subcontainer.children[0]?.clientWidth + endMove)
+                    this.elementPosition--;
+                }
+                else
+                    moveImage(this, endMove)
+
+                this.buttonSelect.children[this.elementPosition].checked = 'true'
+            })
+
+            this.container.addEventListener("touchmove", e => {
+                let movimento = e.touches[e.touches.length - 1].screenX;
+
+                if (this.isMoving && !this.isLocked)
+                    moveImageSafe(this, (this.lastTouch - movimento) * -1.5);
+
+
+                this.lastTouch = e.touches[e.touches.length - 1].screenX;
+            })
+        }
+    }
+
+    generateMouseMovement() {
 
         this.container.addEventListener("mousedown", e => {
             this.isMoving = true
@@ -138,62 +197,29 @@ class Banner {
             }
 
         })
-
-        this.container.addEventListener("touchstart", e => {
-            this.isMoving = true
-
-            this.lastTouch = e.touches[e.touches.length - 1].screenX;
-        })
-
-        this.container.addEventListener("touchend", e => {
-            this.isMoving = false
-
-
-        })
-
-        this.container.addEventListener("touchcancel", e => {
-            this.isMoving = false
-        })
-
-        this.container.addEventListener("touchmove", e => {
-            let movimento = e.touches[e.touches.length - 1].screenX;
-
-
-            console.log(this.lastTouch)
-
-            if (this.isMoving && !this.isLocked) {
-                moveImageSafe(this, (this.lastTouch - movimento) * -1.5);
-            }
-
-
-            this.lastTouch = e.touches[e.touches.length - 1].screenX;
-        })
-
-        //cria os botoes
-        this.generateMoveButtons()
-        this.generateSelectButtons()
     }
 
-    generateSelectButtons(){
+    generateSelectButtons() {
         this.buttonSelect = document.createElement("div")
         this.buttonSelect.classList.add('buttonSelect')
-        this.buttonSelect.id = `${Math.random()}`
+        this.buttonSelect.setAttribute('data-name', `${Math.random()}`)
 
-        for(let i = 0; i < this.elementCount; i++)
+        for (let i = 0; i < this.elementCount; i++)
             this.appendSelectButton(i)
 
         this.container.parentElement.appendChild(this.buttonSelect)
     }
 
-    appendSelectButton(i){
+    appendSelectButton(i) {
         let select = document.createElement("input")
-        select.name = this.buttonSelect.name
-    
+
+        select.name = this.buttonSelect?.getAttribute('data-name')
+
         select.type = "radio"
-        
+
         select.checked = this.buttonSelect.children.length === 0;
         select.onchange = () => {
-            moveFromSelect(banner, i)
+            moveFromSelect(this, i)
         }
 
         this.buttonSelect.appendChild(select)
@@ -203,11 +229,9 @@ class Banner {
         this.buttonLeft = document.createElement("div");
         this.buttonRight = document.createElement("div");
 
-        this.buttonLeft.classList.add('buttonBanner')
-        this.buttonLeft.classList.add('buttonBannerLeft')
+        this.buttonLeft.classList.add('buttonBanner', 'buttonBannerLeft')
 
-        this.buttonRight.classList.add('buttonBanner')
-        this.buttonRight.classList.add('buttonBannerRight')
+        this.buttonRight.classList.add('buttonBanner', 'buttonBannerRight')
 
         this.buttonLeft.onclick = () => {
             moveElements(this, 'LEFT');
@@ -228,7 +252,7 @@ class Banner {
         this.resizeElements();
     }
 
-    generateImage(imageLink = new String()) {
+    generateImage(imageLink = '') {
         let image = document.createElement("div")
 
         image.style.height = '100%'
@@ -245,27 +269,23 @@ class Banner {
 
     resizeElements() {
         this.isLocked = true;
-        
-        if(this.intervalTracker)
+
+        if (this.intervalTracker)
             this.autoMove()
 
         this.subcontainer.style.width = (this.elementCount || 1) * 100 + '%';
 
         for (const child of this.subcontainer.children)
             child.style.width = 100 / (this.elementCount || 1) + "%"
-    
 
-
-        console.log(999)
-        
         this.transitionPosition = (this.elementPosition || 0) * (this.subcontainer.children[0]?.clientWidth ?? 0) * -1;
         this.subcontainer.style.left = this.transitionPosition + 'px'
-        
+
         this.isLocked = false;
     }
 
-    regenerateSelects(){
-        
+    regenerateSelects() {
+
     }
 
     generateSubContainer() {
@@ -284,7 +304,7 @@ class Banner {
         }
     }
 
-    autoMove(timeInMS = 5000){
+    autoMove(timeInMS = 5000) {
         clearInterval(this.intervalTracker)
 
         this.timeInterval = timeInMS ?? this.timeInterval
