@@ -6,28 +6,25 @@ const moveImage = (banner, value) => {
 }
 
 const moveImageSafe = (banner, value) => {
-
     if (banner.transitionPosition + value >= 0)
         banner.transitionPosition = 0;
-
     else if (banner.transitionPosition + value < -(banner.subcontainer.children[0]?.clientWidth * (banner.elementCount - 1)))
         banner.transitionPosition = -(banner.subcontainer.children[0]?.clientWidth * (banner.elementCount - 1));
-
     else
         banner.transitionPosition += value;
 
     banner.subcontainer.style.left = banner.transitionPosition + 'px'
 }
 
-const moveEffect = (banner) => {
+const moveEffect = (banner, otherTime = 0) => {
     banner.isLocked = true;
-    banner.subcontainer.style.transitionDuration = '1.2s'
+    banner.subcontainer.style.transitionDuration = `${otherTime || banner.transitionMiliseconds}ms`
     banner.subcontainer.style.transitionProperty = 'left'
 
     setTimeout(() => {
         banner.subcontainer.style.transitionDuration = '0s'
         banner.isLocked = false
-    }, 1200)
+    }, otherTime || banner.transitionMiliseconds)
 }
 
 const moveElements = (banner, direction = '') => {
@@ -43,7 +40,7 @@ const moveElements = (banner, direction = '') => {
                 break;
         }
 
-        if (this.intervalTracker)
+        if(banner.intervalTracker ?? false)
             banner.autoMove()
 
         banner.buttonSelect.children[banner.elementPosition].checked = 'true'
@@ -78,20 +75,12 @@ function moveOneRight(banner) {
 
 
 const moveFromSelect = (banner, movePosition = 0) => {
-    if (movePosition >= 0 && movePosition < banner.elementCount && !banner.isLocked) {
-        banner.isLocked = true;
-        banner.subcontainer.style.transitionDuration = '1.2s'
-        banner.subcontainer.style.transitionProperty = 'left'
+    if (movePosition >= 0 && movePosition < banner.elementCount) {
+        moveEffect(banner)
 
         moveImage(banner, (movePosition - banner.elementPosition) * banner.subcontainer.children[0]?.clientWidth * -1)
        
         banner.elementPosition = movePosition
-
-
-        setTimeout(() => {
-            banner.subcontainer.style.transitionDuration = '0s'
-            banner.isLocked = false
-        }, 1200)
     }
 
 }
@@ -110,25 +99,36 @@ class Banner {
     transitionPosition = 0
     lastTouch = 0
 
+    transitionMiliseconds = 1000
 
     constructor(banner) {
         this.container = banner
         this.container.draggable = false
-        this.container.style.overflow = 'hidden'
+        this.container.style.overflowX = 'hidden'
 
         //cria o container que se meche
         this.generateSubContainer()
 
         window.addEventListener("resize", () => this.resizeElements());
 
-        this.generateImage('img/hamburguer_classico.jpg')
-        this.generateImage('img/hamburguer_salada.jpg')
-        this.generateImage('img/hamburguer_salada.jpg')
-        this.generateImage('img/hamburguer_salada.jpg')
+       
+
+
         //cria os botoes
         this.generateMoveButtons()
         this.generateSelectButtons()
         this.generateTouchMovement()
+
+        
+        for(const child of this.container.children){
+            this.insertElement(child)
+        }
+
+        this.generateImage('img/hamburguer_classico.jpg')
+        this.generateImage('img/hamburguer_salada.jpg')
+        this.generateImage('img/hamburguer_salada.jpg')
+        this.generateImage('img/hamburguer_salada.jpg')
+        
     }
 
     generateTouchMovement() {
@@ -136,35 +136,37 @@ class Banner {
         if (!this.touchable) {
             this.touchable = true
 
-            this.container.addEventListener("touchstart", e => {
-                this.isMoving = true
-
-                this.lastTouch = e.touches[e.touches.length - 1].screenX;
-
-                this.beginMove = this.transitionPosition
-            })
-
-            this.container.addEventListener("touchend", e => {
+            let tempCallback = () => {
                 this.isMoving = false
-
                 let endMove = (this.beginMove - this.transitionPosition)
 
-
-                moveEffect(this)
-
                 if (endMove > this.subcontainer.children[0]?.clientWidth / 4) {
+                    moveEffect(this)
                     moveImage(this, (this.subcontainer.children[0]?.clientWidth - endMove) * -1)
                     this.elementPosition++;
                 }
                 else if (endMove < (this.subcontainer.children[0]?.clientWidth / 4 * -1)) {
+                    moveEffect(this)
                     moveImage(this, this.subcontainer.children[0]?.clientWidth + endMove)
                     this.elementPosition--;
                 }
-                else
+                else{
+                    moveEffect(this, this.transitionMiliseconds / 1.5)
                     moveImage(this, endMove)
+                }
+                this.autoMove()
 
                 this.buttonSelect.children[this.elementPosition].checked = 'true'
+            }
+
+            this.container.addEventListener("touchstart", e => {
+                this.isMoving = true
+                this.lastTouch = e.touches[e.touches.length - 1].screenX;
+                this.beginMove = this.transitionPosition
             })
+
+            this.container.addEventListener("touchend", tempCallback)
+            this.container.addEventListener("touchcancel", tempCallback)
 
             this.container.addEventListener("touchmove", e => {
                 let movimento = e.touches[e.touches.length - 1].screenX;
@@ -179,7 +181,6 @@ class Banner {
     }
 
     generateMouseMovement() {
-
         this.container.addEventListener("mousedown", e => {
             this.isMoving = true
         })
@@ -195,7 +196,6 @@ class Banner {
             if (this.isMoving && !this.isLocked) {
                 moveImageSafe(this, e.movementX);
             }
-
         })
     }
 
@@ -203,10 +203,6 @@ class Banner {
         this.buttonSelect = document.createElement("div")
         this.buttonSelect.classList.add('buttonSelect')
         this.buttonSelect.setAttribute('data-name', `${Math.random()}`)
-
-        for (let i = 0; i < this.elementCount; i++)
-            this.appendSelectButton(i)
-
         this.container.parentElement.appendChild(this.buttonSelect)
     }
 
@@ -246,23 +242,25 @@ class Banner {
     }
 
     insertElement(element = document.createElement("div")) {
+        element.style.height = '100%'
+        element.style.left = '0px'
+        element.draggable = false
+        element.style.float = "left"
+
         this.subcontainer.appendChild(element)
 
-        this.elementCount++;
+        this.appendSelectButton(this.elementCount++);
+        
         this.resizeElements();
     }
 
     generateImage(imageLink = '') {
         let image = document.createElement("div")
 
-        image.style.height = '100%'
         image.style.backgroundImage = `url('${imageLink}')`;
         image.style.backgroundSize = 'cover'
         image.style.backgroundRepeat = 'no-repeat'
         image.style.backgroundPosition = 'center'
-        image.style.left = '0px'
-        image.draggable = false
-        image.style.float = "left"
 
         this.insertElement(image)
     }
@@ -284,10 +282,6 @@ class Banner {
         this.isLocked = false;
     }
 
-    regenerateSelects() {
-
-    }
-
     generateSubContainer() {
         if (!this.subcontainer) {
             this.subcontainer = document.createElement("div");
@@ -295,9 +289,8 @@ class Banner {
             this.subcontainer.style.height = "100%"
             this.subcontainer.style.position = 'relative'
             this.subcontainer.style.left = '0px'
-            this.subcontainer.id = 'containerBanner'
+            this.subcontainer.classList.add('bannerContainer')
             this.subcontainer.draggable = false
-            this.subcontainer.style.backgroundColor = "blue"
 
 
             this.container.appendChild(this.subcontainer)

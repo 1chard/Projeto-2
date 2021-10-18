@@ -3,13 +3,11 @@
 let menu = new Menu(document.querySelector("header"))
 let banner = new Banner(document.getElementById("banner"))
 
-// banner.autoMove(5000)
-
-
+banner.autoMove(8000)
 banner.buttonLeft.classList.add("material-icons")
-banner.buttonLeft.textContent = "arrow_back"
+banner.buttonLeft.textContent = "navigate_before"
 banner.buttonRight.classList.add("material-icons")
-banner.buttonRight.textContent = "arrow_forward"
+banner.buttonRight.textContent = "navigate_next"
 
 let mudaTema = document.getElementById("mudaTema")
 

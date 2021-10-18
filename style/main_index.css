@@ -5,21 +5,16 @@ main{
     min-height: 500px;
     border: 1px saddlebrown dotted;
     
-    background: red;
+    background: rgb(70, 66, 66);
     
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: center;
-    align-content: center;
-    gap: 5%;
-    padding: 40px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
 }
 
 .listaHamburger{
     width: 240px;
     height: 360px;
     border: 2px solid black;
-    margin: 10px 0;
     display: flex;
     flex-flow: nowrap column;
     align-items: center;
@@ -44,7 +39,7 @@ main{
 .listaHamburger > p{
     align-self: flex-start;
     text-align: justify;
-    margin: 0 8px ;
+    margin: 0 8px;
     flex: 1 0 auto;
 }
 

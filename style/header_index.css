@@ -30,11 +30,11 @@ header{
 #header_principal > input{
     flex: 2 1 40%;
     height: 30px;
+    outline: none;
+    color: black;
+    border-color: var(--secondary-color);
 }
 
-#header_principal > input:focus{
-   background-color: springgreen;
-}
 
 .effectHeader{
     transition: .6s 0s transform ease-in;

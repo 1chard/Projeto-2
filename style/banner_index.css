@@ -18,12 +18,11 @@
 }
 
 #banner-parent > .buttonBanner{
-    padding: 30px 20px;
-    border: 1px solid blue;
+    padding: 4px 0px;
+    border: 2px solid var(--secondary-color);
+    background-color: var(--background-extra);
 
-    font-size: 60px;
-    display: flex;
-
+    font-size: 50px;
 }
 
 #banner-parent > .buttonSelect{
