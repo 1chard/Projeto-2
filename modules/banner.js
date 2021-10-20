@@ -8,8 +8,8 @@ const moveImage = (banner, value) => {
 const moveImageSafe = (banner, value) => {
     if (banner.transitionPosition + value >= 0)
         banner.transitionPosition = 0;
-    else if (banner.transitionPosition + value < -(banner.subcontainer.children[0]?.clientWidth * (banner.elementCount - 1)))
-        banner.transitionPosition = -(banner.subcontainer.children[0]?.clientWidth * (banner.elementCount - 1));
+    else if (banner.transitionPosition + value < -(banner.subcontainer.children[0].clientWidth * (banner.elementCount - 1)))
+        banner.transitionPosition = -(banner.subcontainer.children[0].clientWidth * (banner.elementCount - 1));
     else
         banner.transitionPosition += value;
 
@@ -65,7 +65,7 @@ function moveOneLeft(banner) {
 function moveOneRight(banner) {
     if (banner.elementPosition < (banner.elementCount - 1)) { //se n for o ultimo elemento
         banner.elementPosition++;
-        moveImage(banner, -banner.subcontainer.children[0]?.clientWidth);
+        moveImage(banner, -banner.subcontainer.children[0].clientWidth);
 
     } else {
         banner.elementPosition = 0;
