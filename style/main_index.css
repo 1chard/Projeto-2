@@ -6,12 +6,24 @@ main{
     border: 1px saddlebrown dotted;
     
     background: rgb(70, 66, 66);
-    
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+}
+
+section{
+    flex: 0 0 auto;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 2%;
+    gap: 0.25%;
 }
 
 .listaHamburger{
+
     width: 240px;
     height: 360px;
     border: 2px solid black;
@@ -48,4 +60,9 @@ main{
     padding: 5px;
     align-self: flex-end;
     margin-right: 10px;
+}
+
+@media screen and (max-width: 1024px){
+    aside{
+    }
 }
