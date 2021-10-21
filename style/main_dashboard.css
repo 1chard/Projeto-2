@@ -2,53 +2,67 @@
 
 body{
     display: flex;
-    flew-wrap: nowrap column;
+    flex-flow: nowrap column;
     justify-content: center;
-    align-items: stretch;
-}
-
-header{
-    flex: 0 0 auto;
-    height: 40px; 
-    background-color: var(--main-color);
-    display: flex;
-    flex-flow: nowrap row;
     align-items: center;
-    justify-content: center;
+    align-items: stretch;
 }
 
 main{
     flex: 1 0 auto;
     display: flex;
     flex-flow: nowrap row;
-    
-
-    background-color: blue;
 }
 
 main > nav{
     flex: 0 1 auto;
     display: flex;
     flex-flow: column nowrap;
-    background: red;
     align-items: center;
-    justify-content: center;
-    gap: 12%;
+    justify-content: space-evenly;
+    gap: 5%;
+    width: 110px;
+    
+    background-color: var(--background-extra);
 }
 
-nav > button{
+main > section{
+    flex: 2 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+nav > button {
     outline: none;
     background: none;
     border: none;
-    padding: 100px;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
 }
 
-nav span{
+nav > button > *{
+    color: var(--text-extra)
+}
 
-    font-size: 2em;
+nav > button:hover > *{
+    color: var(--secondary-color);
+}
+
+
+.iconeGrande{
+    font-size: 100px;
+}
+
+.titulo{
+    word-wrap: break-word;
+    font-weight: bold;
+    font-size: 1.1em;
 }
 
 footer{
-    flex: 0 0 100;
-    background-color: yellow;
+    flex: 0 0 auto;
+    background-color: var(--main-extra);
+    text-align: center;
 }

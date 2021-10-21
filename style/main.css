@@ -8,9 +8,6 @@
 
 body {
     background-color: var(--background-color);
-    display: flex;
-    flex-flow: column nowrap;
-    align-items: center;
     min-height: 100vh;
     width: 100%;
 }
@@ -34,6 +31,5 @@ body * {
 
 @media screen and (max-width: 1024px){
     body{
-        background-color: mediumvioletred;
     }
 }
