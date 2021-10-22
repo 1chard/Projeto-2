@@ -3,9 +3,7 @@
 main{
     width: 100%;
     min-height: 500px;
-    border: 1px saddlebrown dotted;
-    
-    background: rgb(70, 66, 66);
+    background-color: var(--main-extra);
 
     display: flex;
     flex-flow: row wrap;
@@ -30,7 +28,7 @@ section{
     display: flex;
     flex-flow: nowrap column;
     align-items: center;
-    background-color: var(--secondary-color);
+    background-color: var(--secondary-extra);
 }
 
 .listaHamburger > img{
@@ -64,5 +62,6 @@ section{
 
 @media screen and (max-width: 1024px){
     aside{
+        display: none;
     }
 }

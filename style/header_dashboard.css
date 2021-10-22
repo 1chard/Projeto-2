@@ -5,6 +5,7 @@ header{
     height: 40px; 
     background-color: var(--main-color);
     position: relative;
+    z-index: 1;
 }
 
 header > *{

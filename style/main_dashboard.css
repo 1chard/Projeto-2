@@ -31,6 +31,9 @@ main > section{
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 3;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 nav > button {
@@ -65,4 +68,16 @@ footer{
     flex: 0 0 auto;
     background-color: var(--main-extra);
     text-align: center;
+}
+
+@media screen and (max-width: 1024px){
+    body{
+        background-color: red;
+    }
+    
+    main{
+        flew-direction: column;
+    }
+    
+    
 }

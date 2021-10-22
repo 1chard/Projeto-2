@@ -1,4 +1,6 @@
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
 
 * {
     padding: 0;
@@ -14,6 +16,7 @@ body {
 
 body * {
     color: var(--text-color);
+    font-family: 'Roboto', sans-serif;
 }
 
 
@@ -27,9 +30,4 @@ body * {
     --secondary-extra: white;
     --text-color: white;
     --text-extra: white;
-}
-
-@media screen and (max-width: 1024px){
-    body{
-    }
 }

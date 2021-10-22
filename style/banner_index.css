@@ -20,7 +20,7 @@
 #banner-parent > .buttonBanner{
     padding: 4px 0px;
     border: 2px solid var(--secondary-color);
-    background-color: var(--background-extra);
+    background-color: var(--secondary-extra);
 
     font-size: 50px;
 }
