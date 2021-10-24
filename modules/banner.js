@@ -1,25 +1,29 @@
-'use strict'
+'use strict';
 
-const moveImage = (banner, value) => {
+const moveBy = (banner, value) => {
     banner.transitionPosition += value;
-    banner.subcontainer.style.left = banner.transitionPosition + 'px'
+    banner.subcontainer.style.transform = `translateX(${banner.transitionPosition}px)`
 }
 
-const moveImageSafe = (banner, value) => {
+const moveTo = (banner, value) => {
+    banner.transitionPosition = value;
+    banner.subcontainer.style.transform = `translateX(${banner.transitionPosition}px)`
+}
+
+const moveBySafe = (banner, value) => {
     if (banner.transitionPosition + value >= 0)
-        banner.transitionPosition = 0;
+        moveTo(banner, 0);
     else if (banner.transitionPosition + value < -(banner.subcontainer.children[0].clientWidth * (banner.elementCount - 1)))
-        banner.transitionPosition = -(banner.subcontainer.children[0].clientWidth * (banner.elementCount - 1));
+        moveTo(banner, -(banner.subcontainer.children[0].clientWidth * (banner.elementCount - 1)));
     else
-        banner.transitionPosition += value;
-
-    banner.subcontainer.style.left = banner.transitionPosition + 'px'
+        moveBy(banner, value);
 }
 
-const moveEffect = (banner, otherTime = 0) => {
+const preMove = (banner, otherTime = 0) => {
     banner.isLocked = true;
+    banner.subcontainer.style.willchange = 'transform'
     banner.subcontainer.style.transitionDuration = `${otherTime || banner.transitionMiliseconds}ms`
-    banner.subcontainer.style.transitionProperty = 'left'
+    banner.subcontainer.style.transitionProperty = 'transform'
 
     setTimeout(() => {
         banner.subcontainer.style.transitionDuration = '0s'
@@ -27,66 +31,73 @@ const moveEffect = (banner, otherTime = 0) => {
     }, otherTime || banner.transitionMiliseconds)
 }
 
-const moveElements = (banner, direction = '') => {
+const move = (banner, direction) => {
     if (!banner.isLocked) {
-        moveEffect(banner)
+        preMove(banner)
 
-        switch (direction.toUpperCase()) {
+        switch (direction) {
             case "LEFT":
-                moveOneLeft(banner)
+                moveLeft(banner)
                 break;
             case "RIGHT":
-                moveOneRight(banner)
-                break;
+                moveRight(banner)
+                break; main
         }
 
-        if(banner.intervalTracker ?? false)
+        if (banner.intervalTracker)
             banner.autoMove()
 
-        banner.buttonSelect.children[banner.elementPosition].checked = 'true'
-
+        if (banner.data.selectable.status)
+            banner.data.selectable.main.children[banner.elementPosition].checked = 'true'
     }
 }
 
 
-function moveOneLeft(banner) {
+function moveLeft(banner) {
     if (banner.elementPosition > 0) { //se n for o ultimo elemento
         banner.elementPosition--;
 
-        moveImage(banner, banner.container.clientWidth);
+        moveBy(banner, banner.container.clientWidth);
     }
     else {
         banner.elementPosition = (banner.elementCount - 1);
-        moveImage(banner, -(banner.container.clientWidth * (banner.elementPosition)));
+        moveTo(banner, -banner.subcontainer.children[0].clientWidth * (banner.elementPosition));
     }
 
 }
 
-function moveOneRight(banner) {
+function moveRight(banner) {
     if (banner.elementPosition < (banner.elementCount - 1)) { //se n for o ultimo elemento
         banner.elementPosition++;
-        moveImage(banner, -banner.subcontainer.children[0].clientWidth);
+        moveBy(banner, -banner.subcontainer.children[0].clientWidth);
 
     } else {
         banner.elementPosition = 0;
-        moveImage(banner, banner.subcontainer.clientWidth - banner.subcontainer.children[0]?.clientWidth);
+        moveTo(banner, 0);
     }
 }
 
 
 const moveFromSelect = (banner, movePosition = 0) => {
     if (movePosition >= 0 && movePosition < banner.elementCount) {
-        moveEffect(banner)
-
-        moveImage(banner, (movePosition - banner.elementPosition) * banner.subcontainer.children[0]?.clientWidth * -1)
-       
+        preMove(banner)
+        moveBy(banner, (movePosition - banner.elementPosition) * banner.subcontainer.children[0]?.clientWidth * -1)
         banner.elementPosition = movePosition
     }
-
 }
 
-
 class Banner {
+    data = {
+        touchable: {
+            status: false,
+        },
+        selectable: {
+            status: false,
+        },
+        moveable: {
+            status: false,
+        }
+    }
     //booleano que permite checkar se esta movendo
     isMoving = false;
     isLocked = false;
@@ -97,72 +108,58 @@ class Banner {
 
     //rastreia movimento
     transitionPosition = 0
-    lastTouch = 0
 
     transitionMiliseconds = 1000
 
     constructor(banner) {
         this.container = banner
-        this.container.draggable = false
         this.container.style.overflowX = 'hidden'
 
         //cria o container que se meche
-        this.generateSubContainer()
+        this.subcontainer = document.createElement("div");
+        this.subcontainer.style.height = "100%"
+        this.subcontainer.style.position = 'relative'
+        this.subcontainer.classList.add('bannerContainer')
+        this.container.appendChild(this.subcontainer)
 
-        window.addEventListener("resize", () => this.resizeElements());
+        window.addEventListener("resize", () => this.resize());
 
-       
-
-
-        //cria os botoes
-        this.generateMoveButtons()
-        this.generateSelectButtons()
-        this.generateTouchMovement()
-
-        
-        for(const child of this.container.children){
-            this.insertElement(child)
-        }
-
-        this.generateImage('img/hamburguer_classico.jpg')
-        this.generateImage('img/hamburguer_salada.jpg')
-        this.generateImage('img/hamburguer_salada.jpg')
-        this.generateImage('img/hamburguer_salada.jpg')
-        
+        for (const child of this.container.children)
+            this.add(child)
     }
 
-    generateTouchMovement() {
-
-        if (!this.touchable) {
-            this.touchable = true
+    touchable() {
+        if (!this.data.touchable.status) {
+            this.data.touchable.status = true;
 
             let tempCallback = () => {
                 this.isMoving = false
-                let endMove = (this.beginMove - this.transitionPosition)
+                let endMove = (this.data.touchable.beginMove - this.transitionPosition)
 
                 if (endMove > this.subcontainer.children[0]?.clientWidth / 4) {
-                    moveEffect(this)
-                    moveImage(this, (this.subcontainer.children[0]?.clientWidth - endMove) * -1)
+                    preMove(this)
+                    moveBy(this, (this.subcontainer.children[0]?.clientWidth - endMove) * -1)
                     this.elementPosition++;
                 }
                 else if (endMove < (this.subcontainer.children[0]?.clientWidth / 4 * -1)) {
-                    moveEffect(this)
-                    moveImage(this, this.subcontainer.children[0]?.clientWidth + endMove)
+                    preMove(this)
+                    moveBy(this, this.subcontainer.children[0]?.clientWidth + endMove)
                     this.elementPosition--;
                 }
-                else{
-                    moveEffect(this, this.transitionMiliseconds / 1.5)
-                    moveImage(this, endMove)
+                else {
+                    preMove(this, this.transitionMiliseconds / 2)
+                    moveBy(this, endMove)
                 }
                 this.autoMove()
 
-                this.buttonSelect.children[this.elementPosition].checked = 'true'
+                if(this.data.selectable.status)
+                    this.data.selectable.main.children[this.elementPosition].checked = 'true'
             }
 
             this.container.addEventListener("touchstart", e => {
                 this.isMoving = true
-                this.lastTouch = e.touches[e.touches.length - 1].screenX;
-                this.beginMove = this.transitionPosition
+                this.data.touchable.lastTouch = e.touches[e.touches.length - 1].screenX;
+                this.data.touchable.beginMove = this.transitionPosition
             })
 
             this.container.addEventListener("touchend", tempCallback)
@@ -172,89 +169,69 @@ class Banner {
                 let movimento = e.touches[e.touches.length - 1].screenX;
 
                 if (this.isMoving && !this.isLocked)
-                    moveImageSafe(this, (this.lastTouch - movimento) * -1.5);
+                    moveBySafe(this, (this.data.touchable.lastTouch - movimento) * -1.5);
 
 
-                this.lastTouch = e.touches[e.touches.length - 1].screenX;
+                this.data.touchable.lastTouch = e.touches[e.touches.length - 1].screenX;
             })
         }
     }
 
-    generateMouseMovement() {
-        this.container.addEventListener("mousedown", e => {
-            this.isMoving = true
-        })
+    selectable() {
+        if (!this.data.selectable.status) {
+            this.data.selectable.status = true
 
-        this.container.addEventListener("mouseup", e => {
-            this.isMoving = false
-        })
-        this.container.addEventListener("mouseout", e => {
-            this.isMoving = false
-        })
+            this.data.selectable.main = document.createElement("div")
+            this.data.selectable.main.classList.add('buttonSelect')
+            this.data.selectable.main.setAttribute('data-name', `${Math.random()}`)
+            this.container.parentElement.appendChild(this.data.selectable.main)
 
-        this.container.addEventListener("mousemove", e => {
-            if (this.isMoving && !this.isLocked) {
-                moveImageSafe(this, e.movementX);
-            }
-        })
-    }
-
-    generateSelectButtons() {
-        this.buttonSelect = document.createElement("div")
-        this.buttonSelect.classList.add('buttonSelect')
-        this.buttonSelect.setAttribute('data-name', `${Math.random()}`)
-        this.container.parentElement.appendChild(this.buttonSelect)
+            for(let i = 0; this.subcontainer.children.length > i; i++)
+                this.appendSelectButton(i)
+        }
     }
 
     appendSelectButton(i) {
         let select = document.createElement("input")
-
-        select.name = this.buttonSelect?.getAttribute('data-name')
-
+        select.name = this.data.selectable.main.getAttribute('data-name')
         select.type = "radio"
+        select.checked = i === this.elementPosition;
+        select.onchange = () => moveFromSelect(this, i)
+        this.data.selectable.main.appendChild(select)
 
-        select.checked = this.buttonSelect.children.length === 0;
-        select.onchange = () => {
-            moveFromSelect(this, i)
-        }
-
-        this.buttonSelect.appendChild(select)
+        console.log(i)
     }
 
-    generateMoveButtons() {
+    moveable() {
         this.buttonLeft = document.createElement("div");
         this.buttonRight = document.createElement("div");
 
         this.buttonLeft.classList.add('buttonBanner', 'buttonBannerLeft')
-
         this.buttonRight.classList.add('buttonBanner', 'buttonBannerRight')
 
-        this.buttonLeft.onclick = () => {
-            moveElements(this, 'LEFT');
-        }
-
-        this.buttonRight.onclick = () => {
-            moveElements(this, 'RIGHT');
-        }
+        this.buttonLeft.onclick = () => move(this, 'LEFT');
+        this.buttonRight.onclick = () => move(this, 'RIGHT');
 
         this.container.parentElement.insertBefore(this.buttonLeft, this.container);
         this.container.parentElement.appendChild(this.buttonRight);
     }
 
-    insertElement(element = document.createElement("div")) {
+    add(element) {
         element.style.height = '100%'
-        element.style.left = '0px'
-        element.draggable = false
         element.style.float = "left"
 
         this.subcontainer.appendChild(element)
 
-        this.appendSelectButton(this.elementCount++);
-        
-        this.resizeElements();
+        if (this.data.selectable.status)
+            this.appendSelectButton(this.elementCount);
+
+
+        this.elementCount++
+
+        this.resize();
     }
 
-    generateImage(imageLink = '') {
+    gen(imageLink) {
         let image = document.createElement("div")
 
         image.style.backgroundImage = `url('${imageLink}')`;
@@ -262,10 +239,10 @@ class Banner {
         image.style.backgroundRepeat = 'no-repeat'
         image.style.backgroundPosition = 'center'
 
-        this.insertElement(image)
+        this.add(image)
     }
 
-    resizeElements() {
+    resize() {
         this.isLocked = true;
 
         if (this.intervalTracker)
@@ -276,38 +253,20 @@ class Banner {
         for (const child of this.subcontainer.children)
             child.style.width = 100 / (this.elementCount || 1) + "%"
 
-        this.transitionPosition = (this.elementPosition || 0) * (this.subcontainer.children[0]?.clientWidth ?? 0) * -1;
-        this.subcontainer.style.left = this.transitionPosition + 'px'
+        moveTo(this, (this.elementPosition || 0) * (this.subcontainer.children[0].clientWidth || 0) * -1);
 
         this.isLocked = false;
-    }
-
-    generateSubContainer() {
-        if (!this.subcontainer) {
-            this.subcontainer = document.createElement("div");
-
-            this.subcontainer.style.height = "100%"
-            this.subcontainer.style.position = 'relative'
-            this.subcontainer.style.left = '0px'
-            this.subcontainer.classList.add('bannerContainer')
-            this.subcontainer.draggable = false
-
-
-            this.container.appendChild(this.subcontainer)
-        }
     }
 
     autoMove(timeInMS = 5000) {
         clearInterval(this.intervalTracker)
 
-        this.timeInterval = timeInMS ?? this.timeInterval
+        this.timeInterval = timeInMS ?? this.timeInterval ?? 0
 
         this.intervalTracker = setInterval(() => {
-            moveElements(this, 'RIGHT')
+            move(this, 'RIGHT')
         }, this.timeInterval)
     }
 }
-
-
 
 //export default Banner;

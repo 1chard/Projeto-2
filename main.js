@@ -4,6 +4,9 @@ let menu = new Menu(document.querySelector("header"))
 let banner = new Banner(document.getElementById("banner"))
 
 banner.autoMove(8000)
+banner.selectable()
+banner.touchable()
+banner.moveable()
 banner.buttonLeft.classList.add("material-icons")
 banner.buttonLeft.textContent = "navigate_before"
 banner.buttonRight.classList.add("material-icons")
@@ -11,8 +14,8 @@ banner.buttonRight.textContent = "navigate_next"
 
 let mudaTema = document.getElementById("mudaTema")
 
+window.matchMedia("screen and (prefers-color-scheme: light)").matches? temaClaro() : temaEscuro();
 
-temaEscuro()
 
 document.getElementById("mudaTema").onclick = e => {
     switch(mudaTema.textContent){
