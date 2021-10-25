@@ -11,7 +11,7 @@ body{
 main{
     flex: 1 0 auto;
     display: flex;
-    flex-flow: nowrap row;
+    flex-flow: wrap row;
 }
 
 main > nav{
@@ -20,9 +20,10 @@ main > nav{
     flex-flow: column nowrap;
     align-items: center;
     justify-content: space-evenly;
-    gap: 5%;
+    gap: 2vh;
     width: 110px;
-    
+    overflow: hidden;
+
     background-color: var(--background-extra);
 }
 
@@ -50,12 +51,12 @@ nav > button > *{
 }
 
 nav > button:hover > *{
-    color: var(--secondary-color);
+    filter: invert();
 }
 
 
 .iconeGrande{
-    font-size: 100px;
+    font-size: 5rem;
 }
 
 .titulo{
@@ -71,12 +72,26 @@ footer{
 }
 
 @media screen and (max-width: 1024px){
-    body{
-        background-color: red;
+    *:root{
+        font-size: 14px;
     }
     
     main{
-        flew-direction: column;
+        flex-flow: wrap column-reverse;
+    }
+
+    main > nav{
+        flex-flow: nowrap row;
+        width: 100%;
+        padding: 5px 0px;
+    }
+
+    .iconeGrande{
+        font-size: 4.5rem;
+    }
+
+    .titulo{
+        display: none;
     }
     
     

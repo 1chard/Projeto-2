@@ -6,7 +6,6 @@ class Hamburguer
 {
     public $id = null;
     public $nome = '';
-    public $categoria = '';
     public $preco = 0.0;
     public $desconto = null;
     public $descricao = null;
@@ -16,17 +15,15 @@ class Hamburguer
         if(gettype($args[0]) === 'array' && count($args) === 1){
             $this->id = $args[0]['idhamburguer'];
         $this->nome = $args[0]['nome'];
-        $this->categoria = $args[0]['categoria'];
         $this->preco = $args[0]['preco'];
         $this->desconto = $args[0]['desconto'];
         $this->descricao = $args[0]['descricao'];
         }
-        else if(count($args) >= 3 && count($args) < 6){
+        else if(count($args) >= 2 && count($args) < 5){
             $this->nome = $args[0];
-            $this->categoria = $args[1];
-            $this->preco = $args[2];
-            $this->desconto = $args[3] ?? null;
-            $this->descricao = $args[4] ?? null;
+            $this->preco = $args[1];
+            $this->desconto = $args[2] ?? null;
+            $this->descricao = $args[3] ?? null;
         }
         else 
             throw new ArgumentCountError("Construtor desconhecido.");
@@ -39,7 +36,7 @@ class Hamburguer
 
 
         return mysqli_query($temp->conexao, "INSERT into hamburguer(nome, categoria, preco, desconto ,descricao)"
-            . " values($param->nome, $param->categoria, $param->preco, $param->desconto, $param->descricao);")
+            . " values($param->nome, $param->preco, $param->desconto, $param->descricao);")
             ? true : false;
     }
 

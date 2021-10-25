@@ -5,11 +5,9 @@
     <title>Dashboard</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href='style/header_dashboard.css'>
-    
     <link rel="stylesheet" href="style/main_dashboard.css">
-    <script src="modules/tema.js">
-    </script>
-
+    <script src="modules/tema.js"></script>
+    <script src="dashboard.js" defer></script>
 </head>
 
 <body>
@@ -66,22 +64,7 @@
         </p>
     </footer>
     <script defer>
-        temaClaro()
-
-        document.getElementById("mudaTema").onclick = e => {
-            switch (mudaTema.textContent) {
-                case "dark_mode":
-                    temaClaro()
-                    mudaTema.textContent = "light_mode"
-                    break
-                case "light_mode":
-                    temaEscuro()
-                    mudaTema.textContent = "dark_mode"
-                    break
-                default:
-                    throw null
-            }
-        }
+        
     </script>
 </body>
 

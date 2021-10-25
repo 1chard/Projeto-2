@@ -1,5 +1,5 @@
 <?php
     const HOSTNAME = 'localhost';
-    const USUARIO = 'root';
-    const SENHA = 'bcd127';
+    const USUARIO = 'richard';
+    const SENHA = '123';
     const DATABASE = 'hamburgueria2021';
