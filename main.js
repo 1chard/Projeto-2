@@ -14,20 +14,26 @@ banner.buttonRight.textContent = "navigate_next"
 
 let mudaTema = document.getElementById("mudaTema")
 
-window.matchMedia("screen and (prefers-color-scheme: light)").matches? temaClaro() : temaEscuro();
-
+if(window.matchMedia("screen and (prefers-color-scheme: dark)").matches) {
+    temaEscuro();
+    mudaTema.textContent = "dark_mode" 
+}
+else{
+    temaClaro(); 
+    mudaTema.textContent = "light_mode" 
+}
 
 document.getElementById("mudaTema").onclick = e => {
     switch(mudaTema.textContent){
         case "dark_mode":
             temaClaro()
             mudaTema.textContent = "light_mode" 
-        break
+            break
         case "light_mode":
             temaEscuro()
             mudaTema.textContent = "dark_mode" 
-        break
+            break
         default:
-        throw null
+            throw new Error("n foi")
     }
 }

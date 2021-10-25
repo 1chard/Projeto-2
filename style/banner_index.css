@@ -65,16 +65,10 @@
     }
 
     #banner-parent > .buttonSelect *{
-        display: block;
-        border-radius: 33%;
-    
-        background-color: #eee;
-        padding: 5px;
+        padding: 7px;
     }
     
     #banner-parent > .buttonSelect *:checked{
-        border-color: #555;
-        background-color: #bbb;
-        padding: 8px;
+        padding: 7px;
     }
 }
