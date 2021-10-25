@@ -13,4 +13,4 @@ create table if not exists hamburguer(
 
 #alter table hamburguer modify column idhamburguer int unsigned primary key not null auto_increment;
 
-#insert into hamburguer(nome, categoria, preco, desconto, descricao) values('', '', '0.4', '0.2', '');
+insert into hamburguer(nome, categoria, preco, desconto, descricao) values('', '', '0.4', '0.2', '');

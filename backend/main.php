@@ -1,10 +1,10 @@
 <?php
-    //include_once './banco/conexao.php';
-    //include_once './banco/hamburguer.php';
-    include_once './util/constantes.php';
+    function import(string $toImport)  {
+        require_once( $_SERVER['DOCUMENT_ROOT'].'/backend/'.$toImport);
+    }
 
-    echo 'fffff';
-    mysqli_connect(HOSTNAME, USUARIO, SENHA, DATABASE);
-    
-    Hamburguer::buscar(0);
+    import('banco/hamburguer.php');
+    import('util/constantes.php');
+
+    var_dump(Hamburguer::buscar(1));
 

@@ -1,11 +1,15 @@
 <?php
-    include_once '../util/constantes.php';
+    import('util/constantes.php');
 
     class Banco{
         public $conexao = null;
 
         function __construct(){
-            $this->banco = mysqli_connect(HOSTNAME, USUARIO, SENHA, DATABASE);
+            $this->conexao = mysqli_connect(HOSTNAME, USUARIO, SENHA, DATABASE);
+        }
+
+        function __destruct(){
+            mysqli_close($this->conexao);
         }
     }
 
