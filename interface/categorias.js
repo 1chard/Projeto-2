@@ -21,5 +21,16 @@ const menu_categorias = async() => {
     <tbody>
         ${texto}
     </tbody>
-    </table>`;
+    </table>
+    
+    <input type='text' id='buttonNome' >
+    <input type='button' id='buttonAdicionar' value='enviar' >`
+    
+    janela.querySelector('#buttonAdicionar').addEventListener(
+        "click", () => {
+            let request = new FormData();
+            request.append("nome", document.getElementById("buttonNome").value)
+            fetch("backend/main.php", {method: 'post', body: request} ).then(t => console.log(t.text()))
+        }
+    );
 }
