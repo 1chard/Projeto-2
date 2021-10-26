@@ -3,8 +3,8 @@
 const temaClaro = () => {
     document.body.style.setProperty("--main-color", "#ffc140");
     document.body.style.setProperty("--main-extra", "#f6a123");
-    document.body.style.setProperty("--background-color", "#ffe");
-    document.body.style.setProperty("--background-extra", "#fbf7ef");
+    document.body.style.setProperty("--background-color", "#fff");
+    document.body.style.setProperty("--background-extra", "#fdfbf8");
     document.body.style.setProperty("--secondary-color", "#fae5c6");
     document.body.style.setProperty("--secondary-extra", "#f6efd0");
     document.body.style.setProperty("--text-color", "#030303");

@@ -47,11 +47,12 @@ nav > button {
 }
 
 nav > button > *{
-    color: var(--text-extra)
+    color: var(--text-extra);
+    filter: grayscale();
 }
 
-nav > button:hover > *{
-    filter: invert();
+#alvo-button, nav > button:hover > *{
+    filter: none;
 }
 
 
@@ -83,16 +84,9 @@ footer{
     main > nav{
         flex-flow: nowrap row;
         width: 100%;
-        padding: 5px 0px;
     }
 
     .iconeGrande{
-        font-size: 4.5rem;
+        font-size: 4rem;
     }
-
-    .titulo{
-        display: none;
-    }
-    
-    
 }

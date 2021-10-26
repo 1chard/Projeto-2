@@ -1,2 +1,21 @@
 @import "main.css";
 
+#janela {
+    flex: 5 0 auto;
+}
+
+#janela table{
+    width: 100%;
+    height: 100%;
+    border: 5px solid var(--main-extra);
+}
+
+#janela table > tbody > tr:nth-child(odd){
+    background-color: #7771;
+}
+
+
+@media screen and (max-width: 1024px) {
+    body {
+    }
+}

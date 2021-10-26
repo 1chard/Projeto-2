@@ -36,7 +36,7 @@ class Categoria
 
     static public function listar(): array{
         $temp = new Banco();
-        $resultado = mysqli_query($temp->conexao, "SELECT * from categoria order by idcategoria desc;");
+        $resultado = mysqli_query($temp->conexao, "SELECT * from categoria;");
 
         $retorno = array();
 

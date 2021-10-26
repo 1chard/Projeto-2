@@ -6,7 +6,11 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href='style/header_dashboard.css'>
     <link rel="stylesheet" href="style/main_dashboard.css">
+
+    <link rel="stylesheet" href="style/menu_dashboard.css">
     <script src="modules/tema.js"></script>
+    <script src="interface/categorias.js" defer></script>
+    <script src="interface/control.js" defer></script>
     <script src="dashboard.js" defer></script>
 </head>
 
@@ -17,25 +21,25 @@
     </header>
     <main>
 
-        <nav>
-            <button>
+        <nav id="categorias">
+            <button data-alvo="produtos">
                 <span class="material-icons iconeGrande">
                     lunch_dining
                 </span>
                 <span class='titulo'>
-                    Administração de Produtos
+                    Produtos
                 </span>
             </button>
-            <button>
+            <button data-alvo="categorias">
 
                 <span class="material-icons iconeGrande">
                     fastfood
                 </span>
-                 <span class='titulo'>
-                    Administração de Categorias
+                <span class='titulo'>
+                    Categorias
                 </span>
             </button>
-            <button>    
+            <button data-alvo="contatos">    
 
                 <span class="material-icons iconeGrande">
                     contact_page
@@ -44,7 +48,7 @@
                     Contatos
                 </span>
             </button>
-            <button>
+            <button data-alvo="produtos">
 
                 <span class="material-icons iconeGrande">
                     group
@@ -54,8 +58,8 @@
                 </span>
             </button>
         </nav>
-        <section>
-            jpafjpasj
+        <section id="janela">
+            
         </section>
     </main>
     <footer>

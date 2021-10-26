@@ -1,3 +1,5 @@
+let mudaTema = document.getElementById("mudaTema")
+
 if(window.matchMedia("screen and (prefers-color-scheme: dark)").matches) {
     temaEscuro();
     mudaTema.textContent = "dark_mode" 
@@ -7,7 +9,7 @@ else{
     mudaTema.textContent = "light_mode" 
 }
 
-document.getElementById("mudaTema").onclick = e => {
+document.getElementById("mudaTema").onclick = () => {
     switch (mudaTema.textContent) {
         case "dark_mode":
             temaClaro()
