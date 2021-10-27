@@ -15,10 +15,13 @@ header > *{
 }
 
 #sair{
-    right: calc(5px + 1%)
+    right: calc(5px + 1%);
+    font-family: 'Material Icons';
+    font-size: 2rem;
 }
 
 #mudaTema{
-    
-    right: calc(45px + 1%)
+    font-size: 2rem;
+    right: calc(45px + 1%);
+    font-family: 'Material Icons';
 }

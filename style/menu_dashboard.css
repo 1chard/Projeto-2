@@ -21,6 +21,11 @@
     background-color: #77777710;
 }
 
+#janela #excluir{
+    padding: 32px;
+    background-color: red;
+}
+
 @media screen and (max-width: 1024px) {
     #janela {
         margin: 0 0;

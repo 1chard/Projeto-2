@@ -6,6 +6,13 @@
     src: url(https://fonts.gstatic.com/s/materialiconsoutlined/v84/gok-H7zzDkdnRel8-DQ6KAXJ69wP1tGnf4ZGhUce.woff2) format('woff2');
 }
 
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/materialicons/v111/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2) format('woff2');
+}
+
 body{
     display: flex;
     flex-flow: nowrap column;
@@ -47,17 +54,21 @@ nav > button > *{
     filter: grayscale();
 }
 
-nav > button:hover .iconeGrande{
-    filter: none;
-
-    font-family: 'Material Icons Outlined';
-}
-
-
 
 .iconeGrande{
     font-size: 5rem;
+    font-family: "Material Icons Outlined";
 }
+
+nav > button:hover .iconeGrande{
+    filter: none;
+}
+
+.alvo-button{
+   background-color: red;
+    font-family: 'Material Icons', "Material Icons Outlined";
+}
+
 
 .titulo{
     word-wrap: break-word;

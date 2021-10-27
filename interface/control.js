@@ -10,7 +10,7 @@ for(const button of categorias){
 
         for(const extra of categorias){
             if(extra === elemento)
-                elemento.classList.add("alvo-button");
+                elemento.style.fontFamily = "Material Icons";
             else
                 elemento.id = ''
         }
