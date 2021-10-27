@@ -7,5 +7,12 @@ for(const button of categorias){
         const elemento = ev.target.localName === 'button'? ev.target: ev.target.parentElement;
 
         Function(`'use strict'; menu_${elemento.getAttribute('data-alvo')}()`).call();
+
+        for(const extra of categorias){
+            if(extra === elemento)
+                elemento.classList.add("alvo-button");
+            else
+                elemento.id = ''
+        }
     });
 }

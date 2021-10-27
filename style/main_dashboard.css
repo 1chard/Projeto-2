@@ -1,4 +1,10 @@
 @import "main.css";
+@font-face {
+    font-family: 'Material Icons Outlined';
+    font-style: normal;
+    font-weight: 400;
+    src: url(https://fonts.gstatic.com/s/materialiconsoutlined/v84/gok-H7zzDkdnRel8-DQ6KAXJ69wP1tGnf4ZGhUce.woff2) format('woff2');
+}
 
 body{
     display: flex;
@@ -27,16 +33,6 @@ main > nav{
     background-color: var(--background-extra);
 }
 
-main > section{
-    flex: 2 0 auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 3;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
 nav > button {
     outline: none;
     background: none;
@@ -51,9 +47,12 @@ nav > button > *{
     filter: grayscale();
 }
 
-#alvo-button, nav > button:hover > *{
+nav > button:hover .iconeGrande{
     filter: none;
+
+    font-family: 'Material Icons Outlined';
 }
+
 
 
 .iconeGrande{

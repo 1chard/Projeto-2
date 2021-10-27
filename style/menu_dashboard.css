@@ -1,22 +1,28 @@
-
-
 #janela {
     flex: 5 0 auto;
+    margin: 2rem 5%;
+    display: flex;
+    flex-flow: wrap column;
+    justify-content: center;
+    align-items: center;
+    gap: 5%;
 }
 
 #janela table{
-    width: 100%;
-    height: 100%;
     border: 5px solid var(--main-extra);
     min-height: 50px;
 }
 
 #janela table > tbody > tr:nth-child(odd){
-    background-color: #7771;
+    background-color: #77777707;
 }
 
+#janela table > tbody > tr:nth-child(even){
+    background-color: #77777710;
+}
 
 @media screen and (max-width: 1024px) {
-    body {
+    #janela {
+        margin: 0 0;
     }
 }
