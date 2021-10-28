@@ -13,7 +13,7 @@ const generateTable = array => {
     return texto;
 }
 
-const menu_categorias = async() => {
+const menu_categorias = async () => {
     const janela = document.getElementById('janela');
 
     let array = await fetch('/backend/main.php?tipo=categoria&pedido=listar').then(t => t.json());
@@ -26,54 +26,57 @@ const menu_categorias = async() => {
     </tbody>
     </table>`
 
-    let inserir = document.createElement('div');
-    let inserirInput = document.createElement('input')
-    let inserirEnviar = document.createElement('input')
-    let excluir = document.createElement('div')
-    
+    const tbody = janela.querySelector('tbody');
+
+
+    const inserir = document.createElement('div');
     inserir.id = "inserir";
-    
+
+    const inserirInput = document.createElement('input')
     inserirInput.type = "text"
     inserirInput.id = "inserirInput"
-    
+
+    const inserirEnviar = document.createElement('input')
     inserirEnviar.type = "button"
     inserirEnviar.id = "inserirEnviar"
     inserirEnviar.value = "Salvar no banco"
-    
-    excluir.ondragover = e => {e.preventDefault()}
-    
+
+    const excluir = document.createElement('div')
+    excluir.id = 'excluir'
+    excluir.textContent = 'trash'
+    excluir.ondragover = e => { e.preventDefault() }
     excluir.ondrop = async (e) => {
-        let request = new FormData();
-            request.append("requisicao", JSON.stringify({ id: event.dataTransfer.getData("id") }));
-            request.append("tipo", 'categoria');
-            request.append("pedido", 'deletar');
+        const request = new FormData();
+        request.append("requisicao", JSON.stringify({ id: e.dataTransfer.getData("id") }));
+        request.append("tipo", 'categoria');
+        request.append("pedido", 'deletar');
 
-            let hold = new Promise( (yes, no) => {
-                
+        let finished = false;
+        
+
+        await fetch("backend/main.php", {
+            method: 'post',
+            body: request
+        }).then(ev => {
+            fetch('/backend/main.php?tipo=categoria&pedido=listar').then(r => r.json()).then( json => {
+                tbody.innerHTML = generateTable(json.resposta);
             });
+        }).catch( e => {
 
-            await fetch("backend/main.php", {
-                method: 'post',
-                body: request
-            }).then(t => console.log(t.text()));
-            
-            let tbody = janela.querySelector('tbody');
-      
-            let json = await fetch('/backend/main.php?tipo=categoria&pedido=listar').then(t => t.json());
-            
-            tbody.innerHTML = generateTable(json.resposta);
+        });
+
+
     }
-    
-    excluir.id = "excluir"
-    
-    
+
+
+
     inserir.appendChild(inserirInput);
     inserir.appendChild(inserirEnviar);
     janela.appendChild(inserir);
     janela.appendChild(excluir);
-    
-    
-    
+
+
+
     /*
     <input type='text' id='buttonNome' >
     <input type='button' id='buttonAdicionar' value='enviar' ></input>
@@ -86,19 +89,19 @@ const menu_categorias = async() => {
             request.append("tipo", 'categoria');
             request.append("pedido", 'inserir');
 
-            let hold = new Promise( (yes, no) => {
-                
+            let hold = new Promise((yes, no) => {
+
             })
 
             await fetch("backend/main.php", {
                 method: 'post',
                 body: request
             }).then(t => console.log(t.text()));
-            
+
             let tbody = janela.querySelector('tbody');
-      
+
             let json = await fetch('/backend/main.php?tipo=categoria&pedido=listar').then(t => t.json());
-            
+
             tbody.innerHTML = generateTable(json.resposta);
         }
     );
