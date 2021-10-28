@@ -1,24 +1,24 @@
 <?php
-function import(string $toImport)
-{
+
+function import(string $toImport) {
     require_once($_SERVER['DOCUMENT_ROOT'] . '/backend/' . $toImport);
 }
 
 import('util/constantes.php');
 import('banco/categoria.php');
-
+import('banco/contato.php');
 
 $status = (bool) false;
 $resposta = null;
-$requisicao = (($_REQUEST['requisicao'] ?? false)? json_decode($_REQUEST['requisicao']) : null);
+$requisicao = (($_REQUEST['requisicao'] ?? false) ? json_decode($_REQUEST['requisicao']) : null);
 
 switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':
-        switch($_GET['tipo']){
+        switch ($_GET['tipo']) {
             case "categoria":
-                switch($_GET['pedido'] ?? ''){
+                switch ($_GET['pedido'] ?? '') {
                     case 'buscar':
-                        $resposta = Categoria::buscar( (int)$requisicao->id);
+                        $resposta = Categoria::buscar((int) $requisicao->id);
                         $status = $resposta !== null;
                         break;
                     case 'listar':
@@ -28,26 +28,51 @@ switch ($_SERVER['REQUEST_METHOD']) {
                     default:
                         break;
                 }
-            break;
+                break;
+            case "contato":
+                switch ($_GET['pedido'] ?? '') {
+                    case 'buscar':
+                        $resposta = Contato::buscar((int) $requisicao->id);
+                        $status = $resposta !== null;
+                        break;
+                    case 'listar':
+                        $resposta = Contato::listar();
+                        $status = $resposta !== null;
+                        break;
+                    default:
+                        break;
+                }
+                break;
             default:
                 break;
         }
         break;
     case 'POST':
-        switch($_POST['tipo']){
-            case "categoria":{
-                switch($_POST['pedido']){
+        switch ($_POST['tipo']) {
+            case "categoria":
+                switch ($_POST['pedido'] ?? '') {
                     case "inserir":
-                        $status = Categoria::inserir(new Categoria($requisicao->nome));
+                        $status = Categoria::inserir(new Categoria(0, $requisicao->nome ?? ''));
                         break;
                     case "atualizar":
-                        $status = Categoria::atualizar(new Categoria($requisicao->nome, $requisicao->id));
+                        $status = Categoria::atualizar(new Categoria((int) $requisicao->id, $requisicao->nome ?? ''));
                         break;
                     case 'deletar':
-                        $status = Categoria::deletar($requisicao->id);
+                        $status = Categoria::deletar((int) $requisicao->id);
                         break;
                 }
-            }
+            case "contato":
+                switch ($_POST['pedido'] ?? '') {
+                    case "inserir":
+                        $status = Contato::inserir(new Contato(0, $requisicao->nome, $requisicao->email ?? '', (int) ($requisicao->celular ?? 0)    ));
+                        break;
+                    case "atualizar":
+                        $status = Contato::atualizar(new Contato((int) $requisicao->id, $requisicao->nome ?? '', $requisicao->email ?? '', (int) ($requisicao->celular ?? 0)    ));
+                        break;
+                    case 'deletar':
+                        $status = Contato::deletar((int) $requisicao->id);
+                        break;
+                }
         }
         break;
     case 'PUT':
@@ -62,7 +87,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
 $retorno = new stdClass();
 $retorno->ok = $status;
-if($resposta !== null)
+if ($resposta !== null)
     $retorno->resposta = $resposta;
 
 echo json_encode($retorno);

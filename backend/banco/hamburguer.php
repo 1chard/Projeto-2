@@ -33,8 +33,6 @@ class Hamburguer
     {
         $temp = new Banco();
 
-
-
         return mysqli_query($temp->conexao, "INSERT into hamburguer(nome, categoria, preco, desconto ,descricao)"
             . " values($param->nome, $param->preco, $param->desconto, $param->descricao);")
             ? true : false;

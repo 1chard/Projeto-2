@@ -7,18 +7,9 @@ class Categoria
     public $id = null;
     public $nome = '';
 
-    public function __construct($arg0, int $id = null){
-        
-        if(gettype($arg0) == 'array'){
-            $this->nome = $arg0['nome'];
-            $this->id = $arg0['idcategoria'];
-        }
-        else if(gettype($arg0) == 'string'){
-            $this->nome = $arg0;
+    public function __construct(int $id, string $nome){
+            $this->nome = $nome;
             $this->id = $id;
-        }
-        else
-            throw new TypeError("Parametro deve ser String");
     }
 
     static public function inserir(Categoria $param): bool{
@@ -28,10 +19,9 @@ class Categoria
 
     static public function buscar(int $id): ?Categoria{
         $temp = new Banco();
-        $resultado = $temp->conexao->query("SELECT * from categoria where "
-            . "idcategoria=$id;")->fetch_assoc();
+        $resultado = $temp->conexao->query("SELECT * from categoria where idcategoria=$id;")->fetch_assoc();
 
-        return $resultado? new Categoria($resultado) : null;
+        return $resultado? new Categoria((int) $resultado['idcategoria'], $resultado['nome']) : null;
     }
 
     static public function listar(): ?array{
@@ -40,19 +30,20 @@ class Categoria
 
         $retorno = array();
 
-        while ($iterator = $resultado->fetch_assoc())
-            array_push($retorno, new Categoria($iterator));
+        while ($iterator = $resultado->fetch_assoc()) {
+            array_push($retorno, new Categoria((int) $iterator['idcategoria'], $iterator['nome']));
+        }
 
         return (count($retorno) > 0)? $retorno : null;
     }
 
     public static function atualizar(Categoria $param): bool{
         $temp = new Banco();
-        return mysqli_query($temp->conexao, "UPDATE categoria SET nome='$param->nome' where idcategoria=$param->id;");
+        return $temp->conexao->query("UPDATE categoria SET nome='$param->nome' where idcategoria=$param->id;");
     }
 
     public static function deletar(int $id): bool{
         $temp = new Banco();
-        return mysqli_query($temp->conexao, "DELETE from categoria where idcategoria=$id;");
+        return $temp->conexao->query("DELETE from categoria where idcategoria=$id;");
     }
 }

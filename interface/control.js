@@ -3,6 +3,11 @@
 let categorias = document.getElementById('categorias').children;
 let ativo = '';
 
+const clearChildren = (dom) => {
+    while (dom.firstChild)
+        dom.firstChild.remove();
+}
+
 const butaoFoco = ev => {
     let style = (ev.target.localName === 'button'? ev.target: ev.target.parentElement)
         .querySelector(".iconeGrande").style;
