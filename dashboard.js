@@ -9,6 +9,8 @@ else{
     mudaTema.textContent = "light_mode" 
 }
 
+document.querySelector("button[data-alvo='categorias']").click();
+
 document.getElementById("mudaTema").onclick = () => {
     switch (mudaTema.textContent) {
         case "dark_mode":

@@ -3,24 +3,30 @@
 let categorias = document.getElementById('categorias').children;
 let ativo = '';
 
+const butaoFoco = ev => {
+    let style = (ev.target.localName === 'button'? ev.target: ev.target.parentElement)
+        .querySelector(".iconeGrande").style;
+        
+        style.fontFamily = "Material Icons";
+        style.filter  = "none";
+}
+
+const butaoDesfoco = ev => {
+    let e = (ev.target.localName === 'button'? ev.target: ev.target.parentElement);
+
+    if(e.getAttribute('data-alvo') !== ativo){
+        let style = e.querySelector(".iconeGrande").style
+        style.fontFamily = "";
+        style.filter  = "";
+    }
+}
+
 for(const button of categorias){
-    button.addEventListener('pointerover', ev => {
-        let style = (ev.target.localName === 'button'? ev.target: ev.target.parentElement)
-            .querySelector(".iconeGrande").style;
-            
-            style.fontFamily = "Material Icons";
-            style.filter  = "none";
-    })
+    button.addEventListener('pointerover', butaoFoco)
+    button.addEventListener('focusin', butaoFoco)
 
-    button.addEventListener('pointerout', ev => {
-        let e = (ev.target.localName === 'button'? ev.target: ev.target.parentElement);
-
-        if(e.getAttribute('data-alvo') !== ativo){
-            let style = e.querySelector(".iconeGrande").style
-            style.fontFamily = "";
-            style.filter  = "";
-        }
-    })
+    button.addEventListener('pointerout', butaoDesfoco)
+    button.addEventListener('focusout', butaoDesfoco)
 
     button.addEventListener('click', ev => {
         const elemento = ev.target.localName === 'button'? ev.target: ev.target.parentElement;

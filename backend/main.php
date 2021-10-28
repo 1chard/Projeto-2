@@ -16,18 +16,21 @@ switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':
         switch($_GET['tipo']){
             case "categoria":
-                switch($_GET['pedido']){
+                switch($_GET['pedido'] ?? ''){
                     case 'buscar':
                         $resposta = Categoria::buscar( (int)$requisicao->id);
                         $status = $resposta !== null;
                         break;
-                        case 'listar':
-                            $resposta = Categoria::listar();
-                            $status = $resposta !== null;
-                            break;
+                    case 'listar':
+                        $resposta = Categoria::listar();
+                        $status = $resposta !== null;
+                        break;
+                    default:
+                        break;
                 }
-            
             break;
+            default:
+                break;
         }
         break;
     case 'POST':
@@ -54,7 +57,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
         break;
     default:
-        $status = false;
+        break;
 }
 
 $retorno = new stdClass();

@@ -9,21 +9,47 @@
 }
 
 #janela table{
-    border: 5px solid var(--main-extra);
-    min-height: 50px;
+    border: 1px solid var(--main-extra);
+    padding: 5px;
+    width: 80%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+#janela table td{
+    padding: 30px auto ;
+    text-align: center;
+    border: 1px solid black;
+}
+
+#janela table > thead > tr{
+    background-color: #1113;
 }
 
 #janela table > tbody > tr:nth-child(odd){
-    background-color: #77777707;
+    background-color: #77777712;
 }
 
 #janela table > tbody > tr:nth-child(even){
-    background-color: #77777710;
+    background-color: #77777720;
 }
 
 #janela #excluir{
-    padding: 32px;
-    background-color: red;
+    padding: 0.5rem;
+    font-size: 4rem;
+    color: var(--font-color);
+    font-family: "Material Icons";
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    font-feature-settings: 'liga';
+    -moz-osx-font-smoothing: grayscale;
 }
 
 @media screen and (max-width: 1024px) {
