@@ -1,11 +1,13 @@
 #janela {
-    flex: 5 0 auto;
+    flex: 1 0 auto;
     margin: 2rem 5%;
     display: flex;
     flex-flow: wrap column;
     justify-content: center;
     align-items: center;
     gap: 5%;
+    overflow: auto;
+    max-width: 100%;
 }
 
 #janela table{

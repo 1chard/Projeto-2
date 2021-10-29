@@ -5,12 +5,13 @@ const menu_contatos = async () => {
 
     let array = await fetch('/backend/main.php?tipo=contato&pedido=listar').then(t => t.json());
 
-
     janela.innerHTML = `<table>
     <thead>
         <tr>
             <td>Id</td>
             <td>Nome</td>
+            <td>Email</td>
+            <td>Celular</td>
         </tr>
     </thead>
     <tbody>
@@ -20,7 +21,6 @@ const menu_contatos = async () => {
     const tbody = janela.querySelector('tbody');
     generateTableDatasContato(array.resposta)?.forEach(e => tbody.appendChild(e));
 
-
     const inserir = document.createElement('div');
     inserir.id = "inserir";
 
@@ -29,29 +29,75 @@ const menu_contatos = async () => {
     inserirInputNome.classList.add('inserirInput');
     inserirInputNome.placeholder = "nome"
 
+    const inserirInputEmail = document.createElement('input')
+    inserirInputEmail.type = "email"
+    inserirInputEmail.classList.add('inserirInput');
+    inserirInputEmail.placeholder = "email"
+
+    const inserirInputCelular = document.createElement('input')
+    inserirInputCelular.type = "tel"
+    inserirInputCelular.classList.add('inserirInput')
+    inserirInputCelular.placeholder = "celular"
+    //^\(?[0-9]{2}\)?\s*[0-9]{4,5}-?[0-9]{4}$
+
+
     const inserirEnviar = document.createElement('input')
     inserirEnviar.type = "button"
     inserirEnviar.id = "inserirEnviar"
     inserirEnviar.value = "Salvar no banco"
     inserirEnviar.onclick = async () => {
-        
+        let rnome = /^[a-zA-z\s]{3,100}$/.test(inserirInputNome.value)
+        let remail = /^[a-zA-Z0-9]+\@[a-zA-Z0-9\.]+$/.test(inserirInputEmail.value) && inserirInputEmail.value.length < 60
+        let rcelular = /^\(?[0-9]{2}\)?\s*[0-9]{4,5}-?[0-9]{4}$/.test(inserirInputCelular.value)
+
+        console.log(rnome + ' ' + remail + ' ' + rcelular)
+
+        if(rnome && remail && rcelular){
+            let celparse = ''
+
+            for(const s of inserirInputCelular.value.matchAll(/[0-9]+/g))
+                celparse += s;
+
+            console.log(celparse);
+
             let request = new FormData();
-            request.append("requisicao", JSON.stringify({ nome: inserirInputNome.value }));
+            request.append("requisicao", JSON.stringify({ 
+                nome: inserirInputNome.value,
+                email: inserirInputEmail.value,
+                celular: celparse
+            }));
             request.append("tipo", 'contato');
             request.append("pedido", 'inserir');
+
+            notif.idle("Enviando requisição", "A requisição está sendo enviada");
             
             await fetch("backend/main.php", {
                 method: 'post',
                 body: request
-            }).then(t => t.json()).then( async json => {
-
-                if(json.ok)
+            }).then(t => {
+                notif.stopIdle()
+                if(t.ok)
+                    return t.json()
+                else
+                    notif.error("Falha", "Erro na conexao: " + t.status);
+                    
+            })?.then( async json => {
+                if(json.ok){
+                    notif.message("Sucesso", "Enviado com sucesso")
                     regenTableContato(tbody);
                 }
-            )
+                else
+                    notif.warning("Aviso", "Erro nas informações");
+            })
+
+        }
+        else
+            notif.error("Erro", "Alguns campos não estão preenchidos corretamente")
         };
 
-    inserir.appendChild(inserirInput);
+    inserir.appendChild(inserirInputNome);
+    inserir.appendChild(inserirInputEmail);
+    inserir.appendChild(inserirInputCelular);
     inserir.appendChild(inserirEnviar);
 
     const excluir = document.createElement('div')
@@ -159,9 +205,13 @@ const generateTableDatasContato = array => {
 
         tdId.textContent = e.id;
         tdNome.textContent = e.nome;
+        tdEmail.textContent = e.email;
+        tdCelular.textContent = e.celular;
 
         tr.appendChild(tdId);
         tr.appendChild(tdNome);
+        tr.appendChild(tdEmail);
+        tr.appendChild(tdCelular);
         
         tr.onclick = () => editModalContato(e.id, e.nome); 
 

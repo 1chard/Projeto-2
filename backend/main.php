@@ -1,6 +1,7 @@
 <?php
 
-function import(string $toImport) {
+function import(string $toImport)
+{
     require_once($_SERVER['DOCUMENT_ROOT'] . '/backend/' . $toImport);
 }
 
@@ -43,8 +44,6 @@ switch ($_SERVER['REQUEST_METHOD']) {
                         break;
                 }
                 break;
-            default:
-                break;
         }
         break;
     case 'POST':
@@ -61,18 +60,21 @@ switch ($_SERVER['REQUEST_METHOD']) {
                         $status = Categoria::deletar((int) $requisicao->id);
                         break;
                 }
-            case "contato":
+                break;
+            case "contato": 
                 switch ($_POST['pedido'] ?? '') {
                     case "inserir":
-                        $status = Contato::inserir(new Contato(0, $requisicao->nome, $requisicao->email ?? '', (int) ($requisicao->celular ?? 0)    ));
+                        $status = Contato::inserir(new Contato(0, $requisicao->nome ?? '', $requisicao->email ?? '', (int) ($requisicao->celular ?? 0)));
                         break;
                     case "atualizar":
-                        $status = Contato::atualizar(new Contato((int) $requisicao->id, $requisicao->nome ?? '', $requisicao->email ?? '', (int) ($requisicao->celular ?? 0)    ));
+                        $status = Contato::atualizar(new Contato((int) $requisicao->id, $requisicao->nome ?? '', $requisicao->email ?? '', (int) ($requisicao->celular ?? 0)));
                         break;
                     case 'deletar':
                         $status = Contato::deletar((int) $requisicao->id);
                         break;
                 }
+                break;
+                
         }
         break;
     case 'PUT':
@@ -91,4 +93,3 @@ if ($resposta !== null)
     $retorno->resposta = $resposta;
 
 echo json_encode($retorno);
-

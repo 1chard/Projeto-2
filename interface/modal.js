@@ -1,9 +1,4 @@
-
-
-
 var modal = {
-    container: undefined,
-    main: undefined,
     hidden: true,
     toggle: function () {
         this.container.style.display = this.hidden? "block": "none";

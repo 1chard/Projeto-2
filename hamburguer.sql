@@ -21,8 +21,8 @@ create table if not exists categoria(
 
 create table if not exists contato(
 	idcontato int unsigned primary key not null auto_increment,
-    nome varchar(30) not null,
-    email varchar(30) not null,
+    nome varchar(100) not null,
+    email varchar(60) not null,
     celular long not null
 );
 
