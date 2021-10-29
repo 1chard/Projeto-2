@@ -130,9 +130,9 @@ const deleteContato = idIn => {
     }).then(r => r.ok);
 }
 
-const editContato = (idIn, nomeIn) => {
+const editContato = (id, nome, email, contato) => {
     const request = new FormData();
-        request.append("requisicao", JSON.stringify({ id: idIn, nome: nomeIn }));
+        request.append("requisicao", JSON.stringify({ id: id, nome: nome, email: email, contato: contato }));
         request.append("tipo", 'contato');
         request.append("pedido", 'atualizar');
 
@@ -151,9 +151,7 @@ const regenTableContato = async(tbody) => {
     });
 }
 
-const editModalContato = (id, nome) => {
-    
-    
+const editModalContato = (id, nome, email, contato) => {
     modal.html(`<table>
         <tr class='fixed'>
             <td>ID</td>
@@ -163,10 +161,18 @@ const editModalContato = (id, nome) => {
             <td>Nome</td>
             <td><input type='text' value='${nome}' name="nome"></td>
         </tr>
+        <tr class='editable'>
+            <td>Email</td>
+            <td><input type='text' value='${email}' name="email"></td>
+        </tr>
+        <tr class='editable'>
+            <td>Contato</td>
+            <td><input type='text' value='${contato}' name="contato"></td>
+        </tr>
     </table>
     <div>
-        <input value='edit' class='iconeGrande' type='button' onclick="eC(${id}, document.querySelector('input[name=\'\']'))">
-        <input value='delete' class='iconeGrande' type='button' onclick="dC(${id})">
+        <input value='edit' class='iconeGrande' type='button'">
+        <input value='delete' class='iconeGrande' type='button'">
     </div>
     `);
     
@@ -180,7 +186,11 @@ const editModalContato = (id, nome) => {
     };
     
     document.querySelector("input[value='edit']").onclick = function () {
-    editContato(id, document.querySelector('input[name="nome"]').value).then(ss => {
+    editContato(id, 
+        document.querySelector('input[name="nome"]').value,    
+        document.querySelector('input[name="email"]').value,
+        document.querySelector('input[name="contato"]').value 
+        ).then(ss => {
             if(ss){
                 modal.hide();
                 regenTableContato(document.querySelector('#janela > table > tbody'))
@@ -213,7 +223,7 @@ const generateTableDatasContato = array => {
         tr.appendChild(tdEmail);
         tr.appendChild(tdCelular);
         
-        tr.onclick = () => editModalContato(e.id, e.nome); 
+        tr.onclick = () => editModalContato(e.id, e.nome, e.email, e.celular); 
 
         return tr;
     });

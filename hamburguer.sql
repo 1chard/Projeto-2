@@ -21,13 +21,17 @@ create table if not exists categoria(
 
 create table if not exists contato(
 	idcontato int unsigned primary key not null auto_increment,
-    nome varchar(100) not null,
-    email varchar(60) not null,
-    celular long not null
+    nome varchar(30) not null,
+    email varchar(30) not null,
+    celular varchar(11) not null
 );
+select * from contato;
+INSERT into categoria(nome) values('$param->nome');
 
-#alter table hamburguer modify column idhamburguer int unsigned primary key not null auto_increment;
-
+desc contato;
+drop table contato;
+alter table contato modify column celular bigint not null;
+#delete from contato where idcontato > 0;
 #alter table hamburguer drop categoria;
 
 #select * from hamburguer;

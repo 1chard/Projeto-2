@@ -11,7 +11,8 @@ import('banco/contato.php');
 
 $status = (bool) false;
 $resposta = null;
-$requisicao = (($_REQUEST['requisicao'] ?? false) ? json_decode($_REQUEST['requisicao']) : null);
+$requisicao = (($_REQUEST['requisicao'] ?? false) ? json_decode($_REQUEST['requisicao']) : new stdClass());
+
 
 switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':
@@ -64,10 +65,10 @@ switch ($_SERVER['REQUEST_METHOD']) {
             case "contato": 
                 switch ($_POST['pedido'] ?? '') {
                     case "inserir":
-                        $status = Contato::inserir(new Contato(0, $requisicao->nome ?? '', $requisicao->email ?? '', (int) ($requisicao->celular ?? 0)));
+                        $status = Contato::inserir(new Contato(0, $requisicao->nome ?? '', $requisicao->email ?? '', $requisicao->celular ?? ''));
                         break;
                     case "atualizar":
-                        $status = Contato::atualizar(new Contato((int) $requisicao->id, $requisicao->nome ?? '', $requisicao->email ?? '', (int) ($requisicao->celular ?? 0)));
+                        $status = Contato::atualizar(new Contato((int) $requisicao->id, $requisicao->nome ?? '', $requisicao->email ?? '', $requisicao->celular ?? ''));
                         break;
                     case 'deletar':
                         $status = Contato::deletar((int) $requisicao->id);

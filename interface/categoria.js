@@ -117,8 +117,8 @@ const editModalCategoria = (id, nome) => {
         </tr>
     </table>
     <div>
-        <input value='edit' class='iconeGrande' type='button' onclick="eC(${id}, document.querySelector('input[name=\'\']'))">
-        <input value='delete' class='iconeGrande' type='button' onclick="dC(${id})">
+        <input value='edit' class='iconeGrande' type='button'">
+        <input value='delete' class='iconeGrande' type='button'>
     </div>
     `);
     
