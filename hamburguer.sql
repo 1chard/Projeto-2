@@ -30,7 +30,7 @@ INSERT into categoria(nome) values('$param->nome');
 
 desc contato;
 drop table contato;
-alter table contato modify column celular bigint not null;
+alter table contato modify column celular varchar(11) not null;
 #delete from contato where idcontato > 0;
 #alter table hamburguer drop categoria;
 

@@ -1,5 +1,5 @@
 <?php
-    if($_SERVER['DOCUMENT_ROOT'] == '/home/richard/Documentos/Projeto-2'){
+    if($_SERVER['DOCUMENT_ROOT'] === '/home/richard/Documentos/Projeto-2'){
         define('HOSTNAME', 'localhost');
         define('USUARIO', 'richard');
         define('SENHA', '123');

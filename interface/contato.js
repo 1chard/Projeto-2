@@ -38,7 +38,7 @@ const menu_contatos = async () => {
     inserirInputCelular.type = "tel"
     inserirInputCelular.classList.add('inserirInput')
     inserirInputCelular.placeholder = "celular"
-    //^\(?[0-9]{2}\)?\s*[0-9]{4,5}-?[0-9]{4}$
+    //^\(?\d{2}\)?\s*\d{4,5}-?\d{4}$
 
 
     const inserirEnviar = document.createElement('input')
@@ -46,22 +46,22 @@ const menu_contatos = async () => {
     inserirEnviar.id = "inserirEnviar"
     inserirEnviar.value = "Salvar no banco"
     inserirEnviar.onclick = async () => {
-        let rnome = /^[a-zA-z\s]{3,100}$/.test(inserirInputNome.value)
-        let remail = /^[a-zA-Z0-9]+\@[a-zA-Z0-9\.]+$/.test(inserirInputEmail.value) && inserirInputEmail.value.length < 60
-        let rcelular = /^\(?[0-9]{2}\)?\s*[0-9]{4,5}-?[0-9]{4}$/.test(inserirInputCelular.value)
+        let rnome = /^[A-z\s]{3,100}$/.test(inserirInputNome.value)
+        let remail = /^[A-z\d]+\@[A-z\d]+$/.test(inserirInputEmail.value) && inserirInputEmail.value.length < 60
+        let rcelular = /^\(?\d{2}\)?\s*\d{4,5}-?\d{4}$/.test(inserirInputCelular.value)
 
         console.log(rnome + ' ' + remail + ' ' + rcelular)
 
         if(rnome && remail && rcelular){
             let celparse = ''
 
-            for(const s of inserirInputCelular.value.matchAll(/[0-9]+/g))
+            for(const s of inserirInputCelular.value.match(/\d+/g))
                 celparse += s;
 
             console.log(celparse);
 
             let request = new FormData();
-            request.append("requisicao", JSON.stringify({ 
+            request.append("requisicao", JSON.stringify({
                 nome: inserirInputNome.value,
                 email: inserirInputEmail.value,
                 celular: celparse
@@ -70,7 +70,7 @@ const menu_contatos = async () => {
             request.append("pedido", 'inserir');
 
             notif.idle("Enviando requisição", "A requisição está sendo enviada");
-            
+
             await fetch("backend/main.php", {
                 method: 'post',
                 body: request
@@ -80,7 +80,7 @@ const menu_contatos = async () => {
                     return t.json()
                 else
                     notif.error("Falha", "Erro na conexao: " + t.status);
-                    
+
             })?.then( async json => {
                 if(json.ok){
                     notif.message("Sucesso", "Enviado com sucesso")
@@ -113,14 +113,14 @@ const menu_contatos = async () => {
         });
 
     }
-    
+
     janela.appendChild(inserir);
     janela.appendChild(excluir);
 }
 
-const deleteContato = idIn => {
+const deleteContato = id => {
     const request = new FormData();
-        request.append("requisicao", JSON.stringify({ id: idIn }));
+        request.append("requisicao", JSON.stringify({ id: id }));
         request.append("tipo", 'contato');
         request.append("pedido", 'deletar');
 
@@ -135,6 +135,8 @@ const editContato = (id, nome, email, contato) => {
         request.append("requisicao", JSON.stringify({ id: id, nome: nome, email: email, contato: contato }));
         request.append("tipo", 'contato');
         request.append("pedido", 'atualizar');
+
+    console.log(contato);
 
     return fetch("backend/main.php", {
             method: 'post',
@@ -175,25 +177,26 @@ const editModalContato = (id, nome, email, contato) => {
         <input value='delete' class='iconeGrande' type='button'">
     </div>
     `);
-    
+
     document.querySelector("input[value='delete']").onclick = () => {
         deleteContato(id).then(ss => {
             if(ss){
                 modal.hide();
-                regenTableContato(document.querySelector('#janela > table > tbody'))
+                regenTableContato(document.querySelector('#janela > table > tbody'));
             }
     })
     };
-    
+
     document.querySelector("input[value='edit']").onclick = function () {
-    editContato(id, 
-        document.querySelector('input[name="nome"]').value,    
+    editContato(
+        id,
+        document.querySelector('input[name="nome"]').value,
         document.querySelector('input[name="email"]').value,
-        document.querySelector('input[name="contato"]').value 
-        ).then(ss => {
-            if(ss){
+        document.querySelector('input[name="contato"]').value
+        ).then(ok => {
+            if(ok){
                 modal.hide();
-                regenTableContato(document.querySelector('#janela > table > tbody'))
+                regenTableContato(document.querySelector('#janela > table > tbody'));
             }
     })
     };
@@ -222,8 +225,8 @@ const generateTableDatasContato = array => {
         tr.appendChild(tdNome);
         tr.appendChild(tdEmail);
         tr.appendChild(tdCelular);
-        
-        tr.onclick = () => editModalContato(e.id, e.nome, e.email, e.celular); 
+
+        tr.onclick = () => editModalContato(e.id, e.nome, e.email, e.celular);
 
         return tr;
     });

@@ -45,7 +45,7 @@
     color: #000;
     background-color: greenyellow;
     min-width: min(10rem, 20%);
-    width: max-content;
+    width: auto;
     height: auto;
     top: 5%;
     left: 5%;
