@@ -21,7 +21,7 @@ const menu_categorias = async () => {
     generateTableDatasCategoria(array.resposta)?.forEach(e => tbody.appendChild(e));
 
 
-    const inserir = document.createElement('div');
+    const inserir = document.createElement('form');
     inserir.id = "inserir";
 
     const inserirInput = document.createElement('input')

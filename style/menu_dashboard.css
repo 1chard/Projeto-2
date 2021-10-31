@@ -59,3 +59,7 @@
         margin: 0 0;
     }
 }
+
+#janela input:invalid{
+    background-color: palevioletred;
+}

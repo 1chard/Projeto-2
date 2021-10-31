@@ -66,7 +66,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
                         break;
                 }
                 break;
-            case "contato": 
+            case "contato":
                 switch ($_POST['pedido']) {
                     case "inserir":
                         $status = Contato::inserir(new Contato(0, $requisicao->nome, $requisicao->email, $requisicao->celular));
@@ -83,10 +83,9 @@ switch ($_SERVER['REQUEST_METHOD']) {
         }
         break;
     case 'PUT':
-        echo file_get_contents('php://input');
+        var_dump($requisicao);
         break;
     case 'DELETE':
-
         break;
     default:
         break;

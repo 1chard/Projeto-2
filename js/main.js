@@ -1,7 +1,11 @@
 'use strict'
 
-let menu = new Menu(document.querySelector("header"))
-let banner = new Banner(document.getElementById("banner"))
+import Header from "./util/dynamicheader.js";
+import Banner from "./util/banner.js";
+import { temaClaro, temaEscuro } from "./util/tema.js";
+
+let header = new Header(document.querySelector("header"));
+let banner = new Banner(document.getElementById("banner"));
 
 banner.autoMove(8000)
 banner.selectable()

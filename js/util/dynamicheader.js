@@ -3,13 +3,12 @@ let scrollTrack = window.scrollY;
 
 const efeitoSumir = header => {
     //so escondo quando tiver saindo do cabecalho, cuidado! pode esconder o texto
-    if( !(header.offsetHeight * 2 < window.scrollY) || (scrollTrack > window.scrollY) )
+    if( header.offsetHeight * 2 >= window.scrollY || (scrollTrack > window.scrollY) )
         header.classList.remove('effectHeader')
-
     else
         header.classList.add('effectHeader')
 
-    scrollTrack = window.scrollY
+    scrollTrack = window.scrollY;
 }
 
 class Menu {
@@ -32,8 +31,6 @@ class Menu {
         this.copiaHeader.style.width = this.header.offsetWidth.toString() + "px";
         this.copiaHeader.style.height = this.header.offsetHeight.toString() + "px";
     }
-
-
 }
 
-//export default Menu;
+export default Menu;
