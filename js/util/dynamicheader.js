@@ -2,33 +2,33 @@ let scrollTrack = window.scrollY;
 
 const efeitoSumir = header => {
   // so escondo quando tiver saindo do cabecalho, cuidado! pode esconder o texto
-  if (header.offsetHeight * 2 >= window.scrollY || (scrollTrack > window.scrollY))
-    {header.classList.remove('effectHeader')};
-  else
-    {header.classList.add('effectHeader')};
+  if (header.offsetHeight * 2 >= window.scrollY || (scrollTrack > window.scrollY)) {
+    header.classList.remove('effectHeader');
+  } else {
+    header.classList.add('effectHeader');
+  }
 
   scrollTrack = window.scrollY;
 };
 
-class Menu {
-  constructor (header) {
-    this.header = header;
+const updateCopy = (header) => {
+  header.copiaHeader.style.width = header.header.offsetWidth.toString() + 'px';
+  header.copiaHeader.style.height = header.header.offsetHeight.toString() + 'px';
+};
 
-    // criase um elemento da mesma autura para nao interferir no fluxo
-    this.copiaHeader = document.createElement('div');
-    this.copiaHeader.style.position = 'relative';
-    document.body.insertBefore(this.copiaHeader, this.header.nextSibling);
+function Menu (header) {
+  const ret = {
+    header: header,
+    copiaHeader: document.createElement('div')
+  };
 
-    window.addEventListener('resize' , () => { this.updateCopy(); });
-    document.body.onscroll = () => efeitoSumir(this.header);
+  updateCopy(ret);
+  window.addEventListener('resize', () => updateCopy(ret));
+  document.body.onscroll = () => efeitoSumir(ret.header);
+  ret.copiaHeader.style.position = 'relative';
+  document.body.insertBefore(ret.copiaHeader, ret.header.nextSibling);
 
-    this.updateCopy();
-  }
-
-  updateCopy () {
-    this.copiaHeader.style.width = this.header.offsetWidth.toString() + 'px';
-    this.copiaHeader.style.height = this.header.offsetHeight.toString() + 'px';
-  }
+  return ret;
 }
 
 export default Menu;

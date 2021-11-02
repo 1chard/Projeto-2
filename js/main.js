@@ -1,10 +1,8 @@
 'use strict';
 
-import Header from './util/dynamicheader.js';
 import Banner from './util/banner.js';
 import { temaClaro, temaEscuro } from './util/tema.js';
 
-new Header(document.querySelector('header'));
 const banner = new Banner(document.getElementById('banner'));
 
 banner.autoMove(8000);
@@ -40,3 +38,7 @@ document.getElementById('mudaTema').onclick = e => {
       throw new Error('n foi');
   }
 };
+
+const filtro = document.getElementById('filtro');
+
+filtro;
