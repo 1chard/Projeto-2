@@ -5,7 +5,6 @@ import modal from "../util/modal.js";
 import { createInputFromCallbacks, createInputFromRegex } from "../util/input.js";
 
 const start = async () => {
-
     const janela = document.getElementById('janela');
 
     let array = await fetch('/backend/main.php?tipo=contato&pedido=listar').then(t => t.json());
@@ -24,7 +23,7 @@ const start = async () => {
     </table>`
 
     const tbody = janela.querySelector('tbody');
-    generateTableDatasContato(array.resposta)?.forEach(e => tbody.appendChild(e));
+    generateTableDatas(array.resposta)?.forEach(e => tbody.appendChild(e));
 
     const inserir = document.createElement('form');
     inserir.id = "inserir";
@@ -33,43 +32,41 @@ const start = async () => {
     inserirInputNome.type = "text"
     inserirInputNome.classList.add('inserirInput');
     inserirInputNome.placeholder = "nome"
+    inserirInputNome.required = true;
+    inserirInputNome.minLength = 3;
+    inserirInputNome.maxLength = 100;
 
     const inserirInputEmail = document.createElement('input')
     inserirInputEmail.type = "email"
     inserirInputEmail.classList.add('inserirInput');
     inserirInputEmail.placeholder = "email"
+    inserirInputEmail.required = true
+    inserirInputEmail.maxLength = 60;
 
-    const inserirInputCelular = createInputFromRegex('Esse número não é válido.\n Insira um número no formato "(01) 23456-7890" ou "01234567890".', /^\(?\d{2}\)?\s*\d{4,5}-?\d{4}$/);
+    const inserirInputCelular = createInputFromCallbacks( 
+        value => (/[^\d\(\)\-\s]/g).test(value)? 'Um número não pode conter letras ou caracteres além de ( ) -' : "",
+        value => value.length < 10? 'Insira um número com dez ou onze dígitos' : '',
+        value => !(/^\(?\d{2}\)?\s*\d{4,5}-?\d{4}$/).test(value)? 'Esse número não é válido' : ""
+    );
     inserirInputCelular.type = "tel"
     inserirInputCelular.classList.add('inserirInput')
     inserirInputCelular.placeholder = "celular"
-    inserirInputCelular.reportValidity();
-
+    inserirInputCelular.required = true
+    inserirInputCelular.maxLength = 20;
 
     const inserirEnviar = document.createElement('input')
     inserirEnviar.type = "button"
     inserirEnviar.id = "inserirEnviar"
     inserirEnviar.value = "Salvar no banco"
     inserirEnviar.onclick = async () => {
-        let rnome = /^[A-z\s]{3,100}$/.test(inserirInputNome.value)
-        let remail = /^[A-z\d]+\@[A-z\d]+$/.test(inserirInputEmail.value) && inserirInputEmail.value.length < 60
-        let rcelular = /^\(?\d{2}\)?\s*\d{4,5}-?\d{4}$/.test(inserirInputCelular.value)
-
-        console.log(rnome + ' ' + remail + ' ' + rcelular)
-
         if (inserir.reportValidity()) {
-            let celparse = ''
-
-            for (const s of inserirInputCelular.value.match(/\d+/g))
-                celparse += s;
-
-            console.log(celparse);
+            
 
             let request = new FormData();
             request.append("requisicao", JSON.stringify({
                 nome: inserirInputNome.value,
                 email: inserirInputEmail.value,
-                celular: celparse
+                celular: parseCelular(inserirInputCelular.value)
             }));
             request.append("tipo", 'contato');
             request.append("pedido", 'inserir');
@@ -89,7 +86,7 @@ const start = async () => {
             })?.then(async json => {
                 if (json.ok) {
                     notif.message("Sucesso", "Enviado com sucesso")
-                    regenTableContato(tbody);
+                    regenTable(tbody);
                 }
                 else
                     notif.warning("Aviso", "Erro nas informações");
@@ -110,12 +107,11 @@ const start = async () => {
     excluir.textContent = 'delete'
     excluir.ondragover = e => { e.preventDefault() }
     excluir.ondrop = async (e) => {
-        deleteContato(e.dataTransfer.getData("id")).then(ev => {
+        deleteData(e.dataTransfer.getData("id")).then(ev => {
             fetch('/backend/main.php?tipo=contato&pedido=listar').then(r => r.json()).then(json => {
-                while (tbody.firstChild)
-                    tbody.firstChild.remove();
+                tbody.innerHTML = '';
 
-                generateTableDatasContato(json.resposta)?.forEach(elem => tbody.appendChild(elem));
+                generateTableDatas(json.resposta)?.forEach(elem => tbody.appendChild(elem));
             });
         });
 
@@ -125,7 +121,7 @@ const start = async () => {
     janela.appendChild(excluir);
 }
 
-const deleteContato = id => {
+const deleteData = id => {
     const request = new FormData();
     request.append("requisicao", JSON.stringify({ id: id }));
     request.append("tipo", 'contato');
@@ -137,7 +133,7 @@ const deleteContato = id => {
     }).then(r => r.ok);
 }
 
-const editContato = (id, nome, email, celular) => {
+const editData = (id, nome, email, celular) => {
     const request = new FormData();
     request.append("requisicao", JSON.stringify({ id: id, nome: nome, email: email, celular: celular }));
     request.append("tipo", 'contato');
@@ -151,71 +147,128 @@ const editContato = (id, nome, email, celular) => {
 
 
 
-const regenTableContato = async (tbody) => {
+const regenTable = async (tbody) => {
     await fetch('/backend/main.php?tipo=contato&pedido=listar').then(t => t.json()).then(listJson => {
         while (tbody.firstChild)
             tbody.firstChild.remove();
 
-        generateTableDatasContato(listJson.resposta)?.forEach(elem => tbody.appendChild(elem))
+        generateTableDatas(listJson.resposta)?.forEach(elem => tbody.appendChild(elem))
     });
 }
 
-const editModalContato = (id, nome, email, contato) => {
-    modal.html(`<table>
-        <tr class='fixed'>
-            <td>ID</td>
-            <td>${id}</td>
-        </tr>
-        <tr class='editable'>
-            <td>Nome</td>
-            <td><input type='text' value='${nome}' name="nome"></td>
-        </tr>
-        <tr class='editable'>
-            <td>Email</td>
-            <td><input type='text' value='${email}' name="email"></td>
-        </tr>
-        <tr class='editable'>
-            <td>Contato</td>
-            <td><input type='text' value='${contato}' name="celular"></td>
-        </tr>
-    </table>
-    <div>
-        <input value='edit' class='iconeGrande' type='button'">
-        <input value='delete' class='iconeGrande' type='button'">
-    </div>
-    `);
+const editModal = (id, nome, email, celular) => {
+    modal.clear();
 
+    const form = document.createElement('form');
+    const mainDiv = document.createElement('div')
+    mainDiv.id = 'mainDiv';
+
+    //tr do id
+    const divId = document.createElement('div')
     
+    const idNome = document.createElement('div')
+    idNome.innerText = 'ID';
 
-    document.querySelector("input[value='delete']").onclick = () => {
-        deleteContato(id).then(ss => {
-            if (ss) {
-                modal.hide();
-                regenTableContato(document.querySelector('#janela > table > tbody'));
-            }
-        })
-    };
+    const idValor = document.createElement('div')
+    idValor.innerHTML = id;
 
-    document.querySelector("input[value='edit']").onclick = function () {
-        editContato(
+    divId.append(idNome, idValor)
+    mainDiv.appendChild(divId);
+
+    //tr do nome
+    const divNome = document.createElement('div')
+
+    const nomeNome = document.createElement('div')
+    nomeNome.innerText = 'Nome';
+
+    const nomeValor = document.createElement('input')
+    nomeValor.placeholder = "nome"
+    nomeValor.required = true;
+    nomeValor.minLength = 3;
+    nomeValor.maxLength = 100;
+    nomeValor.value = nome;
+
+    divNome.append(nomeNome, nomeValor)
+    mainDiv.appendChild(divNome);
+
+    //tr do email
+    const divEmail = document.createElement('div')
+
+    const emailNome = document.createElement('div')
+    emailNome.innerText = 'Email';
+
+    const emailValor = document.createElement('input');
+    emailValor.type = "email";
+    emailValor.placeholder = "email";
+    emailValor.required = true;
+    emailValor.maxLength = 60;
+    emailValor.value = email;
+
+    divEmail.append(emailNome, emailValor);
+    mainDiv.appendChild(divEmail);
+
+    //tr do numero
+    const divCelular = document.createElement('div')
+
+    const celularNome = document.createElement('div')
+    celularNome.innerText = 'Celular';
+
+    const celularValor = createInputFromCallbacks( 
+        value => (/[^\d\(\)\-\s]/g).test(value)? 'Um número não pode conter letras ou caracteres além de ( ) -' : "",
+        value => value.length < 10? 'Insira um número com dez ou onze dígitos' : '',
+        value => !(/^\(?\d{2}\)?\s*\d{4,5}-?\d{4}$/).test(value)? 'Esse número não é válido' : ""
+    );
+    celularValor.type = "tel"
+    celularValor.placeholder = "celular"
+    celularValor.required = true
+    celularValor.maxLength = 20;
+    celularValor.value = unparseCelular(celular);
+
+    divCelular.append(celularNome, celularValor)
+    mainDiv.appendChild(divCelular);
+
+    //depois a div
+    const sendDiv = document.createElement('div');
+
+    const editInput = document.createElement('input');
+    editInput.type = 'button';
+    editInput.value = 'edit'
+    editInput.onclick = () => {
+        if(form.reportValidity()){
+        editData(
             id,
-            document.querySelector('input[name="nome"]').value,
-            document.querySelector('input[name="email"]').value,
-            document.querySelector('input[name="celular"]').value
+            nomeValor.value,
+            emailValor.value,
+            parseCelular(celularValor.value)
         ).then(ok => {
             if (ok) {
-                modal.hide();
-                regenTableContato(document.querySelector('#janela > table > tbody'));
+                regenTable(document.querySelector('#janela > table > tbody')).then( () => modal.hide());
+            }
+        })
+        }
+        else
+            notif.error("Erro", "Alguns campos não estão preenchidos corretamente");
+    };
+
+    const deleteInput = document.createElement('input');
+    deleteInput.type = 'button';
+    deleteInput.value = 'delete'
+    deleteInput.onclick = () => {
+        deleteData(id).then(ss => {
+            if (ss) {
+                regenTable(document.querySelector('#janela > table > tbody')).then( () => modal.hide() );
             }
         })
     };
+    sendDiv.append(editInput, deleteInput);
+    sendDiv.id = "sendDiv"
 
-    
-
-    modal.show();
+    form.append(mainDiv, sendDiv);
+    modal.append(form)
+    modal.show()
 }
 
-const generateTableDatasContato = array => {
+const generateTableDatas = array => {
     return array?.map(e => {
         const tr = document.createElement('tr');
 
@@ -230,17 +283,27 @@ const generateTableDatasContato = array => {
         tdId.textContent = e.id;
         tdNome.textContent = e.nome;
         tdEmail.textContent = e.email;
-        tdCelular.textContent = e.celular;
+        tdCelular.textContent = unparseCelular(e.celular);
 
         tr.appendChild(tdId);
         tr.appendChild(tdNome);
         tr.appendChild(tdEmail);
         tr.appendChild(tdCelular);
 
-        tr.onclick = () => editModalContato(e.id, e.nome, e.email, e.celular);
+        tr.onclick = () => editModal(e.id, e.nome, e.email, e.celular);
 
         return tr;
     });
+}
+
+const unparseCelular = val => {
+    return `(${val.substr(0, 2)}) ${val.substr(2, val.length - 6)}-${val.substr(val.length - 4)}`;
+}
+
+const parseCelular = val => {
+    let celparse = '';
+    val.match(/\d+/g).forEach( s => celparse += s);
+    return celparse;
 }
 
 export { start };

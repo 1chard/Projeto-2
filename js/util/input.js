@@ -1,6 +1,5 @@
 const createInputFromCallbacks = (...cond) => {
-
-    r = document.createElement('input');
+    const r = document.createElement('input');
     
     cond.forEach( (e, i) => {
         if(e.constructor !== Function)
@@ -15,10 +14,12 @@ const createInputFromCallbacks = (...cond) => {
             if(h !== '')
                 return;
             else
-                h = callback();
+                h = callback(this.value);
         });
         this.setCustomValidity(h);
     });
+
+    return r;
 };
 
 const createInputFromRegex = (errorMessage, regex) => {

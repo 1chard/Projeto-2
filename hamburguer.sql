@@ -16,13 +16,13 @@ drop table if exists usuario;
 
 create table if not exists categoria(
 	idcategoria int unsigned primary key not null auto_increment,
-    nome varchar(30) not null
+    nome varchar(40) not null
 );
 
 create table if not exists contato(
 	idcontato int unsigned primary key not null auto_increment,
-    nome varchar(30) not null,
-    email varchar(30) not null,
+    nome varchar(100) not null,
+    email varchar(60) not null,
     celular varchar(11) not null
 );
 select * from contato;

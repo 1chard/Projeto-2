@@ -41,7 +41,7 @@ const butaoDesfoco = ev => {
     let e = (ev.target.localName === 'button' ? ev.target : ev.target.parentElement);
 
     if (e.getAttribute('data-alvo') !== ativo) {
-        let style = e.querySelector(".iconeGrande").style
+        let style = e.querySelector(".iconeGrande").style;
         style.fontFamily = "";
         style.filter = "";
     }

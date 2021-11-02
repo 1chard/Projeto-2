@@ -60,6 +60,12 @@
     }
 }
 
+#janela input{
+    border: 1px solid black;
+    text-align: center;
+    outline: none;
+}
+
 #janela input:invalid{
-    background-color: palevioletred;
+    border: red 1px solid;
 }

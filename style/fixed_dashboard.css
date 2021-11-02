@@ -15,59 +15,86 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: var(--background-color);
-    
+}
+
+#modal form{
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
     align-items: center;
 }
 
-#modal table{
-    border-collapse: collapse;
+#modal #mainDiv{
+    display: flex;
+    flex-flow: nowrap column;
 }
 
-.editable input{
-    border: none;
+
+#modal #mainDiv > *{
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: stretch;
+}
+
+#modal #mainDiv > div > *{
+
+    border: 1px solid #000;
+    text-align: center;
+    padding: 5px;
+}
+
+#modal #mainDiv > div > *:nth-child(odd) {
+    width: 25%;
+}
+
+#modal #mainDiv > div > *:nth-child(even) {
+    width: 75%;
+}
+
+#modal #mainDiv > div > input{
     outline: none;
-    width: 100%;
     height: 100%;
     font-size: 1.15rem;
 }
 
-#modal table td{
-    border: 1px solid #000;
-    padding: 5px;
+#modal #mainDiv > div > input:invalid{
+    border: red 1px solid;
 }
+
+#modal #sendDiv input{
+    font-family: 'Material Icons';
+    font-size: 3em;
+}
+
+
 
 #notification{
     position: fixed;
     border: 1px solid #000;
-    color: #000;
     background-color: greenyellow;
     min-width: min(10rem, 20%);
-    width: auto;
+    max-width: 40%;
     height: auto;
     top: 5%;
     left: 5%;
     z-index: 15;
     text-align: center;
-    padding: 2rem 1rem 1rem 1rem; 
+    padding: 1rem; 
 }
 
 #notification > .title{
-    position: absolute;
     font-weight: bold;
     font-size: 1.3rem;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 10%;
-    word-wrap: normal;
-    overflow-wrap: normal;
+    color: #000;
+    display: block;
 }
 
 #notification > .message{
-    position: relative;
     word-wrap: break-word;
+    display: block;
+    color: #000;
 }
 
 #notification[data-mode=warning]{
