@@ -16,11 +16,6 @@ class Contato
             $this->celular = $celular;
     }
 
-    static public function inserir(Contato $param): bool{
-        $temp = new Banco();
-        return mysqli_query($temp->conexao, "INSERT into contato(nome, email, celular) values('$param->nome', '$param->email', '$param->celular');");
-    }
-
     static public function buscar(int $id): ?Contato{
         $temp = new Banco();
         $resultado = $temp->conexao->query("SELECT * from contato where idcontato=$id;")->fetch_assoc();
@@ -39,6 +34,11 @@ class Contato
         }
 
         return (count($retorno) > 0)? $retorno : null;
+    }
+
+    static public function inserir(Contato $param): bool{
+        $temp = new Banco();
+        return mysqli_query($temp->conexao, "INSERT into contato(nome, email, celular) values('$param->nome', '$param->email', '$param->celular');");
     }
 
     public static function atualizar(Contato $param): bool{

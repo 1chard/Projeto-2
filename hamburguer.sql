@@ -25,8 +25,17 @@ create table if not exists contato(
     email varchar(60) not null,
     celular varchar(11) not null
 );
+
+create table if not exists usuario(
+	idusuario int unsigned primary key not null auto_increment,
+    nome varchar(100) not null,
+    email varchar(60) not null,
+    senha varchar(200) not null
+);
+
+
 select * from contato;
-INSERT into categoria(nome) values('$param->nome');
+#INSERT into categoria(nome) values('$param->nome');
 
 desc contato;
 drop table contato;

@@ -1,21 +1,24 @@
 <?php
-function exception_error_handler($severity, $message, $file, $line) {
+function exception_error_handler($severity, $message, $file, $line): void
+{
     if (!((E_WARNING | E_ERROR | E_PARSE) & $severity))
         return;
     throw new ErrorException($message, 0, $severity, $file, $line);
 }
 set_error_handler("exception_error_handler");
 
-function import(string $toImport){
+function import(string $toImport)
+{
     require_once $_SERVER['DOCUMENT_ROOT'] . '/backend/' . $toImport;
 }
 
 import('util/constantes.php');
 import('banco/categoria.php');
 import('banco/contato.php');
+import('banco/usuario.php');
 
 $status = (bool) false;
-$resposta = null;
+$resposta;
 $requisicao = (($_REQUEST['requisicao']) ? json_decode($_REQUEST['requisicao']) : new stdClass());
 
 switch ($_SERVER['REQUEST_METHOD']) {
@@ -43,6 +46,27 @@ switch ($_SERVER['REQUEST_METHOD']) {
                         break;
                     case 'listar':
                         $resposta = Contato::listar();
+                        $status = $resposta !== null;
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case "usuario":
+                var_dump($_GET);
+                switch ($_GET['pedido']) {
+                    
+                    case 'buscar':
+                        $resposta = Usuario::buscar((int) $requisicao->id);
+                        var_dump($resposta);
+                        unset($resposta->senha);
+                        $status = $resposta !== null;
+                        break;
+                    case 'listar':
+                        $resposta = Usuario::listar();
+                        foreach($resposta as $e){
+                            unset($e->senha);
+                        }
                         $status = $resposta !== null;
                         break;
                     default:
@@ -79,13 +103,10 @@ switch ($_SERVER['REQUEST_METHOD']) {
                         break;
                 }
                 break;
-                
         }
         break;
     case 'PUT':
         var_dump($requisicao);
-        break;
-    case 'DELETE':
         break;
     default:
         break;
