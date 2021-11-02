@@ -64,8 +64,10 @@
     border: 1px solid black;
     text-align: center;
     outline: none;
+    background-color: var(--secondary-color);
 }
 
 #janela input:invalid{
     border: red 1px solid;
+    
 }

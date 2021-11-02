@@ -2,7 +2,7 @@
 
 import notif from '../util/notification.js';
 import modal from '../util/modal.js';
-import { createInputFromCallbacks, createInputFromRegex } from '../util/input.js';
+import { createInputFromCallbacks } from '../util/input.js';
 
 const start = async () => {
   const janela = document.getElementById('janela');
@@ -35,6 +35,7 @@ const start = async () => {
   inserirInputNome.required = true;
   inserirInputNome.minLength = 3;
   inserirInputNome.maxLength = 100;
+  inserirInputNome.autocomplete = 'username';
 
   const inserirInputEmail = document.createElement('input');
   inserirInputEmail.type = 'email';
@@ -42,9 +43,10 @@ const start = async () => {
   inserirInputEmail.placeholder = 'email';
   inserirInputEmail.required = true;
   inserirInputEmail.maxLength = 60;
+  inserirInputEmail.autocomplete = 'email';
 
   const inserirInputCelular = createInputFromCallbacks(
-    value => (/[^\d\(\)\-\s]/g).test(value) ? 'Um número não pode conter letras ou caracteres além de ( ) -' : '',
+    value => (/[^\d()\-\s]/g).test(value) ? 'Um número não pode conter letras ou caracteres além de ( ) -' : '',
     value => value.length < 10 ? 'Insira um número com dez ou onze dígitos' : '',
     value => !(/^\(?\d{2}\)?\s*\d{4,5}-?\d{4}$/).test(value) ? 'Esse número não é válido' : ''
   );
@@ -53,6 +55,7 @@ const start = async () => {
   inserirInputCelular.placeholder = 'celular';
   inserirInputCelular.required = true;
   inserirInputCelular.maxLength = 20;
+  inserirInputCelular.autocomplete = 'tel';
 
   const inserirEnviar = document.createElement('input');
   inserirEnviar.type = 'button';
@@ -78,16 +81,14 @@ const start = async () => {
         notif.stopIdle();
         if (t.ok) {
           return t.json();
-        }
-        else {
+        } else {
           notif.error('Falha', 'Erro na conexao: ' + t.status);
         }
       })?.then(async json => {
         if (json.ok) {
           notif.message('Sucesso', 'Enviado com sucesso');
           regenTable(tbody);
-        }
-        else {
+        } else {
           notif.warning('Aviso', 'Erro nas informações');
         }
       });
@@ -101,7 +102,7 @@ const start = async () => {
   excluir.textContent = 'delete';
   excluir.ondragover = e => { e.preventDefault(); };
   excluir.ondrop = async (e) => {
-    deleteData(e.dataTransfer.getData('id')).then(ev => {
+    deleteData(e.dataTransfer.getData('id')).then(() => {
       fetch('/backend/main.php?tipo=contato&pedido=listar').then(r => r.json()).then(json => {
         tbody.innerHTML = '';
 
@@ -177,6 +178,7 @@ const editModal = (id, nome, email, celular) => {
   nomeValor.minLength = 3;
   nomeValor.maxLength = 100;
   nomeValor.value = nome;
+  nomeValor.autocomplete = 'username';
 
   divNome.append(nomeNome, nomeValor);
   mainDiv.appendChild(divNome);
@@ -193,6 +195,7 @@ const editModal = (id, nome, email, celular) => {
   emailValor.required = true;
   emailValor.maxLength = 60;
   emailValor.value = email;
+  emailValor.autocomplete = 'email';
 
   divEmail.append(emailNome, emailValor);
   mainDiv.appendChild(divEmail);
@@ -213,6 +216,7 @@ const editModal = (id, nome, email, celular) => {
   celularValor.required = true;
   celularValor.maxLength = 20;
   celularValor.value = unparseCelular(celular);
+  celularValor.autocomplete = 'tel';
 
   divCelular.append(celularNome, celularValor);
   mainDiv.appendChild(divCelular);

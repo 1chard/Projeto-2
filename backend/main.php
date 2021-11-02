@@ -19,7 +19,7 @@ import('banco/usuario.php');
 
 $status = (bool) false;
 $resposta;
-$requisicao = (($_REQUEST['requisicao']) ? json_decode($_REQUEST['requisicao']) : new stdClass());
+$requisicao = json_decode($_REQUEST['requisicao']) ?? new stdClass();
 
 switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':
@@ -27,7 +27,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
             case "categoria":
                 switch ($_GET['pedido']) {
                     case 'buscar':
-                        $resposta = Categoria::buscar((int) $requisicao->id);
+                        $resposta = Categoria::buscar((int) $_GET['id']);
                         $status = $resposta !== null;
                         break;
                     case 'listar':
@@ -41,7 +41,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
             case "contato":
                 switch ($_GET['pedido']) {
                     case 'buscar':
-                        $resposta = Contato::buscar((int) $requisicao->id);
+                        $resposta = Contato::buscar((int) $_GET['id']);
                         $status = $resposta !== null;
                         break;
                     case 'listar':
@@ -53,18 +53,16 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 }
                 break;
             case "usuario":
-                var_dump($_GET);
                 switch ($_GET['pedido']) {
-                    
+
                     case 'buscar':
-                        $resposta = Usuario::buscar((int) $requisicao->id);
-                        var_dump($resposta);
+                        $resposta = Usuario::buscar((int) $_GET['id']);
                         unset($resposta->senha);
                         $status = $resposta !== null;
                         break;
                     case 'listar':
                         $resposta = Usuario::listar();
-                        foreach($resposta as $e){
+                        foreach ($resposta as $e) {
                             unset($e->senha);
                         }
                         $status = $resposta !== null;
@@ -100,6 +98,19 @@ switch ($_SERVER['REQUEST_METHOD']) {
                         break;
                     case 'deletar':
                         $status = Contato::deletar((int) $requisicao->id);
+                        break;
+                }
+                break;
+            case "usuario":
+                switch ($_POST['pedido']) {
+                    case "inserir":
+                        $status = Usuario::inserir(new Usuario(0, $requisicao->nome, $requisicao->email, $requisicao->senha));
+                        break;
+                    case "atualizar":
+                        $status = Usuario::atualizar(new Usuario((int) $requisicao->id, $requisicao->nome, $requisicao->email, $requisicao->senha));
+                        break;
+                    case 'deletar':
+                        $status = Usuario::deletar((int) $requisicao->id);
                         break;
                 }
                 break;

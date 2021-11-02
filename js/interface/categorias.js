@@ -32,6 +32,7 @@ const start = async () => {
   inserirInputNome.required = true;
   inserirInputNome.minLength = 3;
   inserirInputNome.maxLength = 100;
+  inserirInputNome.autocomplete = 'username';
 
   const inserirEnviar = document.createElement('input');
   inserirEnviar.type = 'button';
@@ -121,7 +122,7 @@ const regenTable = async (tbody) => {
   });
 };
 
-const editModal = (id, nome, email, celular) => {
+const editModal = (id, nome) => {
   modal.clear();
 
   const form = document.createElement('form');
