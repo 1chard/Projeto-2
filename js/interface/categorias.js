@@ -2,20 +2,17 @@
 
 import notif from "../util/notification.js";
 import modal from "../util/modal.js";
-import { createInputFromCallbacks, createInputFromRegex } from "../util/input.js";
 
 const start = async () => {
     const janela = document.getElementById('janela');
 
-    let array = await fetch('/backend/main.php?tipo=contato&pedido=listar').then(t => t.json());
+    let array = await fetch('/backend/main.php?tipo=categoria&pedido=listar').then(t => t.json());
 
     janela.innerHTML = `<table>
     <thead>
         <tr>
             <td>Id</td>
             <td>Nome</td>
-            <td>Email</td>
-            <td>Celular</td>
         </tr>
     </thead>
     <tbody>
@@ -36,24 +33,6 @@ const start = async () => {
     inserirInputNome.minLength = 3;
     inserirInputNome.maxLength = 100;
 
-    const inserirInputEmail = document.createElement('input')
-    inserirInputEmail.type = "email"
-    inserirInputEmail.classList.add('inserirInput');
-    inserirInputEmail.placeholder = "email"
-    inserirInputEmail.required = true
-    inserirInputEmail.maxLength = 60;
-
-    const inserirInputCelular = createInputFromCallbacks( 
-        value => (/[^\d\(\)\-\s]/g).test(value)? 'Um número não pode conter letras ou caracteres além de ( ) -' : "",
-        value => value.length < 10? 'Insira um número com dez ou onze dígitos' : '',
-        value => !(/^\(?\d{2}\)?\s*\d{4,5}-?\d{4}$/).test(value)? 'Esse número não é válido' : ""
-    );
-    inserirInputCelular.type = "tel"
-    inserirInputCelular.classList.add('inserirInput')
-    inserirInputCelular.placeholder = "celular"
-    inserirInputCelular.required = true
-    inserirInputCelular.maxLength = 20;
-
     const inserirEnviar = document.createElement('input')
     inserirEnviar.type = "button"
     inserirEnviar.id = "inserirEnviar"
@@ -65,10 +44,8 @@ const start = async () => {
             let request = new FormData();
             request.append("requisicao", JSON.stringify({
                 nome: inserirInputNome.value,
-                email: inserirInputEmail.value,
-                celular: parseCelular(inserirInputCelular.value)
             }));
-            request.append("tipo", 'contato');
+            request.append("tipo", 'categoria');
             request.append("pedido", 'inserir');
 
             notif.idle("Enviando requisição", "A requisição está sendo enviada");
@@ -97,7 +74,7 @@ const start = async () => {
             notif.error("Erro", "Alguns campos não estão preenchidos corretamente")
     };
 
-    inserir.append(inserirInputNome, inserirInputEmail, inserirInputCelular, inserirEnviar);
+    inserir.append(inserirInputNome, inserirEnviar);
 
     const excluir = document.createElement('div')
     excluir.id = 'excluir'
@@ -105,7 +82,7 @@ const start = async () => {
     excluir.ondragover = e => { e.preventDefault() }
     excluir.ondrop = async (e) => {
         deleteData(e.dataTransfer.getData("id")).then(ev => {
-            fetch('/backend/main.php?tipo=contato&pedido=listar').then(r => r.json()).then(json => {
+            fetch('/backend/main.php?tipo=categoria&pedido=listar').then(r => r.json()).then(json => {
                 tbody.innerHTML = '';
 
                 generateTableDatas(json.resposta)?.forEach(elem => tbody.appendChild(elem));
@@ -121,7 +98,7 @@ const start = async () => {
 const deleteData = id => {
     const request = new FormData();
     request.append("requisicao", JSON.stringify({ id: id }));
-    request.append("tipo", 'contato');
+    request.append("tipo", 'categoria');
     request.append("pedido", 'deletar');
 
     return fetch("backend/main.php", {
@@ -133,7 +110,7 @@ const deleteData = id => {
 const editData = (id, nome, email, celular) => {
     const request = new FormData();
     request.append("requisicao", JSON.stringify({ id: id, nome: nome, email: email, celular: celular }));
-    request.append("tipo", 'contato');
+    request.append("tipo", 'categoria');
     request.append("pedido", 'atualizar');
 
     return fetch("backend/main.php", {
@@ -145,7 +122,7 @@ const editData = (id, nome, email, celular) => {
 
 
 const regenTable = async (tbody) => {
-    await fetch('/backend/main.php?tipo=contato&pedido=listar').then(t => t.json()).then(listJson => {
+    await fetch('/backend/main.php?tipo=categoria&pedido=listar').then(t => t.json()).then(listJson => {
         while (tbody.firstChild)
             tbody.firstChild.remove();
 
@@ -188,42 +165,6 @@ const editModal = (id, nome, email, celular) => {
     divNome.append(nomeNome, nomeValor)
     mainDiv.appendChild(divNome);
 
-    //tr do email
-    const divEmail = document.createElement('div')
-
-    const emailNome = document.createElement('div')
-    emailNome.innerText = 'Email';
-
-    const emailValor = document.createElement('input');
-    emailValor.type = "email";
-    emailValor.placeholder = "email";
-    emailValor.required = true;
-    emailValor.maxLength = 60;
-    emailValor.value = email;
-
-    divEmail.append(emailNome, emailValor);
-    mainDiv.appendChild(divEmail);
-
-    //tr do numero
-    const divCelular = document.createElement('div')
-
-    const celularNome = document.createElement('div')
-    celularNome.innerText = 'Celular';
-
-    const celularValor = createInputFromCallbacks( 
-        value => (/[^\d\(\)\-\s]/g).test(value)? 'Um número não pode conter letras ou caracteres além de ( ) -' : "",
-        value => value.length < 10? 'Insira um número com dez ou onze dígitos' : '',
-        value => !(/^\(?\d{2}\)?\s*\d{4,5}-?\d{4}$/).test(value)? 'Esse número não é válido' : ""
-    );
-    celularValor.type = "tel"
-    celularValor.placeholder = "celular"
-    celularValor.required = true
-    celularValor.maxLength = 20;
-    celularValor.value = unparseCelular(celular);
-
-    divCelular.append(celularNome, celularValor)
-    mainDiv.appendChild(divCelular);
-
     //depois a div
     const sendDiv = document.createElement('div');
 
@@ -235,8 +176,6 @@ const editModal = (id, nome, email, celular) => {
         editData(
             id,
             nomeValor.value,
-            emailValor.value,
-            parseCelular(celularValor.value)
         ).then(ok => {
             if (ok) {
                 regenTable(document.querySelector('#janela > table > tbody')).then( () => modal.hide());
@@ -271,33 +210,19 @@ const generateTableDatas = array => {
 
         const tdId = document.createElement('td');
         const tdNome = document.createElement('td');
-        const tdEmail = document.createElement('td');
-        const tdCelular = document.createElement('td');
 
         tr.draggable = true;
         tr.ondragstart = (ev) => ev.dataTransfer.setData("id", e.id);
 
         tdId.textContent = e.id;
         tdNome.textContent = e.nome;
-        tdEmail.textContent = e.email;
-        tdCelular.textContent = unparseCelular(e.celular);
 
-        tr.append(tdId, tdNome, tdEmail, tdCelular);
+        tr.append(tdId, tdNome);
 
-        tr.onclick = () => editModal(e.id, e.nome, e.email, e.celular);
+        tr.onclick = () => editModal(e.id, e.nome);
 
         return tr;
     });
-}
-
-const unparseCelular = val => {
-    return `(${val.substr(0, 2)}) ${val.substr(2, val.length - 6)}-${val.substr(val.length - 4)}`;
-}
-
-const parseCelular = val => {
-    let celparse = '';
-    val.match(/\d+/g).forEach( s => celparse += s);
-    return celparse;
 }
 
 export { start };
