@@ -17,8 +17,6 @@ import('banco/categoria.php');
 import('banco/contato.php');
 import('banco/usuario.php');
 
-$status = (bool) false;
-$resposta;
 $requisicao = json_decode($_REQUEST['requisicao']) ?? new stdClass();
 
 switch ($_SERVER['REQUEST_METHOD']) {
@@ -62,7 +60,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
                         break;
                     case 'listar':
                         $resposta = Usuario::listar();
-                        foreach ($resposta as $e) {
+                        foreach( ($resposta ?? array()) as $e) {
                             unset($e->senha);
                         }
                         $status = $resposta !== null;
@@ -123,9 +121,12 @@ switch ($_SERVER['REQUEST_METHOD']) {
         break;
 }
 
+if($status !== null){
 $retorno = new stdClass();
 $retorno->ok = $status;
+
 if ($resposta !== null)
     $retorno->resposta = $resposta;
+}
 
-echo json_encode($retorno);
+echo $retorno? json_encode($retorno) : '';

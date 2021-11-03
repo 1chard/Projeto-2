@@ -12,7 +12,11 @@ create table if not exists hamburguer(
 );
 */
 
-drop table if exists usuario;
+desc contato;
+
+-- alter table contato modify nome varchar(100) not null;
+
+-- drop table if exists usuario;
 
 create table if not exists categoria(
 	idcategoria int unsigned primary key not null auto_increment,

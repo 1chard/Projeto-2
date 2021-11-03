@@ -43,6 +43,7 @@ const butaoDesfoco = ev => {
     style.fontFamily = '';
     style.filter = '';
   }
+  
 };
 
 for (const button of document.getElementById('categorias').children) {
@@ -58,6 +59,14 @@ for (const button of document.getElementById('categorias').children) {
     if (pedido !== ativo) {
       ativo = pedido;
       import(`./interface/${ativo}.js`).then(ev => void ev.start());
+
+      for(const el of document.getElementById('categorias').children){
+        if(el !== button){
+          butaoDesfoco({target: el});
+        }
+      }
+       
+    
     }
   });
 }
