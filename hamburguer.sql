@@ -12,7 +12,7 @@ create table if not exists hamburguer(
 );
 */
 
-desc contato;
+desc usuario;
 
 -- alter table contato modify nome varchar(100) not null;
 
@@ -34,9 +34,10 @@ create table if not exists usuario(
 	idusuario int unsigned primary key not null auto_increment,
     nome varchar(100) not null,
     email varchar(60) not null,
-    senha varchar(200) not null
+    senha varchar(32) not null
 );
 
+alter table usuario modify column senha varchar(32) not null;
 
 select * from contato;
 #INSERT into categoria(nome) values('$param->nome');

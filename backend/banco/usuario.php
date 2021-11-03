@@ -1,6 +1,7 @@
 <?php
 
 import("banco/conexao.php");
+import("util/criptografia.php");
 
 class Usuario
 {
@@ -18,7 +19,7 @@ class Usuario
 
     static public function inserir(Usuario $param): bool{
         $temp = new Banco();
-        return mysqli_query($temp->conexao, "INSERT into usuario(nome, email, senha) values('$param->nome', '$param->email', '$param->senha');");
+        return mysqli_query($temp->conexao, "INSERT into usuario(nome, email, senha) values('$param->nome', '$param->email', '". criptografar($param->senha) ."');");
     }
 
     static public function buscar(int $id): ?Usuario{
