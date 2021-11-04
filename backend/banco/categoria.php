@@ -14,7 +14,7 @@ class Categoria
 
     static public function inserir(Categoria $param): bool{
         $temp = new Banco();
-        return mysqli_query($temp->conexao, "INSERT into categoria(nome) values('$param->nome');");
+        return $temp->conexao->query("INSERT into categoria(nome) values('$param->nome');");
     }
 
     static public function buscar(int $id): ?Categoria{

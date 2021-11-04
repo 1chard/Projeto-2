@@ -2,62 +2,52 @@
 
 import("banco/conexao.php");
 
-class Hamburguer
+class Contato
 {
     public $id = null;
     public $nome = '';
-    public $preco = 0.0;
-    public $desconto = null;
-    public $descricao = null;
+    public $email = '';
+    public $celular = '';
 
-    public function __construct(...$args)
-    {
-        if(gettype($args[0]) === 'array' && count($args) === 1){
-            $this->id = $args[0]['idhamburguer'];
-        $this->nome = $args[0]['nome'];
-        $this->preco = $args[0]['preco'];
-        $this->desconto = $args[0]['desconto'];
-        $this->descricao = $args[0]['descricao'];
-        }
-        else if(count($args) >= 2 && count($args) < 5){
-            $this->nome = $args[0];
-            $this->preco = $args[1];
-            $this->desconto = $args[2] ?? null;
-            $this->descricao = $args[3] ?? null;
-        }
-        else 
-            throw new ArgumentCountError("Construtor desconhecido.");
+    public function __construct(int $id, string $nome, string $email, string $celular){
+            $this->nome = $nome;
+            $this->id = $id;
+            $this->email = $email;
+            $this->celular = $celular;
     }
 
-    static public function inserir(Hamburguer $param): bool
-    {
+    static public function buscar(int $id): ?Contato{
         $temp = new Banco();
+        $resultado = $temp->conexao->query("SELECT * from contato where idcontato=$id;")->fetch_assoc();
 
-        return mysqli_query($temp->conexao, "INSERT into hamburguer(nome, categoria, preco, desconto ,descricao)"
-            . " values($param->nome, $param->preco, $param->desconto, $param->descricao);")
-            ? true : false;
+        return $resultado? new Contato((int) $resultado['idcontato'], $resultado['nome'], $resultado['email'], $resultado['celular']) : null;
     }
 
-
-
-    static public function buscar(int $id): Hamburguer{
+    static public function listar(): ?array{
         $temp = new Banco();
-        $resultado = mysqli_query($temp->conexao, "SELECT * from hamburguer where "
-            . "idhamburguer=$id;");
-
-        return $resultado? new Hamburguer($resultado->fetch_assoc()) : null;
-    }
-
-    static public function listar()
-    {
-        $temp = new Banco();
-        $resultado = mysqli_query($temp->conexao, "SELECT * from hamburguer order by idhamburguer desc;");
+        $resultado = $temp->conexao->query("SELECT * from contato;");
 
         $retorno = array();
 
-        while ($iterator = $resultado->fetch_assoc())
-            array_push($retorno, new Hamburguer($iterator));
+        while ($iterator = $resultado->fetch_assoc()) {
+            array_push($retorno, new Contato((int) $iterator['idcontato'], $iterator['nome'], $iterator['email'],  $iterator['celular']));
+        }
 
-        return $retorno;
+        return (count($retorno) > 0)? $retorno : null;
+    }
+
+    static public function inserir(Contato $param): bool{
+        $temp = new Banco();
+        return $temp->conexao->query("INSERT into contato(nome, email, celular) values('$param->nome', '$param->email', '$param->celular');");
+    }
+
+    public static function atualizar(Contato $param): bool{
+        $temp = new Banco();
+        return $temp->conexao->query("UPDATE contato SET nome='$param->nome', email='$param->email', celular='$param->celular' where idcontato=$param->id;");
+    }
+
+    public static function deletar(int $id): bool{
+        $temp = new Banco();
+        return $temp->conexao->query("DELETE from contato where idcontato=$id;");
     }
 }

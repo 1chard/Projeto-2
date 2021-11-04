@@ -38,7 +38,7 @@ class Contato
 
     static public function inserir(Contato $param): bool{
         $temp = new Banco();
-        return mysqli_query($temp->conexao, "INSERT into contato(nome, email, celular) values('$param->nome', '$param->email', '$param->celular');");
+        return $temp->conexao->query("INSERT into contato(nome, email, celular) values('$param->nome', '$param->email', '$param->celular');");
     }
 
     public static function atualizar(Contato $param): bool{

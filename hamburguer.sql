@@ -20,27 +20,42 @@ desc usuario;
 
 create table if not exists categoria(
 	idcategoria int unsigned primary key not null auto_increment,
-    nome varchar(40) not null
+    nome varchar(40) not null unique
 );
 
 create table if not exists contato(
 	idcontato int unsigned primary key not null auto_increment,
     nome varchar(100) not null,
-    email varchar(60) not null,
+    email varchar(60) not null unique,
     celular varchar(11) not null
 );
 
 create table if not exists usuario(
 	idusuario int unsigned primary key not null auto_increment,
     nome varchar(100) not null,
-    email varchar(60) not null,
+    email varchar(60) not null unique,
     senha varchar(32) not null
 );
 
-alter table usuario modify column senha varchar(32) not null;
+create table if not exists produto(
+	idproduto int unsigned primary key not null auto_increment,
+    nome varchar(40) not null,
+    valor float not null,
+    imagem varchar(40),
+    destaque bool default false,
+    desconto float default '0.0',
+    idcategoria int unsigned not null,
+    
+    constraint fk_categoria_produto 
+    foreign key (idcategoria)
+    references categoria(idcategoria)
+);
 
-select * from contato;
+select * from usuario;
+select idusuario from usuario where email='afdsf@gmail.com' and senha='4f9db6eec1b382f6184603793dc3fc6';
 #INSERT into categoria(nome) values('$param->nome');
+
+
 
 desc contato;
 drop table contato;

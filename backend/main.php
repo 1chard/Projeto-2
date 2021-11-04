@@ -1,14 +1,12 @@
 <?php
-function exception_error_handler($severity, $message, $file, $line): void
-{
+function exception_error_handler($severity, $message, $file, $line): void{
     if (!((E_WARNING | E_ERROR | E_PARSE) & $severity))
         return;
     throw new ErrorException($message, 0, $severity, $file, $line);
 }
 set_error_handler("exception_error_handler");
 
-function import(string $toImport)
-{
+function import(string $toImport): void{
     require_once $_SERVER['DOCUMENT_ROOT'] . '/backend/' . $toImport;
 }
 
@@ -110,12 +108,16 @@ switch ($_SERVER['REQUEST_METHOD']) {
                     case 'deletar':
                         $status = Usuario::deletar((int) $requisicao->id);
                         break;
+                    case 'logar':
+                        $status = Usuario::logar(new Usuario(0, '', $requisicao->email, $requisicao->senha));
+                        break;
                 }
                 break;
         }
         break;
     case 'PUT':
-        var_dump($requisicao);
+        
+        file_put_contents("C:\\Users\\21193534\\FJKSJFKFJK.png", base64_decode(file_get_contents('php://input')));
         break;
     default:
         break;

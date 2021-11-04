@@ -19,7 +19,7 @@ class Usuario
 
     static public function inserir(Usuario $param): bool{
         $temp = new Banco();
-        return mysqli_query($temp->conexao, "INSERT into usuario(nome, email, senha) values('$param->nome', '$param->email', '". criptografar($param->senha) ."');");
+        return $temp->conexao->query("INSERT into usuario(nome, email, senha) values('$param->nome', '$param->email', '" . criptografar($param->senha, $param->email) . "');");
     }
 
     static public function buscar(int $id): ?Usuario{
@@ -44,11 +44,17 @@ class Usuario
 
     public static function atualizar(Usuario $param): bool{
         $temp = new Banco();
-        return $temp->conexao->query("UPDATE usuario SET nome='$param->nome', email='$param->email', senha='$param->senha' where idusuario=$param->id;");
+        return $temp->conexao->query("UPDATE usuario SET nome='$param->nome', email='$param->email', senha='" . criptografar($param->senha, $param->email) . "' where idusuario=$param->id;");
     }
 
     public static function deletar(int $id): bool{
         $temp = new Banco();
         return $temp->conexao->query("DELETE from usuario where idusuario=$id;");
+    }
+
+    public static function logar(Usuario $param): bool{
+        $temp = new Banco();
+        return $temp->conexao->query("SELECT idusuario from usuario where email='$param->email' and senha='" . criptografar($param->senha, $param->email) . "';")->fetch_assoc()
+            ? true : false;
     }
 }

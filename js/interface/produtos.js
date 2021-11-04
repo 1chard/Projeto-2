@@ -7,19 +7,23 @@ import { createInputFromCallbacks } from '../util/input.js';
 const start = async () => {
   const janela = document.getElementById('janela');
 
-  const array = await fetch('/backend/main.php?tipo=usuario&pedido=listar').then(t => t.json());
+  const array = await fetch('/backend/main.php?tipo=contato&pedido=listar').then(t => t.json());
 
   janela.innerHTML = `<table>
-  <thead>
-    <tr>
-      <td>Id</td>
-      <td>Nome</td>
-      <td>Email</td>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-  </table>`;
+    <thead>
+        <tr>
+            <td>Id</td>
+            <td>Nome</td>
+            <td>Valor</td>
+            <td>Destaque</td>
+            <td>Desconto</td>
+            <td>Imagem</td>
+            <td>Categoria</td>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+    </table>`;
 
   const tbody = janela.querySelector('tbody');
   generateTableDatas(array.resposta)?.forEach(e => tbody.appendChild(e));
@@ -44,29 +48,35 @@ const start = async () => {
   inserirInputEmail.maxLength = 60;
   inserirInputEmail.autocomplete = 'email';
 
-  const inserirInputSenha = createInputFromCallbacks(
-    value => value.length < 8 ? 'Sua senha é muito curta' : '',
-    value => (/(.)\1{3,}/).exec(value) ? 'Não use sequências como "1111" ou "dddd"' : '',
-    value => (/[^#-&(-/\d?-zÁÉÍÓÚáéíóúÀÈÌÒÙàèìòùç]/).exec(value) ? 'Essa senha contém caracteres além de letras, números ou #$%&?@()*+,-./)' : ''
+  const inserirInputCelular = createInputFromCallbacks(
+    value => (/[^\d()\-\s]/g).test(value) ? 'Um número não pode conter letras ou caracteres além de ( ) -' : '',
+    value => value.length < 10 ? 'Insira um número com dez ou onze dígitos' : '',
+    value => !(/^\(?\d{2}\)?\s*\d{4,5}-?\d{4}$/).test(value) ? 'Esse número não é válido' : ''
   );
-  inserirInputSenha.type = 'password';
-  inserirInputSenha.classList.add('inserirInput');
-  inserirInputSenha.placeholder = 'senha';
-  inserirInputSenha.required = true;
-  inserirInputSenha.maxLength = 24;
-  inserirInputSenha.autocomplete = 'new-password';
+  inserirInputCelular.type = 'tel';
+  inserirInputCelular.classList.add('inserirInput');
+  inserirInputCelular.placeholder = 'celular';
+  inserirInputCelular.required = true;
+  inserirInputCelular.maxLength = 20;
+  inserirInputCelular.autocomplete = 'tel';
 
-  const inserirButtonRevelarSenha = document.createElement('input');
-  inserirButtonRevelarSenha.type = 'button';
-  inserirButtonRevelarSenha.value = 'Revelar senha';
-  inserirButtonRevelarSenha.onclick = function () {
-    if (inserirInputSenha.type === 'password') {
-      this.value = 'Esconder Senha';
-      inserirInputSenha.type = 'text';
-    } else {
-      this.value = 'Revelar Senha';
-      inserirInputSenha.type = 'password';
-    }
+  const inserirInputImagem = document.createElement('input');
+  inserirInputEmail.type = 'file';
+  inserirInputEmail.classList.add('inserirInput');
+  inserirInputEmail.required = true;
+  inserirInputEmail.onchange = function () {
+    const reader = new FileReader();
+    reader.readAsDataURL(this.files[0]);
+    reader.onload = function () {
+
+      fetch('backend/main.php', {
+        method: 'put',
+        body: reader.result.substr(reader.result.indexOf(',') + 1)
+      }).then(r => r.ok);
+    };
+    reader.onerror = function (error) {
+      console.log('Error: ', error);
+    };
   };
 
   const inserirEnviar = document.createElement('input');
@@ -79,9 +89,9 @@ const start = async () => {
       request.append('requisicao', JSON.stringify({
         nome: inserirInputNome.value,
         email: inserirInputEmail.value,
-        senha: inserirInputSenha.value
+        celular: parseCelular(inserirInputCelular.value)
       }));
-      request.append('tipo', 'usuario');
+      request.append('tipo', 'contato');
       request.append('pedido', 'inserir');
 
       notif.idle('Enviando requisição', 'A requisição está sendo enviada');
@@ -107,15 +117,15 @@ const start = async () => {
     } else { notif.error('Erro', 'Alguns campos não estão preenchidos corretamente'); }
   };
 
-  inserir.append(inserirInputNome, inserirInputEmail, inserirInputSenha, inserirButtonRevelarSenha, inserirEnviar);
+  inserir.append(inserirInputNome, inserirInputEmail, inserirInputCelular, inserirInputImagem, inserirEnviar);
 
   const excluir = document.createElement('div');
   excluir.id = 'excluir';
   excluir.textContent = 'delete';
   excluir.ondragover = e => { e.preventDefault(); };
   excluir.ondrop = async (e) => {
-    deleteData(e.dataTransfer.getData('id')).then(ev => {
-      fetch('/backend/main.php?tipo=usuario&pedido=listar').then(r => r.json()).then(json => {
+    deleteData(e.dataTransfer.getData('id')).then(() => {
+      fetch('/backend/main.php?tipo=contato&pedido=listar').then(r => r.json()).then(json => {
         tbody.innerHTML = '';
 
         generateTableDatas(json.resposta)?.forEach(elem => tbody.appendChild(elem));
@@ -130,7 +140,7 @@ const start = async () => {
 const deleteData = id => {
   const request = new FormData();
   request.append('requisicao', JSON.stringify({ id: id }));
-  request.append('tipo', 'usuario');
+  request.append('tipo', 'contato');
   request.append('pedido', 'deletar');
 
   return fetch('backend/main.php', {
@@ -139,10 +149,10 @@ const deleteData = id => {
   }).then(r => r.ok);
 };
 
-const editData = (id, nome, email, senha) => {
+const editData = (id, nome, email, celular) => {
   const request = new FormData();
-  request.append('requisicao', JSON.stringify({ id: id, nome: nome, email: email, senha: senha }));
-  request.append('tipo', 'usuario');
+  request.append('requisicao', JSON.stringify({ id: id, nome: nome, email: email, celular: celular }));
+  request.append('tipo', 'contato');
   request.append('pedido', 'atualizar');
 
   return fetch('backend/main.php', {
@@ -152,14 +162,14 @@ const editData = (id, nome, email, senha) => {
 };
 
 const regenTable = async (tbody) => {
-  await fetch('/backend/main.php?tipo=usuario&pedido=listar').then(t => t.json()).then(listJson => {
+  await fetch('/backend/main.php?tipo=contato&pedido=listar').then(t => t.json()).then(listJson => {
     while (tbody.firstChild) { tbody.firstChild.remove(); }
 
     generateTableDatas(listJson.resposta)?.forEach(elem => tbody.appendChild(elem));
   });
 };
 
-const editModal = (id, nome, email) => {
+const editModal = (id, nome, email, celular) => {
   modal.clear();
 
   const form = document.createElement('form');
@@ -190,6 +200,7 @@ const editModal = (id, nome, email) => {
   nomeValor.minLength = 3;
   nomeValor.maxLength = 100;
   nomeValor.value = nome;
+  nomeValor.autocomplete = 'username';
 
   divNome.append(nomeNome, nomeValor);
   mainDiv.appendChild(divNome);
@@ -211,38 +222,26 @@ const editModal = (id, nome, email) => {
   divEmail.append(emailNome, emailValor);
   mainDiv.appendChild(divEmail);
 
-  // tr da senha
-  const divSenha = document.createElement('div');
+  // tr do numero
+  const divCelular = document.createElement('div');
 
-  const senhaNome = document.createElement('div');
-  senhaNome.innerText = 'Email';
+  const celularNome = document.createElement('div');
+  celularNome.innerText = 'Celular';
 
-  const senhaValor = createInputFromCallbacks(
-    value => value.length < 8 ? 'Sua senha é muito curta' : '',
-    value => (/(.)\1{3,}/).exec(value) ? 'Não use sequências como "1111" ou "dddd"' : '',
-    value => (/[^#-&(-/\d?-zÁÉÍÓÚáéíóúÀÈÌÒÙàèìòùç]/).exec(value) ? 'Essa senha contém caracteres além de letras, números ou #$%&?@()*+,-./)' : ''
+  const celularValor = createInputFromCallbacks(
+    value => (/[^\d\(\)\-\s]/g).test(value) ? 'Um número não pode conter letras ou caracteres além de ( ) -' : '',
+    value => value.length < 10 ? 'Insira um número com dez ou onze dígitos' : '',
+    value => !(/^\(?\d{2}\)?\s*\d{4,5}-?\d{4}$/).test(value) ? 'Esse número não é válido' : ''
   );
-  senhaValor.type = 'password';
-  senhaValor.placeholder = 'senha';
-  senhaValor.required = true;
-  senhaValor.maxLength = 24;
-  senhaValor.autocomplete = 'current-password';
+  celularValor.type = 'tel';
+  celularValor.placeholder = 'celular';
+  celularValor.required = true;
+  celularValor.maxLength = 20;
+  celularValor.value = unparseCelular(celular);
+  celularValor.autocomplete = 'tel';
 
-  const revelarSenha = document.createElement('input');
-  revelarSenha.type = 'button';
-  revelarSenha.value = 'Revelar senha';
-  revelarSenha.onclick = function () {
-    if (senhaValor.type === 'password') {
-      this.value = 'Esconder Senha';
-      senhaValor.type = 'text';
-    } else {
-      this.value = 'Revelar Senha';
-      senhaValor.type = 'password';
-    }
-  };
-
-  divSenha.append(senhaNome, senhaValor, revelarSenha);
-  mainDiv.appendChild(divSenha);
+  divCelular.append(celularNome, celularValor);
+  mainDiv.appendChild(divCelular);
 
   // depois a div
   const sendDiv = document.createElement('div');
@@ -256,7 +255,7 @@ const editModal = (id, nome, email) => {
         id,
         nomeValor.value,
         emailValor.value,
-        senhaValor.value
+        parseCelular(celularValor.value)
       ).then(ok => {
         if (ok) {
           regenTable(document.querySelector('#janela > table > tbody')).then(() => modal.hide());
@@ -290,6 +289,7 @@ const generateTableDatas = array => {
     const tdId = document.createElement('td');
     const tdNome = document.createElement('td');
     const tdEmail = document.createElement('td');
+    const tdCelular = document.createElement('td');
 
     tr.draggable = true;
     tr.ondragstart = (ev) => ev.dataTransfer.setData('id', e.id);
@@ -297,13 +297,24 @@ const generateTableDatas = array => {
     tdId.textContent = e.id;
     tdNome.textContent = e.nome;
     tdEmail.textContent = e.email;
+    tdCelular.textContent = unparseCelular(e.celular);
 
-    tr.append(tdId, tdNome, tdEmail);
+    tr.append(tdId, tdNome, tdEmail, tdCelular);
 
-    tr.onclick = () => editModal(e.id, e.nome, e.email);
+    tr.onclick = () => editModal(e.id, e.nome, e.email, e.celular);
 
     return tr;
   });
+};
+
+const unparseCelular = val => {
+  return `(${val.substr(0, 2)}) ${val.substr(2, val.length - 6)}-${val.substr(val.length - 4)}`;
+};
+
+const parseCelular = val => {
+  let celparse = '';
+  val.match(/\d+/g).forEach(s => celparse += s);
+  return celparse;
 };
 
 export { start };
