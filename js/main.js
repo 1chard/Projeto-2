@@ -17,7 +17,6 @@ banner.buttonLeft.textContent = 'navigate_before';
 banner.buttonRight.classList.add('material-icons');
 banner.buttonRight.textContent = 'navigate_next';
 
-const mudaTema = document.getElementById('mudaTema');
 
 if (window.matchMedia('screen and (prefers-color-scheme: dark)').matches) {
   temaEscuro();
@@ -27,15 +26,15 @@ if (window.matchMedia('screen and (prefers-color-scheme: dark)').matches) {
   mudaTema.textContent = 'light_mode';
 }
 
-document.getElementById('mudaTema').onclick = e => {
+document.getElementById('mudaTema').onclick = function() {
   switch (mudaTema.textContent) {
     case 'dark_mode':
       temaClaro();
-      mudaTema.textContent = 'light_mode';
+      this.textContent = 'light_mode';
       break;
     case 'light_mode':
       temaEscuro();
-      mudaTema.textContent = 'dark_mode';
+      this.textContent = 'dark_mode';
       break;
     default:
       throw new Error('n foi');

@@ -7,7 +7,7 @@ const notif = {
   message: function (title, message, time = 4000, extraHtml = '') {
     return new Promise((resolve) => {
       this.main.style.display = 'none';
-      clearTimeout(this.trackerTimeout ?? 0);
+      clearTimeout(this.trackerTimeout || 0);
 
       this.trackerTimeout = setTimeout(() => {
         this.main.innerHTML = `

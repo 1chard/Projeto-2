@@ -2,52 +2,37 @@
 
 import("banco/conexao.php");
 
-class Contato
-{
+class Hamburguer {
+
     public $id = null;
     public $nome = '';
-    public $email = '';
-    public $celular = '';
+    public $valor = null;
+    public $desconto = 0.0;
+    public $destaque = false;
+    public $idimagem = null;
+    public $idcategoria = null;
 
-    public function __construct(int $id, string $nome, string $email, string $celular){
-            $this->nome = $nome;
-            $this->id = $id;
-            $this->email = $email;
-            $this->celular = $celular;
+    public function __construct(int $id,string $nome,float $valor, int $idcategoria, int $idimagem, float $desconto = 0.0,bool $destaque = false) {
+        $this->id = $id;
+        $this->nome = $nome;
+        $this->valor = $valor;
+        $this->desconto = $desconto;
+        $this->destaque = $destaque;
+        $this->idimagem = $idimagem;
+        $this->idcategoria = $idcategoria;
     }
 
-    static public function buscar(int $id): ?Contato{
+    static public function inserir(Hamburguer $param): bool{
         $temp = new Banco();
-        $resultado = $temp->conexao->query("SELECT * from contato where idcontato=$id;")->fetch_assoc();
-
-        return $resultado? new Contato((int) $resultado['idcontato'], $resultado['nome'], $resultado['email'], $resultado['celular']) : null;
-    }
-
-    static public function listar(): ?array{
-        $temp = new Banco();
-        $resultado = $temp->conexao->query("SELECT * from contato;");
-
-        $retorno = array();
-
-        while ($iterator = $resultado->fetch_assoc()) {
-            array_push($retorno, new Contato((int) $iterator['idcontato'], $iterator['nome'], $iterator['email'],  $iterator['celular']));
-        }
-
-        return (count($retorno) > 0)? $retorno : null;
-    }
-
-    static public function inserir(Contato $param): bool{
-        $temp = new Banco();
-        return $temp->conexao->query("INSERT into contato(nome, email, celular) values('$param->nome', '$param->email', '$param->celular');");
-    }
-
-    public static function atualizar(Contato $param): bool{
-        $temp = new Banco();
-        return $temp->conexao->query("UPDATE contato SET nome='$param->nome', email='$param->email', celular='$param->celular' where idcontato=$param->id;");
-    }
-
-    public static function deletar(int $id): bool{
-        $temp = new Banco();
-        return $temp->conexao->query("DELETE from contato where idcontato=$id;");
+        return $temp->conexao->query(<<<EOF
+                INSERT into imagem(nome, valor, desconto, destaque, idimagem, idcategoria) values(
+                    '$param->nome',
+                    '$param->valor',
+                '$param->desconto',
+                '$param->destaque',
+                $param->idimagem,
+                $param->idcategoria,
+                );
+                EOF);
     }
 }

@@ -1,12 +1,15 @@
 <?php
-function exception_error_handler($severity, $message, $file, $line): void{
-    if (!((E_WARNING | E_ERROR | E_PARSE) & $severity))
+
+function exception_error_handler($severity, $message, $file, $line): void {
+    if (!((E_WARNING | E_ERROR | E_PARSE) & $severity)) {
         return;
+    }
     throw new ErrorException($message, 0, $severity, $file, $line);
 }
+
 set_error_handler("exception_error_handler");
 
-function import(string $toImport): void{
+function import(string $toImport): void {
     require_once $_SERVER['DOCUMENT_ROOT'] . '/backend/' . $toImport;
 }
 
@@ -14,6 +17,11 @@ import('util/constantes.php');
 import('banco/categoria.php');
 import('banco/contato.php');
 import('banco/usuario.php');
+import('banco/hamburguer.php');
+import('banco/imagem.php');
+
+echo((string) microtime());
+die;
 
 $requisicao = json_decode($_REQUEST['requisicao']) ?? new stdClass();
 
@@ -58,7 +66,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
                         break;
                     case 'listar':
                         $resposta = Usuario::listar();
-                        foreach( ($resposta ?? array()) as $e) {
+                        foreach (($resposta ?? array()) as $e) {
                             unset($e->senha);
                         }
                         $status = $resposta !== null;
@@ -66,6 +74,20 @@ switch ($_SERVER['REQUEST_METHOD']) {
                     default:
                         break;
                 }
+                break;
+            case "hamburguer":
+            case 'buscar':
+                $resposta = Hamburguer::buscar((int) $_GET['id']);
+                $resposta->imagem = Imagem::buscar($resposta->id);
+                $status = $resposta !== null;
+                break;
+            case 'listar':
+                $resposta = Hamburguer::listar();
+                foreach (($resposta ?? array()) as $e) {
+                    $e->imagem = Imagem::buscar($e->id);
+                }
+                $status = $resposta !== null;
+                break;
                 break;
         }
         break;
@@ -113,22 +135,48 @@ switch ($_SERVER['REQUEST_METHOD']) {
                         break;
                 }
                 break;
+            case "hamburguer":
+                switch ($_POST['pedido']) {
+                    case "inserir":
+                        $filename = sha1($requisicao->nome . rand() . time() . microtime()) . substr($requisicao->nomearquivo, strrchr($requisicao->nomearquivo, '.') + 1);
+
+                        file_put_contents(".img/" . $filename, base64_decode($requisicao->base64));
+                        $status = (bool) Imagem::inserir(new Imagem(0, $filename));
+                        if ($status) {
+                            $imagemId = Imagem::buscarPorNome($filename)->id;
+
+                            $status = $status && Hamburguer::inserir(new Hamburguer(
+                                                    0,
+                                                    $requisicao->nome,
+                                                    (float) $requisicao->valor,
+                                                    (int) $requisicao->categoria,
+                                                    (int) $imagemId,
+                                                    (float) $requisicao->desconto ?? 0.0,
+                                                    (bool) $requisicao->destaque ?? false
+                            ));
+                        }
+                        break;
+                    case "atualizar":
+                        $status = Hamburguer::atualizar(new Hamburguer((int) $requisicao->id, $requisicao->nome, $requisicao->email, $requisicao->senha));
+                        break;
+                    case 'deletar':
+                        $status = Hamburguer::deletar((int) $requisicao->id);
+                        break;
+                }
+                break;
         }
-        break;
-    case 'PUT':
-        
-        file_put_contents("C:\\Users\\21193534\\FJKSJFKFJK.png", base64_decode(file_get_contents('php://input')));
         break;
     default:
         break;
 }
 
-if($status !== null){
-$retorno = new stdClass();
-$retorno->ok = $status;
+if ($status !== null) {
+    $retorno = new stdClass();
+    $retorno->ok = $status;
 
-if ($resposta !== null)
-    $retorno->resposta = $resposta;
+    if ($resposta !== null) {
+        $retorno->resposta = $resposta;
+    }
 }
 
-echo $retorno? json_encode($retorno) : '';
+echo $retorno ? json_encode($retorno) : '';

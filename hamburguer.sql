@@ -41,15 +41,30 @@ create table if not exists produto(
 	idproduto int unsigned primary key not null auto_increment,
     nome varchar(40) not null,
     valor float not null,
-    imagem varchar(40),
     destaque bool default false,
     desconto float default '0.0',
     idcategoria int unsigned not null,
+    idimagem int unsigned not null,
     
     constraint fk_categoria_produto 
     foreign key (idcategoria)
-    references categoria(idcategoria)
+    references categoria(idcategoria),
+    constraint fk_imagem_produto
+    foreign key (idimagem)
+    references imagem(idimagem)
 );
+
+create table if not exists imagem(
+	idimagem int unsigned primary key not null auto_increment,
+    nome varchar(50) not null
+);
+
+-- alter table imagem modify column nome varchar(50) not null unique;
+
+
+select * from produto;
+
+desc produto;
 
 select * from usuario;
 select idusuario from usuario where email='afdsf@gmail.com' and senha='4f9db6eec1b382f6184603793dc3fc6';
