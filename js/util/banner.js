@@ -2,12 +2,16 @@
 
 const moveBy = (banner, value) => {
   banner.transitionPosition += value;
-  banner.subcontainer.style.transform = `translateX(${banner.transitionPosition}px)`;
+  banner.subcontainer.scrollBy({
+    left: banner.transitionPosition
+  });
 };
 
 const moveTo = (banner, value) => {
   banner.transitionPosition = value;
-  banner.subcontainer.style.transform = `translateX(${banner.transitionPosition}px)`;
+  banner.subcontainer.scrollBy({
+    left: banner.transitionPosition
+  });
 };
 
 const moveBySafe = (banner, value) => {
@@ -226,12 +230,16 @@ function Banner (banner) {
     }
   };
 
+  ret.container.style.overflow = 'scroll';
   ret.subcontainer.style.height = '100%';
   ret.subcontainer.style.position = 'relative';
   ret.subcontainer.classList.add('bannerContainer');
 
   window.addEventListener('resize', () => ret.resize());
-  for (const child of ret.container.children) { ret.add(child); }
+
+  for (const child of ret.container.children) {
+    ret.add(child);
+  }
 
   ret.container.appendChild(ret.subcontainer);
 
