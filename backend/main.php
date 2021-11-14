@@ -10,8 +10,8 @@ function exception_error_handler($severity, $message, $file, $line): void {
 
 set_error_handler("exception_error_handler");
 
-function import(string $toImport): void {
-    require_once $_SERVER['DOCUMENT_ROOT'] . '/backend/' . $toImport;
+function import(string $toImport) {
+    require_once filter_input(INPUT_SERVER,  'DOCUMENT_ROOT') . '/backend/' . $toImport;
 }
 
 error_log($_SERVER['SERVER_ADDR']);
@@ -25,13 +25,17 @@ import('banco/usuario.php');
 import('banco/hamburguer.php');
 import('banco/imagem.php');
 
-switch ($_SERVER['REQUEST_METHOD']) {
+$requisicao = json_decode(filter_input(INPUT_POST,  'requisicao') ?? '');
+$status = null;
+$retorno = null;
+
+switch (filter_input(INPUT_SERVER,  'REQUEST_METHOD')) {
     case 'GET':
-        switch ($_GET['tipo']) {
+        switch (filter_input(INPUT_GET,  'tipo')) {
             case "categoria":
-                switch ($_GET['pedido']) {
+                switch (filter_input(INPUT_GET,  'pedido')) {
                     case 'buscar':
-                        $resposta = Categoria::buscar((int) $_GET['id']);
+                        $resposta = Categoria::buscar((int) filter_input(INPUT_GET,  'id'));
                         $status = $resposta !== null;
                         break;
                     case 'listar':
@@ -43,9 +47,9 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 }
                 break;
             case "contato":
-                switch ($_GET['pedido']) {
+                switch (filter_input(INPUT_GET,  'pedido') ?? '') {
                     case 'buscar':
-                        $resposta = Contato::buscar((int) $_GET['id']);
+                        $resposta = Contato::buscar((int) filter_input(INPUT_GET,  'id'));
                         $status = $resposta !== null;
                         break;
                     case 'listar':
@@ -57,10 +61,10 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 }
                 break;
             case "usuario":
-                switch ($_GET['pedido']) {
+                switch (filter_input(INPUT_GET,  'pedido')) {
 
                     case 'buscar':
-                        $resposta = Usuario::buscar((int) $_GET['id']);
+                        $resposta = Usuario::buscar((int) filter_input(INPUT_GET,  'id'));
                         unset($resposta->senha);
                         $status = $resposta !== null;
                         break;
@@ -77,11 +81,8 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 break;
             case "hamburguer":
             case 'buscar':
-                $resposta = Hamburguer::buscar((int) $_GET['id']);
-                
-                if($resposta)
-                    $resposta->imagem = Imagem::buscar($resposta->idimagem ?? 0);
-                
+                $resposta = Hamburguer::buscar((int) filter_input(INPUT_GET,  'id'));
+                $resposta->imagem = Imagem::buscar($resposta->id);
                 $status = $resposta !== null;
                 break;
             case 'listar':
@@ -96,9 +97,9 @@ switch ($_SERVER['REQUEST_METHOD']) {
         }
         break;
     case 'POST':
-        switch ($body->tipo) {
+        switch (filter_input(INPUT_POST,  'tipo')) {
             case "categoria":
-                switch ($body->pedido) {
+                switch (filter_input(INPUT_POST,  'pedido')) {
                     case "inserir":
                         $status = Categoria::inserir(new Categoria(0, $body->info->nome));
                         break;
@@ -111,7 +112,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 }
                 break;
             case "contato":
-                switch ($body->pedido) {
+                switch (filter_input(INPUT_POST,  'pedido')) {
                     case "inserir":
                         $status = Contato::inserir(new Contato(0, $body->info->nome, $body->info->email, $body->info->celular));
                         break;
@@ -124,7 +125,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 }
                 break;
             case "usuario":
-                switch ($body->pedido) {
+                switch (filter_input(INPUT_POST,  'pedido')) {
                     case "inserir":
                         $status = Usuario::inserir(new Usuario(0, $body->info->nome, $body->info->email, $body->info->senha));
                         break;
@@ -137,10 +138,11 @@ switch ($_SERVER['REQUEST_METHOD']) {
                     case 'logar':
                         $status = Usuario::logar(new Usuario(0, '', $body->info->email, $body->info->senha));
                         break;
+                    default;
                 }
                 break;
             case "hamburguer":
-                switch ($body->pedido) {
+                switch (filter_input(INPUT_POST,  'pedido')) {
                     case "inserir":
                         $filename = sha1($body->info->nome . rand() . time() . microtime()) . substr($body->info->nomearquivo, strrchr($body->info->nomearquivo, '.') + 1);
 
@@ -166,15 +168,13 @@ switch ($_SERVER['REQUEST_METHOD']) {
                     case 'deletar':
                         $status = Hamburguer::deletar((int) $body->info->id);
                         break;
+                    default;
                 }
                 break;
+            default;
         }
         break;
-    case 'PUT':
-        break;
-    default:
-        http_response_code(405);
-        return;
+    default;
 }
 
 if ($status !== null) {
