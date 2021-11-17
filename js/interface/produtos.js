@@ -7,7 +7,7 @@ import { createInputFromCallbacks } from '../util/input.js';
 const start = async () => {
   const janela = document.getElementById('janela');
 
-  const array = await fetch('/backend/main.php?tipo=contato&pedido=listar').then(t => t.json());
+  const array = await fetch('/backend/main.php?tipo=hamburguer&pedido=listar').then(t => t.json());
 
   janela.innerHTML = `<table>
     <thead>
@@ -125,7 +125,7 @@ const start = async () => {
   excluir.ondragover = e => { e.preventDefault(); };
   excluir.ondrop = async (e) => {
     deleteData(e.dataTransfer.getData('id')).then(() => {
-      fetch('/backend/main.php?tipo=contato&pedido=listar').then(r => r.json()).then(json => {
+      fetch('/backend/main.php?tipo=&pedido=listar').then(r => r.json()).then(json => {
         tbody.innerHTML = '';
 
         generateTableDatas(json.resposta)?.forEach(elem => tbody.appendChild(elem));

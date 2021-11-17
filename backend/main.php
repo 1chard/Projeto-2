@@ -1,5 +1,6 @@
 <?php
 
+
 function exception_error_handler($severity, $message, $file, $line): void {
     if (!((E_WARNING | E_ERROR | E_PARSE) & $severity)) {
         return;
@@ -13,15 +14,15 @@ function import(string $toImport): void {
     require_once $_SERVER['DOCUMENT_ROOT'] . '/backend/' . $toImport;
 }
 
+echo "{\"ds\": 323}";
+die;
+        
 import('util/constantes.php');
 import('banco/categoria.php');
 import('banco/contato.php');
 import('banco/usuario.php');
 import('banco/hamburguer.php');
 import('banco/imagem.php');
-
-echo((string) microtime());
-die;
 
 $requisicao = json_decode($_REQUEST['requisicao']) ?? new stdClass();
 
@@ -66,8 +67,8 @@ switch ($_SERVER['REQUEST_METHOD']) {
                         break;
                     case 'listar':
                         $resposta = Usuario::listar();
-                        foreach (($resposta ?? array()) as $e) {
-                            unset($e->senha);
+                        foreach (($resposta ?? array()) as $iterator) {
+                            unset($iterator->senha);
                         }
                         $status = $resposta !== null;
                         break;
@@ -78,16 +79,20 @@ switch ($_SERVER['REQUEST_METHOD']) {
             case "hamburguer":
             case 'buscar':
                 $resposta = Hamburguer::buscar((int) $_GET['id']);
-                $resposta->imagem = Imagem::buscar($resposta->id);
+                
+                if($resposta)
+                    $resposta->imagem = Imagem::buscar($resposta->idimagem ?? 0);
+                
                 $status = $resposta !== null;
                 break;
             case 'listar':
                 $resposta = Hamburguer::listar();
-                foreach (($resposta ?? array()) as $e) {
-                    $e->imagem = Imagem::buscar($e->id);
+                
+                foreach ($resposta as $iterator) {
+                    $iterator->imagem = Imagem::buscar($iterator->idimagem);
                 }
+                
                 $status = $resposta !== null;
-                break;
                 break;
         }
         break;
@@ -166,17 +171,25 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 break;
         }
         break;
-    default:
+    case 'PUT':
         break;
+    default:
+        http_response_code(405);
+        return;
 }
 
 if ($status !== null) {
+    http_response_code(200);
+    
     $retorno = new stdClass();
     $retorno->ok = $status;
 
     if ($resposta !== null) {
         $retorno->resposta = $resposta;
     }
+}
+else{
+    http_response_code(204);
 }
 
 echo $retorno ? json_encode($retorno) : '';

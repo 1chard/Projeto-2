@@ -21,18 +21,55 @@ class Hamburguer {
         $this->idimagem = $idimagem;
         $this->idcategoria = $idcategoria;
     }
+    
+    public static function buscar(int $id): ?Hamburguer {
+        $temp = new Banco();
+        $resultado = $temp->conexao->query("SELECT * from produto where idproduto=$id;")->fetch_assoc();
+
+        return $resultado? new Usuario(
+                (int)       $resultado['idproduto'],
+                (string)    $resultado['nome'],
+                (float)     $resultado['valor'],
+                (int)       $resultado['idcategoria'],
+                (int)       $resultado['idimagem'],
+                (float)     $resultado['desconto'],
+                (bool)      $resultado['destaque']
+                ) : null;
+    }
+    
+    static public function listar(): array{
+        $temp = new Banco();
+        $resultado = $temp->conexao->query("SELECT * from produto;");
+
+        $retorno = array();
+
+        while ($iterator = $resultado->fetch_assoc()) {
+            array_push($retorno, new Hamburguer(
+                (int)       $iterator['idproduto'],
+                (string)    $iterator['nome'],
+                (float)     $iterator['valor'],
+                (int)       $iterator['idcategoria'],
+                (int)       $iterator['idimagem'],
+                (float)     $iterator['desconto'],
+                (bool)      $iterator['destaque']
+                ));
+        }
+
+        return $retorno;
+    }
+
 
     static public function inserir(Hamburguer $param): bool{
         $temp = new Banco();
-        return $temp->conexao->query(<<<EOF
+        return $temp->conexao->query("
                 INSERT into imagem(nome, valor, desconto, destaque, idimagem, idcategoria) values(
-                    '$param->nome',
-                    '$param->valor',
+                '$param->nome',
+                '$param->valor',
                 '$param->desconto',
                 '$param->destaque',
                 $param->idimagem,
                 $param->idcategoria,
                 );
-                EOF);
+            ");
     }
 }
