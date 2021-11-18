@@ -14,17 +14,14 @@ function import(string $toImport): void {
     require_once $_SERVER['DOCUMENT_ROOT'] . '/backend/' . $toImport;
 }
 
-echo "{\"ds\": 323}";
-die;
-        
+$body = json_decode(file_get_contents('php://input') ?: '{}');
+
 import('util/constantes.php');
 import('banco/categoria.php');
 import('banco/contato.php');
 import('banco/usuario.php');
 import('banco/hamburguer.php');
 import('banco/imagem.php');
-
-$requisicao = json_decode($_REQUEST['requisicao']) ?? new stdClass();
 
 switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':
@@ -97,75 +94,75 @@ switch ($_SERVER['REQUEST_METHOD']) {
         }
         break;
     case 'POST':
-        switch ($_POST['tipo']) {
+        switch ($body->tipo) {
             case "categoria":
-                switch ($_POST['pedido']) {
+                switch ($body->pedido) {
                     case "inserir":
-                        $status = Categoria::inserir(new Categoria(0, $requisicao->nome));
+                        $status = Categoria::inserir(new Categoria(0, $body->info->nome));
                         break;
                     case "atualizar":
-                        $status = Categoria::atualizar(new Categoria((int) $requisicao->id, $requisicao->nome));
+                        $status = Categoria::atualizar(new Categoria((int) $body->info->id, $body->info->nome));
                         break;
                     case 'deletar':
-                        $status = Categoria::deletar((int) $requisicao->id);
+                        $status = Categoria::deletar((int) $body->info->id);
                         break;
                 }
                 break;
             case "contato":
-                switch ($_POST['pedido']) {
+                switch ($body->pedido) {
                     case "inserir":
-                        $status = Contato::inserir(new Contato(0, $requisicao->nome, $requisicao->email, $requisicao->celular));
+                        $status = Contato::inserir(new Contato(0, $body->info->nome, $body->info->email, $body->info->celular));
                         break;
                     case "atualizar":
-                        $status = Contato::atualizar(new Contato((int) $requisicao->id, $requisicao->nome, $requisicao->email, $requisicao->celular));
+                        $status = Contato::atualizar(new Contato((int) $body->info->id, $body->info->nome, $body->info->email, $body->info->celular));
                         break;
                     case 'deletar':
-                        $status = Contato::deletar((int) $requisicao->id);
+                        $status = Contato::deletar((int) $body->info->id);
                         break;
                 }
                 break;
             case "usuario":
-                switch ($_POST['pedido']) {
+                switch ($body->pedido) {
                     case "inserir":
-                        $status = Usuario::inserir(new Usuario(0, $requisicao->nome, $requisicao->email, $requisicao->senha));
+                        $status = Usuario::inserir(new Usuario(0, $body->info->nome, $body->info->email, $body->info->senha));
                         break;
                     case "atualizar":
-                        $status = Usuario::atualizar(new Usuario((int) $requisicao->id, $requisicao->nome, $requisicao->email, $requisicao->senha));
+                        $status = Usuario::atualizar(new Usuario((int) $body->info->id, $body->info->nome, $body->info->email, $body->info->senha));
                         break;
                     case 'deletar':
-                        $status = Usuario::deletar((int) $requisicao->id);
+                        $status = Usuario::deletar((int) $body->info->id);
                         break;
                     case 'logar':
-                        $status = Usuario::logar(new Usuario(0, '', $requisicao->email, $requisicao->senha));
+                        $status = Usuario::logar(new Usuario(0, '', $body->info->email, $body->info->senha));
                         break;
                 }
                 break;
             case "hamburguer":
-                switch ($_POST['pedido']) {
+                switch ($body->pedido) {
                     case "inserir":
-                        $filename = sha1($requisicao->nome . rand() . time() . microtime()) . substr($requisicao->nomearquivo, strrchr($requisicao->nomearquivo, '.') + 1);
+                        $filename = sha1($body->info->nome . rand() . time() . microtime()) . substr($body->info->nomearquivo, strrchr($body->info->nomearquivo, '.') + 1);
 
-                        file_put_contents(".img/" . $filename, base64_decode($requisicao->base64));
+                        file_put_contents(".img/" . $filename, base64_decode($body->info->base64));
                         $status = (bool) Imagem::inserir(new Imagem(0, $filename));
                         if ($status) {
                             $imagemId = Imagem::buscarPorNome($filename)->id;
 
                             $status = $status && Hamburguer::inserir(new Hamburguer(
                                                     0,
-                                                    $requisicao->nome,
-                                                    (float) $requisicao->valor,
-                                                    (int) $requisicao->categoria,
+                                                    $body->info->nome,
+                                                    (float) $body->info->valor,
+                                                    (int) $body->info->categoria,
                                                     (int) $imagemId,
-                                                    (float) $requisicao->desconto ?? 0.0,
-                                                    (bool) $requisicao->destaque ?? false
+                                                    (float) $body->info->desconto ?? 0.0,
+                                                    (bool) $body->info->destaque ?? false
                             ));
                         }
                         break;
                     case "atualizar":
-                        $status = Hamburguer::atualizar(new Hamburguer((int) $requisicao->id, $requisicao->nome, $requisicao->email, $requisicao->senha));
+                        $status = Hamburguer::atualizar(new Hamburguer((int) $body->info->id, $body->info->nome, $body->info->email, $body->info->senha));
                         break;
                     case 'deletar':
-                        $status = Hamburguer::deletar((int) $requisicao->id);
+                        $status = Hamburguer::deletar((int) $body->info->id);
                         break;
                 }
                 break;

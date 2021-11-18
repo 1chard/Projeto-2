@@ -7,23 +7,17 @@ const ajax = {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(body)
-            }).then( async response => {
-                return response.json()
-            });       
+            })     
     },
     get: function (url, body = {}){
+        const link = new URLSearchParams();
+        Object.entries(body).forEach( entry => {
+            link.set(entry[0], entry[1]);
+        })
         
-        return fetch(url, {
-                method: 'post',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(body)
-            }).then( async response => {
-                return response.json()
-            });        
+        return fetch(url + '?' + link.toString());     
     }
     
 }
 
-export { Recurse };
+export { ajax };

@@ -2,13 +2,13 @@
 
 import notif from '../util/notification.js';
 import modal from '../util/modal.js';
+import { ajax } from '../util/extra.js';
+import $ from '../jquery.js';
 
 const start = async () => {
   const janela = document.getElementById('janela');
-
-  const array = await fetch('/backend/main.php?tipo=categoria&pedido=listar').then(t => t.json());
-
-  janela.innerHTML = `<table>
+  
+  $('#janela').html(`<table>
   <thead>
     <tr>
       <td>Id</td>
@@ -17,15 +17,25 @@ const start = async () => {
   </thead>
   <tbody>
   </tbody>
-  </table>`;
+  </table>`)
+            .append( 
+                $(document.createElement('form'))
+                .attr('id', "inserir")
+                .append( 
+                    $(document.createElement('input'))
+                    .attr(
+                        {
+                            value: "text"
+                        }
+                    )
+                )
+            
+            )
 
   const tbody = janela.querySelector('tbody');
-  generateTableDatas(array.resposta)?.forEach(e => tbody.appendChild(e));
+  regenTable(tbody);
 
-  const inserir = document.createElement('form');
-  inserir.id = 'inserir';
-
-  const inserirInputNome = document.createElement('input');
+/*
   inserirInputNome.type = 'text';
   inserirInputNome.classList.add('inserirInput');
   inserirInputNome.placeholder = 'nome';
@@ -40,24 +50,18 @@ const start = async () => {
   inserirEnviar.value = 'Salvar no banco';
   inserirEnviar.onclick = async () => {
     if (inserir.reportValidity()) {
-      const request = new FormData();
-      request.append('requisicao', JSON.stringify({
-        nome: inserirInputNome.value
-      }));
-      request.append('tipo', 'categoria');
-      request.append('pedido', 'inserir');
-
       notif.idle('Enviando requisição', 'A requisição está sendo enviada');
 
-      await fetch('backend/main.php', {
-        method: 'post',
-        body: request
-      }).then(t => {
+      await ajax.post('backend/main.php', {
+        info: { nome: inserirInputNome.value},
+        tipo: 'categoria',
+        pedido: 'inserir'
+      }).then(response => {
         notif.stopIdle();
-        if (t.ok) {
-          return t.json();
+        if (response.ok) {
+          return response.json();
         } else {
-          notif.error('Falha', 'Erro na conexao: ' + t.status);
+          notif.error('Erro', response.status);
         }
       })?.then(async json => {
         if (json.ok) {
@@ -78,45 +82,40 @@ const start = async () => {
   excluir.ondragover = e => { e.preventDefault(); };
   excluir.ondrop = async (e) => {
     deleteData(e.dataTransfer.getData('id')).then(ev => {
-      fetch('/backend/main.php?tipo=categoria&pedido=listar').then(r => r.json()).then(json => {
+        ajax.get('/backend/main.php', { tipo: 'categoria', pedido: 'listar'})?.then( async response => {
         tbody.innerHTML = '';
 
-        generateTableDatas(json.resposta)?.forEach(elem => tbody.appendChild(elem));
+        regenTable(tbody)
       });
     });
   };
 
   janela.appendChild(inserir);
   janela.appendChild(excluir);
+     * 
+     * 
+ */
 };
 
 const deleteData = id => {
-  const request = new FormData();
-  request.append('requisicao', JSON.stringify({ id: id }));
-  request.append('tipo', 'categoria');
-  request.append('pedido', 'deletar');
-
-  return fetch('backend/main.php', {
-    method: 'post',
-    body: request
+  return ajax.post('backend/main.php', { 
+    info: { id: id },
+    tipo: 'categoria',
+    pedido: 'deletar'
   }).then(r => r.ok);
 };
 
-const editData = (id, nome, email, celular) => {
-  const request = new FormData();
-  request.append('requisicao', JSON.stringify({ id: id, nome: nome, email: email, celular: celular }));
-  request.append('tipo', 'categoria');
-  request.append('pedido', 'atualizar');
-
-  return fetch('backend/main.php', {
-    method: 'post',
-    body: request
+const editData = (id, nome) => {
+  return ajax.post('backend/main.php', {
+    info: { id: id, nome: nome },
+    tipo: 'categoria',
+    pedido: 'atualizar'
   }).then(r => r.ok);
 };
 
-const regenTable = async (tbody) => {
-  await fetch('/backend/main.php?tipo=categoria&pedido=listar').then(t => t.json()).then(listJson => {
-    while (tbody.firstChild) { tbody.firstChild.remove(); }
+const regenTable = (tbody) => {
+  ajax.get('/backend/main.php', { tipo: 'categoria', pedido: 'listar' }).then(t => t.json()).then(listJson => {
+    tbody.innerHTML = ''
 
     generateTableDatas(listJson.resposta)?.forEach(elem => tbody.appendChild(elem));
   });
@@ -195,6 +194,7 @@ const editModal = (id, nome) => {
 };
 
 const generateTableDatas = array => {
+
   return array?.map(e => {
     const tr = document.createElement('tr');
 

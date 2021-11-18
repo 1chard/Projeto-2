@@ -3,6 +3,7 @@
 import notif from '../util/notification.js';
 import modal from '../util/modal.js';
 import { createInputFromCallbacks } from '../util/input.js';
+import { ajax } from '../util/extra.js';
 
 const start = async () => {
   const janela = document.getElementById('janela');
@@ -65,18 +66,19 @@ const start = async () => {
     if (inserir.reportValidity()) {
       const request = new FormData();
       request.append('requisicao', JSON.stringify({
-        nome: inserirInputNome.value,
-        email: inserirInputEmail.value,
-        celular: parseCelular(inserirInputCelular.value)
+
       }));
-      request.append('tipo', 'contato');
-      request.append('pedido', 'inserir');
 
       notif.idle('Enviando requisição', 'A requisição está sendo enviada');
 
       await fetch('backend/main.php', {
-        method: 'post',
-        body: request
+        info: {
+          nome: inserirInputNome.value,
+          email: inserirInputEmail.value,
+          celular: parseCelular(inserirInputCelular.value)
+        },
+        tipo: 'contato',
+        pedido: 'inserir'
       }).then(t => {
         notif.stopIdle();
         if (t.ok) {
