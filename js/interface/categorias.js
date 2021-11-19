@@ -25,35 +25,32 @@ const start = async () => {
                     $(document.createElement('input'))
                     .attr(
                         {
-                            value: "text"
+                            type: "text",
+                            placeholder: 'nome',
+                            required: true,
+                            minLength: 3,
+                            maxLength: 100,
+                            autocomplete: 'username'
                         }
-                    )
+                    ).addClass('inserirInput')
                 )
-            
-            )
-
-  const tbody = janela.querySelector('tbody');
-  regenTable(tbody);
-
-/*
-  inserirInputNome.type = 'text';
-  inserirInputNome.classList.add('inserirInput');
-  inserirInputNome.placeholder = 'nome';
-  inserirInputNome.required = true;
-  inserirInputNome.minLength = 3;
-  inserirInputNome.maxLength = 100;
-  inserirInputNome.autocomplete = 'username';
-
-  const inserirEnviar = document.createElement('input');
-  inserirEnviar.type = 'button';
-  inserirEnviar.id = 'inserirEnviar';
-  inserirEnviar.value = 'Salvar no banco';
-  inserirEnviar.onclick = async () => {
-    if (inserir.reportValidity()) {
+                .append(
+                    $(document.createElement('input'))
+                    .attr(
+                        {
+                            type: "button",
+                            id: 'inserirEnviar',
+                            value: 'Salvar no banco'
+                        }
+                    ).click( async function () {
+                        
+                
+                        
+    if (this.parentElement.reportValidity()) {
       notif.idle('Enviando requisição', 'A requisição está sendo enviada');
 
       await ajax.post('backend/main.php', {
-        info: { nome: inserirInputNome.value},
+        info: { nome: $(this.parentElement).find('input[placeholder="nome"]').val()},
         tipo: 'categoria',
         pedido: 'inserir'
       }).then(response => {
@@ -66,35 +63,18 @@ const start = async () => {
       })?.then(async json => {
         if (json.ok) {
           notif.message('Sucesso', 'Enviado com sucesso');
-          regenTable(tbody);
+          regenTable();
         } else {
           notif.warning('Aviso', 'Erro nas informações');
         }
       });
     } else { notif.error('Erro', 'Alguns campos não estão preenchidos corretamente'); }
-  };
+                    })
+                )
+            
+            )
 
-  inserir.append(inserirInputNome, inserirEnviar);
-
-  const excluir = document.createElement('div');
-  excluir.id = 'excluir';
-  excluir.textContent = 'delete';
-  excluir.ondragover = e => { e.preventDefault(); };
-  excluir.ondrop = async (e) => {
-    deleteData(e.dataTransfer.getData('id')).then(ev => {
-        ajax.get('/backend/main.php', { tipo: 'categoria', pedido: 'listar'})?.then( async response => {
-        tbody.innerHTML = '';
-
-        regenTable(tbody)
-      });
-    });
-  };
-
-  janela.appendChild(inserir);
-  janela.appendChild(excluir);
-     * 
-     * 
- */
+  regenTable();
 };
 
 const deleteData = id => {
@@ -113,48 +93,45 @@ const editData = (id, nome) => {
   }).then(r => r.ok);
 };
 
-const regenTable = (tbody) => {
+const regenTable = () => {
   ajax.get('/backend/main.php', { tipo: 'categoria', pedido: 'listar' }).then(t => t.json()).then(listJson => {
-    tbody.innerHTML = ''
+    const jqTBODY = $('tbody').empty();
 
-    generateTableDatas(listJson.resposta)?.forEach(elem => tbody.appendChild(elem));
+    generateTableDatas(listJson.resposta)?.forEach(elem => jqTBODY.append(elem));
   });
 };
 
 const editModal = (id, nome) => {
   modal.clear();
 
-  const form = document.createElement('form');
-  const mainDiv = document.createElement('div');
-  mainDiv.id = 'mainDiv';
+  modal.append(
+          $(document.createElement('form')).append(
+      $(document.createElement('div')).attr('id', 'mainDiv').append( 
+        $(document.createElement('div')).append(
+            $(document.createElement('div')).text("ID"),
+            $(document.createElement('div')).text(id)
+        ),
+        $(document.createElement('div')).append(
+            $(document.createElement('div')).text("Nome"),
+            $(document.createElement('input'))
+                    .attr(
+                        {
+                            type: "text",
+                            placeholder: 'nome',
+                            required: true,
+                            minLength: 3,
+                            maxLength: 100,
+                            autocomplete: 'username'
+                        }
+                    ).val(nome)
+        ),
+      ),
+      $(document.createElement('div')).attr('id', 'sendDiv').append(
+              
+      )
+  ).get()
+            );
 
-  // tr do id
-  const divId = document.createElement('div');
-
-  const idNome = document.createElement('div');
-  idNome.innerText = 'ID';
-
-  const idValor = document.createElement('div');
-  idValor.innerHTML = id;
-
-  divId.append(idNome, idValor);
-  mainDiv.appendChild(divId);
-
-  // tr do nome
-  const divNome = document.createElement('div');
-
-  const nomeNome = document.createElement('div');
-  nomeNome.innerText = 'Nome';
-
-  const nomeValor = document.createElement('input');
-  nomeValor.placeholder = 'nome';
-  nomeValor.required = true;
-  nomeValor.minLength = 3;
-  nomeValor.maxLength = 100;
-  nomeValor.value = nome;
-
-  divNome.append(nomeNome, nomeValor);
-  mainDiv.appendChild(divNome);
 
   // depois a div
   const sendDiv = document.createElement('div');
@@ -185,11 +162,7 @@ const editModal = (id, nome) => {
       }
     });
   };
-  sendDiv.append(editInput, deleteInput);
-  sendDiv.id = 'sendDiv';
-
-  form.append(mainDiv, sendDiv);
-  modal.append(form);
+  
   modal.show();
 };
 
