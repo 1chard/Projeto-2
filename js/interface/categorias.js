@@ -6,8 +6,10 @@ import { ajax } from '../util/extra.js';
 import $ from '../jquery.js';
 
 const start = async () => {
+  notif.idle("Processando", "Aguarde o processamento...")
+
   const janela = document.getElementById('janela');
-  
+
   $('#janela').html(`<table>
   <thead>
     <tr>
@@ -18,67 +20,64 @@ const start = async () => {
   <tbody>
   </tbody>
   </table>`)
-            .append( 
-                $(document.createElement('form'))
-                .attr('id', "inserir")
-                .append( 
-                    $(document.createElement('input'))
-                    .attr(
-                        {
-                            type: "text",
-                            placeholder: 'nome',
-                            required: true,
-                            minLength: 3,
-                            maxLength: 100,
-                            autocomplete: 'username'
-                        }
-                    ).addClass('inserirInput')
-                )
-                .append(
-                    $(document.createElement('input'))
-                    .attr(
-                        {
-                            type: "button",
-                            id: 'inserirEnviar',
-                            value: 'Salvar no banco'
-                        }
-                    ).click( async function () {
-                        
-                
-                        
-    if (this.parentElement.reportValidity()) {
-      notif.idle('Enviando requisição', 'A requisição está sendo enviada');
+    .append(
+      $(document.createElement('form'))
+        .attr('id', "inserir")
+        .append(
+          $(document.createElement('input'))
+            .attr(
+              {
+                type: "text",
+                placeholder: 'nome',
+                required: true,
+                minLength: 3,
+                maxLength: 100,
+                autocomplete: 'username'
+              }
+            ).addClass('inserirInput')
+        )
+        .append(
+          $(document.createElement('input'))
+            .attr(
+              {
+                type: "button",
+                id: 'inserirEnviar',
+                value: 'Salvar no banco'
+              }
+            ).click(async function () {
+              if (this.parentElement.reportValidity()) {
+                notif.idle('Enviando requisição', 'A requisição está sendo enviada');
 
-      await ajax.post('backend/main.php', {
-        info: { nome: $(this.parentElement).find('input[placeholder="nome"]').val()},
-        tipo: 'categoria',
-        pedido: 'inserir'
-      }).then(response => {
-        notif.stopIdle();
-        if (response.ok) {
-          return response.json();
-        } else {
-          notif.error('Erro', response.status);
-        }
-      })?.then(async json => {
-        if (json.ok) {
-          notif.message('Sucesso', 'Enviado com sucesso');
-          regenTable();
-        } else {
-          notif.warning('Aviso', 'Erro nas informações');
-        }
-      });
-    } else { notif.error('Erro', 'Alguns campos não estão preenchidos corretamente'); }
-                    })
-                )
-            
-            )
+                await ajax.post('backend/main.php', {
+                  info: { nome: $(this.parentElement).find('input[placeholder="nome"]').val() },
+                  tipo: 'categoria',
+                  pedido: 'inserir'
+                }).then(response => {
+                  notif.stopIdle();
+                  if (response.ok) {
+                    return response.json();
+                  } else {
+                    notif.error('Erro', response.status);
+                  }
+                })?.then(async json => {
+                  if (json.ok) {
+                    notif.message('Sucesso', 'Enviado com sucesso');
+                    regenTable();
+                  } else {
+                    notif.warning('Aviso', 'Erro nas informações');
+                  }
+                });
+              } else { notif.error('Erro', 'Alguns campos não estão preenchidos corretamente'); }
+            })
+        )
+    )
 
   regenTable();
+  notif.stopIdle();
 };
 
 const deleteData = id => {
-  return ajax.post('backend/main.php', { 
+  return ajax.post('backend/main.php', {
     info: { id: id },
     tipo: 'categoria',
     pedido: 'deletar'
@@ -105,32 +104,32 @@ const editModal = (id, nome) => {
   modal.clear();
 
   modal.append(
-          $(document.createElement('form')).append(
-      $(document.createElement('div')).attr('id', 'mainDiv').append( 
+    $(document.createElement('form')).append(
+      $(document.createElement('div')).attr('id', 'mainDiv').append(
         $(document.createElement('div')).append(
-            $(document.createElement('div')).text("ID"),
-            $(document.createElement('div')).text(id)
+          $(document.createElement('div')).text("ID"),
+          $(document.createElement('div')).text(id)
         ),
         $(document.createElement('div')).append(
-            $(document.createElement('div')).text("Nome"),
-            $(document.createElement('input'))
-                    .attr(
-                        {
-                            type: "text",
-                            placeholder: 'nome',
-                            required: true,
-                            minLength: 3,
-                            maxLength: 100,
-                            autocomplete: 'username'
-                        }
-                    ).val(nome)
+          $(document.createElement('div')).text("Nome"),
+          $(document.createElement('input'))
+            .attr(
+              {
+                type: "text",
+                placeholder: 'nome',
+                required: true,
+                minLength: 3,
+                maxLength: 100,
+                autocomplete: 'username'
+              }
+            ).val(nome)
         ),
       ),
       $(document.createElement('div')).attr('id', 'sendDiv').append(
-              
+
       )
-  ).get()
-            );
+    ).get()
+  );
 
 
   // depois a div
@@ -162,7 +161,7 @@ const editModal = (id, nome) => {
       }
     });
   };
-  
+
   modal.show();
 };
 
