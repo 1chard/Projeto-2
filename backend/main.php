@@ -14,6 +14,8 @@ function import(string $toImport): void {
     require_once $_SERVER['DOCUMENT_ROOT'] . '/backend/' . $toImport;
 }
 
+error_log($_SERVER['SERVER_ADDR']);
+
 $body = json_decode(file_get_contents('php://input') ?: '{}');
 
 import('util/constantes.php');

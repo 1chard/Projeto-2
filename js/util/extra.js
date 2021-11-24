@@ -17,7 +17,28 @@ const ajax = {
         
         return fetch(url + '?' + link.toString());     
     }
-    
 }
 
-export { ajax };
+const functionTypeSafe = (callback, ...args) => {
+    if(callback.constructor !== Function)
+        throw new TypeError('callback is not a Function')
+    
+    args.forEach( (arg, index) => {
+        if( arg.constructor !== Function ){
+            throw new TypeError(typeof arg + " (at index " + index + ') is not a Function');
+        }
+    })
+    
+    return function (){
+        "use strict";
+        args.forEach( (arg, index) => {
+        if( arguments[index].constructor !== arg ){
+            throw new TypeError(typeof arguments[index] + " (at index " + index + ') is not of type ' + typeof arg.name);
+        }
+        });
+        
+        return callback.apply(null, arguments);
+    }
+}
+
+export { ajax, functionTypeSafe };
