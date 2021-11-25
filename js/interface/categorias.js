@@ -2,7 +2,7 @@
 
 import notif from '../util/notification.js';
 import modal from '../util/modal.js';
-import { ajax, functionTypeSafe } from '../util/extra.js';
+import { ajax } from '../util/extra.js';
 import $ from '../jquery.js';
 
 const start = async () => {
@@ -46,26 +46,21 @@ const start = async () => {
 							if (this.parentElement.reportValidity()) {
 								notif.idle('Enviando requisição', 'A requisição está sendo enviada');
 
-								const json = await ajax.post('backend/main.php', {
-									info: { nome: $(this.parentElement).find('input[placeholder="nome"]').val() },
-									tipo: 'categoria',
-									pedido: 'inserir'
-								}).then(response => {
-									notif.stopIdle();
-									if (response.ok) {
-										return response.json();
-									} else {
-										notif.error('Erro', response.status);
-										return null;
-									}
+								ajax.post(
+									'backend/main.php/categoria',
+									function (status, text) {
+										if (status === 200) {
+											notif.message('Sucesso', 'Enviado com sucesso');
+											regenTable();
+										}
+										else
+											notif.warning('Aviso', 'Erro nas informações');
+									},
+									function (status, text) {
+										notif.error('Erro', status);
+									}, {
+									nome: $(this.parentElement).find('input[placeholder="nome"]').val()
 								});
-
-								if (json !== null && json.ok) {
-									notif.message('Sucesso', 'Enviado com sucesso');
-									regenTable();
-								} else {
-									notif.warning('Aviso', 'Erro nas informações');
-								}
 							} else {
 								notif.error('Erro', 'Alguns campos não estão preenchidos corretamente');
 							}
@@ -78,26 +73,26 @@ const start = async () => {
 };
 
 const deleteData = id => {
-	return ajax.post('backend/main.php', {
-		info: { id: id },
-		tipo: 'categoria',
-		pedido: 'deletar'
-	}).then(r => r.ok);
+	ajax.delete('backend/main.php/categoria/' + id);
 };
 
 const editData = (id, nome) => {
-	return ajax.post('backend/main.php', {
-		info: { id: id, nome: nome },
-		tipo: 'categoria',
-		pedido: 'atualizar'
-	}).then(r => r.ok);
+	ajax.put('backend/main.php/categoria/' + id, null, null, {
+		nome: nome
+	});
 };
 
 const regenTable = () => {
-	ajax.get('/backend/main.php', { tipo: 'categoria', pedido: 'listar' }).then(t => t.json()).then(listJson => {
+	ajax.get('/backend/main.php/categoria', function (status, text) {
 		const jqTBODY = $('tbody').empty();
 
-		generateTableDatas(listJson.resposta).forEach(elem => jqTBODY.append(elem));
+		JSON.parse(text || "[]").forEach(e => jqTBODY.append(
+			$(document.createElement('tr')).append(
+				$(document.createElement('td')).text(e.id),
+				$(document.createElement('td')).text(e.nome)
+			).on("dragstart", null, null, (ev) => ev.dataTransfer.setData('id', e.id))
+			.click(() => editModal(e.id, e.nome)).get(0)
+		));
 	});
 };
 
@@ -137,56 +132,31 @@ const editModal = (id, nome) => {
 							editData(
 								id,
 								$(form).find('input[placeholder="nome"]').val()
-							).then(ok => {
-								if (ok) {
-									regenTable();
-									modal.hide();
-								}
-							});
+							);
+							regenTable();
+							modal.hide();
+
 						} else {
 							notif.error('Erro', 'Alguns campos não estão preenchidos corretamente');
 						}
+					}
+				), 
+				$(document.createElement('input')).attr({
+					type: 'button',
+					value: 'delete'
+				}).click(
+					function(){
+						deleteData(id);
+						regenTable();
+						modal.hide();
 					}
 				)
 			)
 		).get(0)
 	);
 
-	const deleteInput = document.createElement('input');
-	deleteInput.type = 'button';
-	deleteInput.value = 'delete';
-	deleteInput.onclick = () => {
-		deleteData(id).then(ss => {
-			if (ss) {
-				regenTable();
-				modal.hide();
-			}
-		});
-	};
-
 	modal.show();
 };
 
-const generateTableDatas = functionTypeSafe(array => {
-	return array.map(e => {
-		const tr = document.createElement('tr');
-
-		const tdId = document.createElement('td');
-		const tdNome = document.createElement('td');
-
-		tr.draggable = true;
-		tr.ondragstart = (ev) => ev.dataTransfer.setData('id', e.id);
-
-		tdId.textContent = e.id;
-		tdNome.textContent = e.nome;
-
-		tr.append(tdId, tdNome);
-
-		tr.onclick = () => editModal(e.id, e.nome);
-
-		return tr;
-	});
-}, Array);
 
 export { start };
-export default start;

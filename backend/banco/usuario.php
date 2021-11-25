@@ -19,7 +19,7 @@ class Usuario
 
     static public function inserir(Usuario $param): bool{
         $temp = new Banco();
-        return $temp->conexao->query("INSERT into usuario(nome, email, senha) values('$param->nome', '$param->email', '" . criptografar($param->senha, $param->email) . "');");
+        return $temp->conexao->real_query("INSERT into usuario(nome, email, senha) values('$param->nome', '$param->email', '" . criptografar($param->senha, $param->email) . "');");
     }
 
     static public function buscar(int $id): ?Usuario{
@@ -39,17 +39,19 @@ class Usuario
             array_push($retorno, new Usuario((int) $iterator['idusuario'], $iterator['nome'], $iterator['email'],  $iterator['senha']));
         }
 
-        return (count($retorno) > 0)? $retorno : null;
+        return $retorno;
     }
 
     public static function atualizar(Usuario $param): bool{
         $temp = new Banco();
-        return $temp->conexao->query("UPDATE usuario SET nome='$param->nome', email='$param->email', senha='" . criptografar($param->senha, $param->email) . "' where idusuario=$param->id;");
+        return $temp->conexao->real_query("UPDATE usuario SET nome='$param->nome', email='$param->email', senha='" . criptografar($param->senha, $param->email) . "' where idusuario=$param->id;");
     }
 
     public static function deletar(int $id): bool{
         $temp = new Banco();
-        return $temp->conexao->query("DELETE from usuario where idusuario=$id;");
+        $temp->conexao->query("DELETE from usuario where idusuario=$id;");
+
+		return $temp->conexao->affected_rows > 0;
     }
 
     public static function logar(Usuario $param): bool{

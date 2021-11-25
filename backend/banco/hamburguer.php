@@ -26,7 +26,7 @@ class Hamburguer {
         $temp = new Banco();
         $resultado = $temp->conexao->query("SELECT * from produto where idproduto=$id;")->fetch_assoc();
 
-        return $resultado? new Usuario(
+        return $resultado? new Hamburguer(
                 (int)       $resultado['idproduto'],
                 (string)    $resultado['nome'],
                 (float)     $resultado['valor'],
@@ -43,25 +43,28 @@ class Hamburguer {
 
         $retorno = array();
 
-        while ($iterator = $resultado->fetch_assoc()) {
-            array_push($retorno, new Hamburguer(
-                (int)       $iterator['idproduto'],
-                (string)    $iterator['nome'],
-                (float)     $iterator['valor'],
-                (int)       $iterator['idcategoria'],
-                (int)       $iterator['idimagem'],
-                (float)     $iterator['desconto'],
-                (bool)      $iterator['destaque']
-                ));
-        }
-
+		
+		if($resultado !== false){
+			while ($iterator = $resultado->fetch_assoc()) {
+				array_push($retorno, new Hamburguer(
+					(int)       $iterator['idproduto'],
+					(string)    $iterator['nome'],
+					(float)     $iterator['valor'],
+					(int)       $iterator['idcategoria'],
+					(int)       $iterator['idimagem'],
+					(float)     $iterator['desconto'],
+					(bool)      $iterator['destaque']
+					));
+			}	
+		}
+        
         return $retorno;
     }
 
 
     static public function inserir(Hamburguer $param): bool{
         $temp = new Banco();
-        return $temp->conexao->query("
+        return $temp->conexao->real_query("
                 INSERT into imagem(nome, valor, desconto, destaque, idimagem, idcategoria) values(
                 '$param->nome',
                 '$param->valor',

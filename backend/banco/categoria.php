@@ -14,7 +14,7 @@ class Categoria
 
     static public function inserir(Categoria $param): bool{
         $temp = new Banco();
-        return $temp->conexao->query("INSERT into categoria(nome) values('$param->nome');");
+        return $temp->conexao->real_query("INSERT into categoria(nome) values('$param->nome');");
     }
 
     static public function buscar(int $id): ?Categoria{
@@ -24,8 +24,9 @@ class Categoria
         return $resultado? new Categoria((int) $resultado['idcategoria'], $resultado['nome']) : null;
     }
 
-    static public function listar(): ?array{
+    static public function listar(): array{
         $temp = new Banco();
+
         $resultado = $temp->conexao->query("SELECT * from categoria;");
 
         $retorno = array();
@@ -34,16 +35,18 @@ class Categoria
             array_push($retorno, new Categoria((int) $iterator['idcategoria'], $iterator['nome']));
         }
 
-        return (count($retorno) > 0)? $retorno : null;
+        return $retorno;
     }
 
     public static function atualizar(Categoria $param): bool{
         $temp = new Banco();
-        return $temp->conexao->query("UPDATE categoria SET nome='$param->nome' where idcategoria=$param->id;");
+        return $temp->conexao->real_query("UPDATE categoria SET nome='$param->nome' where idcategoria=$param->id;");
     }
 
     public static function deletar(int $id): bool{
         $temp = new Banco();
-        return $temp->conexao->query("DELETE from categoria where idcategoria=$id;");
+        $temp->conexao->real_query("DELETE from categoria where idcategoria=$id;");
+
+		return $temp->conexao->affected_rows > 0;
     }
 }

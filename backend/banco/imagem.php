@@ -11,7 +11,7 @@ class Imagem {
 
     static public function inserir(Imagem $param): bool{
         $temp = new Banco();
-        return $temp->conexao->query("INSERT into imagem(nome) values('$param->nome');");
+        return $temp->conexao->real_query("INSERT into imagem(nome) values('$param->nome');");
     }
 
     static public function buscar(int $id): ?Imagem{
@@ -30,11 +30,13 @@ class Imagem {
 
     public static function atualizar(Imagem $param): bool{
         $temp = new Banco();
-        return $temp->conexao->query("UPDATE imagem SET nome='$param->nome' where idimagem=$param->id;");
+        return $temp->conexao->real_query("UPDATE imagem SET nome='$param->nome' where idimagem=$param->id;");
     }
 
     public static function deletar(int $id): bool{
         $temp = new Banco();
-        return $temp->conexao->query("DELETE from imagem where idimagem=$id;");
+        $temp->conexao->real_query("DELETE from imagem where idimagem=$id;");
+
+		return $temp->conexao->affected_rows > 0;
     }
 }

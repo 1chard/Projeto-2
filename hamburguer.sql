@@ -19,26 +19,26 @@ desc usuario;
 -- drop table if exists usuario;
 
 create table if not exists categoria(
-	idcategoria int unsigned primary key not null auto_increment,
+	idcategoria int unsigned primary key not null auto_increment unique,
     nome varchar(40) not null unique
 );
 
 create table if not exists contato(
-	idcontato int unsigned primary key not null auto_increment,
+	idcontato int unsigned primary key not null auto_increment unique,
     nome varchar(100) not null,
     email varchar(60) not null unique,
     celular varchar(11) not null
 );
 
 create table if not exists usuario(
-	idusuario int unsigned primary key not null auto_increment,
+	idusuario int unsigned primary key not null auto_increment unique,
     nome varchar(100) not null,
     email varchar(60) not null unique,
     senha varchar(32) not null
 );
 
 create table if not exists produto(
-	idproduto int unsigned primary key not null auto_increment,
+	idproduto int unsigned primary key not null auto_increment unique,
     nome varchar(40) not null,
     valor float not null,
     destaque bool default false,
@@ -55,8 +55,8 @@ create table if not exists produto(
 );
 
 create table if not exists imagem(
-	idimagem int unsigned primary key not null auto_increment,
-    nome varchar(50) not null
+	idimagem int unsigned primary key not null auto_increment unique,
+    nome varchar(50) not null unique,
 );
 
 -- alter table imagem modify column nome varchar(50) not null unique;
