@@ -56,7 +56,6 @@ class Usuario
 
     public static function logar(Usuario $param): bool{
         $temp = new Banco();
-        return $temp->conexao->query("SELECT idusuario from usuario where email='$param->email' and senha='" . criptografar($param->senha, $param->email) . "';")->fetch_assoc()
-            ? true : false;
+        return $temp->conexao->query("SELECT idusuario from usuario where email='$param->email' and senha='" . criptografar($param->senha, $param->email) . "';")->fetch_assoc() !== null;
     }
 }

@@ -1,41 +1,17 @@
-
-
-/*
-	<span class="input input--haruki">
-					<input class="input__field input__field--haruki" type="text" id="input-1" />
-					<label class="input__label input__label--haruki" for="input-1">
-						<span class="input__label-content input__label-content--haruki">First Name</span>
-					</label>
-				</span>
-*/
-/* Hoshi */
 .hoshi {
 	position: relative;
 	z-index: 1;
 	display: inline-block;
-	margin: 1em;
-	max-width: 400px;
-	width: calc(100% - 2em);
-	vertical-align: top;
 	overflow: hidden;
 }
 
 .hoshi > input{
-	margin-top: 1em;
-	padding: 0.85em 0.15em;
-	width: 100%;
-	background: transparent;
-	color: #595F6E;
-	
 	position: relative;
 	display: block;
-	float: right;
-	padding: 0.8em;
-	width: 60%;
+	padding: 0.6em;
+	padding-top: 0.9em;
 	border: none;
 	border-radius: 0;
-	background: #f0f0f0;
-	color: #aaa;
 	font-weight: bold;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	-webkit-appearance: none
@@ -45,21 +21,21 @@
 	outline: none;
 }
 
+.hoshi > input::placeholder{
+	visibility: 0;
+}
+
 .hoshi > label {
 	position: absolute;
 	bottom: 0;
 	left: 0;
-	padding: 0 0.25em;
 	width: 100%;
 	height: calc(100% - 1em);
 	text-align: left;
 	pointer-events: none;
 	
 	display: inline-block;
-	float: right;
-	padding: 0 1em;
-	width: 40%;
-	color: #6a7989;
+	padding: 0 0.7em;
 	font-weight: bold;
 	font-size: 70.25%;
 	-webkit-font-smoothing: antialiased;
@@ -74,41 +50,39 @@
 
 .hoshi > label > span {
 	position: absolute;
-	position: relative;
 	display: block;
-	padding: 1.6em 0;
 	width: 100%;
+	color: #aaa;
 }
 
 .hoshi > label::before,
 .hoshi > label::after {
 	content: '';
 	position: absolute;
-	top: 0;
 	left: 0;
+	top: 25%;
 	width: 100%;
 	height: calc(100% - 10px);
 	border-bottom: 1px solid #B9C1CA;
 }
 
 .hoshi > label::after {
-	margin-top: 2px;
 	border-bottom: 4px solid red;
 	-webkit-transform: translate3d(-100%, 0, 0);
 	transform: translate3d(-100%, 0, 0);
 	-webkit-transition: -webkit-transform 0.3s;
 	transition: transform 0.3s;
+	z-index: 1;
 }
 
-
-.hoshi > input:focus + .hoshi > label::after,
-.input--filled .input__label--hoshi::after {
+.hoshi > input:focus + label::after,
+.hoshi > input:not(:placeholder-shown) + label::after{
 	-webkit-transform: translate3d(0, 0, 0);
 	transform: translate3d(0, 0, 0);
 }
 
-.hoshi > input:focus + .hoshi > label > span,
-.input--filled .input__label-content--hoshi {
+.hoshi > input:focus + label > span,
+.hoshi > input:not(:placeholder-shown) + label > span {
 	-webkit-animation: anim-1 0.3s forwards;
 	animation: anim-1 0.3s forwards;
 }
@@ -121,13 +95,13 @@
 	}
 	51% {
 		opacity: 0;
-		-webkit-transform: translate3d(-1em, -40%, 0);
-		transform: translate3d(-1em, -40%, 0);
+		-webkit-transform: translate3d(-1em, -100%, 0);
+		transform: translate3d(-1em, -100%, 0);
 	}
 	100% {
 		opacity: 1;
-		-webkit-transform: translate3d(0, -40%, 0);
-		transform: translate3d(0, -40%, 0);
+		-webkit-transform: translate3d(0, -100%, 0);
+		transform: translate3d(0, -100%, 0);
 	}
 }
 
@@ -139,12 +113,12 @@
 	}
 	51% {
 		opacity: 0;
-		-webkit-transform: translate3d(-1em, -40%, 0);
-		transform: translate3d(-1em, -40%, 0);
+		-webkit-transform: translate3d(-1em, -90%, 0);
+		transform: translate3d(-1em, -90%, 0);
 	}
 	100% {
 		opacity: 1;
-		-webkit-transform: translate3d(0, -40%, 0);
-		transform: translate3d(0, -40%, 0);
+		-webkit-transform: translate3d(0, -90%, 0);
+		transform: translate3d(0, -90%, 0);
 	}
 }

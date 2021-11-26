@@ -1,10 +1,10 @@
 const p_processResponse = async (response, done, error) => {
 	const text = await response.text();
-	
+
 	if (response.ok && done) {
 		done.call(null, response.status, text);
 	}
-	else if(error){
+	else if (error) {
 		error.call(null, response.status, text);
 	}
 }
@@ -16,38 +16,38 @@ const p_post = (url, done, error, body, method) => {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify(body)
-	}).then( (response) => p_processResponse(response, done, error) );
+	}).then((response) => p_processResponse(response, done, error));
 }
 
 const p_get = (url, done, error, body, method) => {
 	let fetchPromise;
 
-		if(body !== null){
-			const link = new URLSearchParams();
-			Object.entries(body).forEach(entry => {
-				link.set(entry[0], entry[1]);
-			});
+	if (body !== null) {
+		const link = new URLSearchParams();
+		Object.entries(body).forEach(entry => {
+			link.set(entry[0], entry[1]);
+		});
 
-			fetchPromise = fetch(url + "?" + link.toString(), { method: method });
-		}
-		else{
-			fetchPromise = fetch(url, { method: method });
-		}
-		
-		fetchPromise.then( (response) => p_processResponse(response, done, error) );
+		fetchPromise = fetch(url + "?" + link.toString(), { method: method });
+	}
+	else {
+		fetchPromise = fetch(url, { method: method });
+	}
+
+	fetchPromise.then((response) => p_processResponse(response, done, error));
 }
 
 const ajax = {
-	post: function (url, done = function(statusOK, message){}, error = function(statusError, message){}, body = {}){
+	post: function (url, done = function (statusOK, message) { }, error = function (statusError, message) { }, body = {}) {
 		p_post(url, done, error, body, "post");
 	},
-	get: function (url, done = function(statusOK, message){}, error = function(statusError, message){}, body = null) {
+	get: function (url, done = function (statusOK, message) { }, error = function (statusError, message) { }, body = null) {
 		p_get(url, done, error, body, "get");
 	},
-	put: function (url, done = function(statusOK, message){}, error = function(statusError, message){}, body = {}){
+	put: function (url, done = function (statusOK, message) { }, error = function (statusError, message) { }, body = {}) {
 		p_post(url, done, error, body, "put");
 	},
-	delete: function (url, done = function(statusOK, message){}, error = function(statusError, message){}, body = null) {
+	delete: function (url, done = function (statusOK, message) { }, error = function (statusError, message) { }, body = null) {
 		p_get(url, done, error, body, "delete");
 	}
 };
@@ -74,4 +74,14 @@ const functionTypeSafe = (callback, ...args) => {
 	};
 };
 
-export { ajax, functionTypeSafe };
+const unparseCelular = val => {
+	return `(${val.substr(0, 2)}) ${val.substr(2, val.length - 6)}-${val.substr(val.length - 4)}`;
+};
+
+const parseCelular = val => {
+	let celparse = '';
+	val.match(/\d+/g).forEach(s => celparse += s);
+	return celparse;
+};
+
+export { ajax, functionTypeSafe, unparseCelular, parseCelular };

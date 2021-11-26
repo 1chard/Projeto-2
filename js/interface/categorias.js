@@ -32,7 +32,7 @@ const start = async () => {
 								maxLength: 100,
 								autocomplete: 'username'
 							}
-						).addClass('inserirInput')
+						)
 				)
 				.append(
 					$(document.createElement('input'))
@@ -48,7 +48,7 @@ const start = async () => {
 
 								ajax.post(
 									'backend/main.php/categoria',
-									function (status, text) {
+									(status, text) => {
 										if (status === 200) {
 											notif.message('Sucesso', 'Enviado com sucesso');
 											regenTable();
@@ -56,11 +56,10 @@ const start = async () => {
 										else
 											notif.warning('Aviso', 'Erro nas informações');
 									},
-									function (status, text) {
-										notif.error('Erro', status);
-									}, {
-									nome: $(this.parentElement).find('input[placeholder="nome"]').val()
-								});
+									(status, text) => notif.error('Erro', status)
+									, {
+										nome: $(this.parentElement).find('input[placeholder="nome"]').val()
+									});
 							} else {
 								notif.error('Erro', 'Alguns campos não estão preenchidos corretamente');
 							}
@@ -87,11 +86,11 @@ const regenTable = () => {
 		const jqTBODY = $('tbody').empty();
 
 		JSON.parse(text || "[]").forEach(e => jqTBODY.append(
-			$(document.createElement('tr')).append(
-				$(document.createElement('td')).text(e.id),
-				$(document.createElement('td')).text(e.nome)
-			).on("dragstart", null, null, (ev) => ev.dataTransfer.setData('id', e.id))
-			.click(() => editModal(e.id, e.nome)).get(0)
+			$(`<tr>
+				<td>${e.id}</td>
+				<td>${e.nome}</td>
+			</tr>
+			`).click(() => editModal(e.id, e.nome)).get(0)
 		));
 	});
 };
@@ -140,12 +139,12 @@ const editModal = (id, nome) => {
 							notif.error('Erro', 'Alguns campos não estão preenchidos corretamente');
 						}
 					}
-				), 
+				),
 				$(document.createElement('input')).attr({
 					type: 'button',
 					value: 'delete'
 				}).click(
-					function(){
+					function () {
 						deleteData(id);
 						regenTable();
 						modal.hide();
@@ -157,6 +156,5 @@ const editModal = (id, nome) => {
 
 	modal.show();
 };
-
 
 export { start };

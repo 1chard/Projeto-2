@@ -78,63 +78,32 @@ switch (filter_input(INPUT_SERVER,  'REQUEST_METHOD')) {
 				$resposta = Categoria::inserir(new Categoria(0, $body->nome));
 				break;
 			case "contato":
-				switch (filter_input(INPUT_POST,  'pedido')) {
-					case "inserir":
-						$status = Contato::inserir(new Contato(0, $body->info->nome, $body->info->email, $body->info->celular));
-						break;
-					case "atualizar":
-						$status = Contato::atualizar(new Contato((int) $body->info->id, $body->info->nome, $body->info->email, $body->info->celular));
-						break;
-					case 'deletar':
-						$status = Contato::deletar((int) $body->info->id);
-						break;
-				}
+				$resposta = Contato::inserir(new Contato(0, $body->nome, $body->email, $body->celular));
 				break;
 			case "usuario":
-				switch (filter_input(INPUT_POST,  'pedido')) {
-					case "inserir":
-						$status = Usuario::inserir(new Usuario(0, $body->info->nome, $body->info->email, $body->info->senha));
-						break;
-					case "atualizar":
-						$status = Usuario::atualizar(new Usuario((int) $body->info->id, $body->info->nome, $body->info->email, $body->info->senha));
-						break;
-					case 'deletar':
-						$status = Usuario::deletar((int) $body->info->id);
-						break;
-					case 'logar':
-						$status = Usuario::logar(new Usuario(0, '', $body->info->email, $body->info->senha));
-						break;
-					default;
-				}
+				$resposta = Usuario::inserir(new Usuario(0, $body->nome, $body->email, $body->senha));
+				break;
+			case "login":
+				$resposta = Usuario::logar(new Usuario(0, '', $body->email, $body->senha));
 				break;
 			case "hamburguer":
-				switch (filter_input(INPUT_POST,  'pedido')) {
-					case "inserir":
-						$filename = sha1($body->info->nome . rand() . time() . microtime()) . substr($body->info->nomearquivo, strrchr($body->info->nomearquivo, '.') + 1);
+				$filename = sha1($body->nome . rand() . time() . microtime()) . substr($body->nomearquivo, strrchr($body->nomearquivo, '.') + 1);
 
-						file_put_contents(".img/" . $filename, base64_decode($body->info->base64));
-						$status = (bool) Imagem::inserir(new Imagem(0, $filename));
-						if ($status) {
-							$imagemId = Imagem::buscarPorNome($filename)->id;
+				file_put_contents(".img/" . $filename, base64_decode($body->base64));
+				
+				$resposta = (bool) Imagem::inserir(new Imagem(0, $filename));
+				if ($resposta) {
+					$imagemId = Imagem::buscarPorNome($filename)->id;
 
-							$status = $status && Hamburguer::inserir(new Hamburguer(
-								0,
-								$body->info->nome,
-								(float) $body->info->valor,
-								(int) $body->info->categoria,
-								(int) $imagemId,
-								(float) $body->info->desconto ?? 0.0,
-								(bool) $body->info->destaque ?? false
-							));
-						}
-						break;
-					case "atualizar":
-						$status = Hamburguer::atualizar(new Hamburguer((int) $body->info->id, $body->info->nome, $body->info->email, $body->info->senha));
-						break;
-					case 'deletar':
-						$status = Hamburguer::deletar((int) $body->info->id);
-						break;
-					default;
+					$resposta = $resposta && Hamburguer::inserir(new Hamburguer(
+						0,
+						$body->nome,
+						(float) $body->valor,
+						(int) $body->categoria,
+						(int) $imagemId,
+						(float) $body->desconto ?? 0.0,
+						(bool) $body->destaque ?? false
+					));
 				}
 				break;
 		}
@@ -144,6 +113,12 @@ switch (filter_input(INPUT_SERVER,  'REQUEST_METHOD')) {
 			case "categoria":
 				$resposta = Categoria::atualizar(new Categoria($camposUrl[1], $body->nome));
 				break;
+			case "contato":
+				$resposta = Contato::atualizar(new Contato((int) $camposUrl[1], $body->nome, $body->email, $body->celular));
+				break;
+			case "usuario":
+				$resposta = Usuario::atualizar(new Usuario((int) $body->id, $body->nome, $body->email, $body->senha));
+				break;
 		}
 		break;
 	case 'DELETE':
@@ -151,19 +126,24 @@ switch (filter_input(INPUT_SERVER,  'REQUEST_METHOD')) {
 			case "categoria":
 				$resposta = Categoria::deletar((int) $camposUrl[1]);
 				break;
+			case "contato":
+				$resposta = Contato::deletar((int) $camposUrl[1]);
+				break;
+			case "usuario":
+				$resposta = Usuario::deletar((int) $camposUrl[1]);
+				break;
 		}
 
 		echo $resposta;
 
-		if(!$resposta)
+		if (!$resposta)
 			$resposta = null;
 		break;
-
 }
 
 
 if ($resposta !== null) {
-	if($resposta === "" || $resposta === array() || $resposta === false)
+	if ($resposta === "" || $resposta === array() || $resposta === false)
 		http_response_code(204);
 	else
 		http_response_code(200);
