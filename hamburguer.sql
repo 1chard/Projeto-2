@@ -1,3 +1,4 @@
+
 create database if not exists hamburgueria2021;
 
 use hamburgueria2021;
