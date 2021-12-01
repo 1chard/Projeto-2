@@ -16,16 +16,24 @@ class Imagem {
 
     static public function buscar(int $id): ?Imagem{
         $temp = new Banco();
-        $resultado = $temp->conexao->query("SELECT * from imagem where idimagem=$id;")->fetch_assoc();
-
-        return $resultado? new Imagem((int) $resultado['idimagem'], $resultado['nome']) : null;
+        
+		if($resultado = $temp->conexao->query("SELECT * from imagem where idimagem=$id;")){
+			$resultado = $resultado->fetch_assoc();
+			return new Imagem((int) $resultado['idimagem'], $resultado['nome']);
+		}
+		else
+        	return  null;
     }
     
     static public function buscarPorNome(string $nome): ?Imagem{
         $temp = new Banco();
-        $resultado = $temp->conexao->query("SELECT * from imagem where nome=$nome;")->fetch_assoc();
-
-        return $resultado? new Imagem((int) $resultado['idimagem'], $resultado['nome']) : null;
+        
+		if($resultado = $temp->conexao->query("SELECT * from imagem where nome='$nome';")){
+			$resultado = $resultado->fetch_assoc();
+			return new Imagem((int) $resultado['idimagem'], $resultado['nome']);
+		}
+		else
+        	return  null;
     }
 
     public static function atualizar(Imagem $param): bool{
@@ -35,7 +43,7 @@ class Imagem {
 
     public static function deletar(int $id): bool{
         $temp = new Banco();
-        $temp->conexao->real_query("DELETE from imagem where idimagem=$id;");
+        $temp->conexao->query("DELETE from imagem where idimagem=$id;");
 
 		return $temp->conexao->affected_rows > 0;
     }

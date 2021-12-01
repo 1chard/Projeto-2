@@ -24,9 +24,11 @@ class Hamburguer {
     
     public static function buscar(int $id): ?Hamburguer {
         $temp = new Banco();
-        $resultado = $temp->conexao->query("SELECT * from produto where idproduto=$id;")->fetch_assoc();
+        $resultado = $temp->conexao->query("SELECT * from produto where idproduto=$id;");
 
-        return $resultado? new Hamburguer(
+		if($resultado !== false){
+			$resultado = $resultado->fetch_assoc();
+			return new Hamburguer(
                 (int)       $resultado['idproduto'],
                 (string)    $resultado['nome'],
                 (float)     $resultado['valor'],
@@ -34,7 +36,10 @@ class Hamburguer {
                 (int)       $resultado['idimagem'],
                 (float)     $resultado['desconto'],
                 (bool)      $resultado['destaque']
-                ) : null;
+                );
+		}
+		else
+			return null;
     }
     
     static public function listar(): array{
@@ -43,7 +48,6 @@ class Hamburguer {
 
         $retorno = array();
 
-		
 		if($resultado !== false){
 			while ($iterator = $resultado->fetch_assoc()) {
 				array_push($retorno, new Hamburguer(
@@ -64,15 +68,31 @@ class Hamburguer {
 
     static public function inserir(Hamburguer $param): bool{
         $temp = new Banco();
-        return $temp->conexao->real_query("
-                INSERT into imagem(nome, valor, desconto, destaque, idimagem, idcategoria) values(
+        return $temp->conexao->query("
+                INSERT into produto(nome, valor, desconto, destaque, idimagem, idcategoria) values(
                 '$param->nome',
                 '$param->valor',
                 '$param->desconto',
-                '$param->destaque',
+                $param->destaque,
                 $param->idimagem,
-                $param->idcategoria,
+                $param->idcategoria
                 );
             ");
     }
+
+	public static function deletar(int $id): bool{
+		$temp = new Banco();
+
+		$resultado = $temp->conexao->query("SELECT idimagem from produto where idproduto=$id;");
+
+		$resultado = $resultado->fetch_assoc();
+
+		error_log(Imagem::deletar((int) $resultado['idimagem']) ? 'true' : 'false');
+
+		
+		$temp->conexao->query("DELETE from produto where idproduto=$id;");
+
+			return $temp->conexao->affected_rows > 0 && $resultado;
+		
+	}
 }

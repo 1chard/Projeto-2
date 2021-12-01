@@ -39,7 +39,7 @@ create table if not exists usuario(
 
 create table if not exists produto(
 	idproduto int unsigned primary key not null auto_increment unique,
-    nome varchar(40) not null,
+    nome varchar(40) not null unique,
     valor float not null,
     destaque bool default false,
     desconto float default '0.0',
@@ -56,7 +56,7 @@ create table if not exists produto(
 
 create table if not exists imagem(
 	idimagem int unsigned primary key not null auto_increment unique,
-    nome varchar(50) not null unique,
+    nome varchar(50) not null unique
 );
 
 -- alter table imagem modify column nome varchar(50) not null unique;
