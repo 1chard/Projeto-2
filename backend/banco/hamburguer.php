@@ -4,10 +4,10 @@ import("banco/conexao.php");
 
 class Hamburguer {
 
-    public $id = null;
-    public $nome = '';
-    public $valor = null;
-    public $desconto = 0.0;
+    public ?int $id = null;
+    public ?string $nome = '';
+    public ?float $valor = null;
+    public ?int $desconto = 0.0;
     public $destaque = false;
     public $idimagem = null;
     public $idcategoria = null;

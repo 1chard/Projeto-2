@@ -82,8 +82,8 @@ const start = async () => {
 				id: 'inserirEnviar',
 				value: 'Salvar no banco'
 			}).click(function () {
-				if (this.parentElement.reportValidity()) {
-					const file = $(this.parentElement).find('input[placeholder="imagem"]')[0].files[0];
+				if (form.reportValidity()) {
+					const file = $(form).find('input[placeholder="imagem"]')[0].files[0];
 					const filereader = new FileReader();
 
 					filereader.onload = (event) => {
@@ -116,7 +116,7 @@ const start = async () => {
 									base64: filereader.result.substring(filereader.result.lastIndexOf(',')),
 									nome: file.name,
 									mimetype: file.type
-								},
+								} ,
 							});
 					};
 
@@ -257,14 +257,17 @@ const editModal = (id, nome, valor, destaque, desconto, imagem, categoria) => {
 					value: 'edit'
 				}).click(
 					function () {
-						if (this.parentElement.reportValidity()) {
-							const file = $(this.parentElement).find('input[placeholder="imagem"]')[0].files[0];
+                                            const form = this.parentElement.parentElement;
+                                            
+						if (form.reportValidity()) {
+                                                    	const file = $(form).find('input[placeholder="imagem"]').get(0)?.files[0] ?? null;
 							const filereader = new FileReader();
 		
+						
+                                                        
 							filereader.onload = (event) => {
-		
 								notif.idle('Enviando requisição', 'A requisição está sendo enviada');
-								ajax.post(
+								ajax.put(
 									'backend/main.php/hamburguer',
 									(status, text) => {
 										console.log(text)
@@ -282,11 +285,11 @@ const editModal = (id, nome, valor, destaque, desconto, imagem, categoria) => {
 										notif.error('Erro', status)
 									}
 									, {
-										nome: $(this.parentElement).find('input[placeholder="nome"]').val(),
-										valor: $(this.parentElement).find('input[placeholder="valor"]').val(),
-										destaque: $(this.parentElement).find('input[placeholder="destaque"]').prop("checked"),
-										desconto: $(this.parentElement).find('input[placeholder="desconto"]').val(),
-										categoria: $(this.parentElement).find('select').val(),
+										nome: $(form).find('input[placeholder="nome"]').val(),
+										valor: $(form).find('input[placeholder="valor"]').val(),
+										destaque: $(form).find('input[placeholder="destaque"]').prop("checked"),
+										desconto: $(form).find('input[placeholder="desconto"]').val(),
+										categoria: $(form).find('select').val(),
 										imagem: file? {
 											base64: filereader.result.substring(filereader.result.lastIndexOf(',')),
 											nome: file.name,
@@ -295,7 +298,10 @@ const editModal = (id, nome, valor, destaque, desconto, imagem, categoria) => {
 									});
 							};
 		
-							filereader.readAsDataURL(file);
+                                                        if(file !== null)
+                                                            filereader.readAsDataURL(file);
+                                                        else
+                                                            filereader.onload()
 						} else {
 							notif.error('Erro', 'Alguns campos não estão preenchidos corretamente');
 						}

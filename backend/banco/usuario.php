@@ -5,12 +5,12 @@ import("util/criptografia.php");
 
 class Usuario
 {
-    public $id = null;
-    public $nome = '';
-    public $email = '';
-    public $senha = '';
+    public int $id = 0;
+    public ?string $nome;
+    public ?string $email;
+    public ?string $senha;
 
-    public function __construct(int $id, string $nome, string $email, string $senha ){
+    public function __construct(int $id, ?string $nome, ?string $email, ?string $senha ){
             $this->nome = $nome;
             $this->id = $id;
             $this->email = $email;
