@@ -4,10 +4,10 @@ import("banco/conexao.php");
 
 class Contato
 {
-    public $id = null;
-    public $nome = '';
-    public $email = '';
-    public $celular = '';
+    public int $id;
+    public string $nome;
+    public string $email;
+    public string $celular;
 
     public function __construct(int $id, string $nome, string $email, string $celular){
             $this->nome = $nome;

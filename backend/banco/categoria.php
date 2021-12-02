@@ -4,8 +4,8 @@ import("banco/conexao.php");
 
 class Categoria
 {
-    public $id = null;
-    public $nome = '';
+    public int $id;
+    public string $nome;
 
     public function __construct(int $id, string $nome){
             $this->nome = $nome;
@@ -14,7 +14,7 @@ class Categoria
 
     static public function inserir(Categoria $param): bool{
         $temp = new Banco();
-        return $temp->conexao->real_query("INSERT into categoria(nome) values('$param->nome');");
+        return $temp->conexao->query("INSERT into categoria(nome) values('$param->nome');");
     }
 
     static public function buscar(int $id): ?Categoria{
@@ -47,6 +47,6 @@ class Categoria
         $temp = new Banco();
         $temp->conexao->real_query("DELETE from categoria where idcategoria=$id;");
 
-		return $temp->conexao->affected_rows > 0;
+        return $temp->conexao->affected_rows > 0;
     }
 }

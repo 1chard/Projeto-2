@@ -1,7 +1,11 @@
--- drop database hamburgueria2021;
+select * from produto;
+UPDATE produto SET nome='fdafdf42341', valor='2', desconto='2', destaque=1, idimagem=10, idcategoria=5 where idimagem=8;
+
 create database if not exists hamburgueria2021;
 
 use hamburgueria2021;
+
+desc usuario;
 
 create table if not exists categoria(
 	idcategoria int unsigned primary key not null auto_increment unique,
@@ -29,7 +33,7 @@ create table if not exists imagem(
 
 create table if not exists produto(
 	idproduto int unsigned primary key not null auto_increment unique,
-    nome varchar(40) not null,
+    nome varchar(40) not null unique,
     valor float not null,
     destaque bool default false,
     desconto float default '0.0',

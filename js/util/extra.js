@@ -1,5 +1,6 @@
 const p_processResponse = async (response, done, error) => {
 	const text = await response.text();
+        console.log(text)
 
 	if (response.ok && done) {
 		done.call(null, response.status, text);

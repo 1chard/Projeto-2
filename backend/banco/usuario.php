@@ -5,12 +5,12 @@ import("util/criptografia.php");
 
 class Usuario
 {
-    public int $id = 0;
-    public ?string $nome;
-    public ?string $email;
-    public ?string $senha;
-
-    public function __construct(int $id, ?string $nome, ?string $email, ?string $senha ){
+    public int $id;
+    public string $nome;
+    public string $email;
+    public string $senha;
+    
+    public function __construct(int $id, string $nome, string $email, string $senha){
             $this->nome = $nome;
             $this->id = $id;
             $this->email = $email;
@@ -29,7 +29,7 @@ class Usuario
         return $resultado? new Usuario((int) $resultado['idusuario'], $resultado['nome'], $resultado['email'], $resultado['senha']) : null;
     }
 
-    static public function listar(): ?array{
+    static public function listar(): array{
         $temp = new Banco();
         $resultado = $temp->conexao->query("SELECT * from usuario;");
 

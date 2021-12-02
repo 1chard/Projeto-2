@@ -2,7 +2,6 @@
 
 import notif from '../util/notification.js';
 import modal from '../util/modal.js';
-import { createInputFromCallbacks } from '../util/input.js';
 import $ from '../jquery.js';
 import { ajax } from '../util/extra.js';
 
@@ -82,6 +81,8 @@ const start = async () => {
 				id: 'inserirEnviar',
 				value: 'Salvar no banco'
 			}).click(function () {
+                            const form = this.parentElement;
+                            
 				if (form.reportValidity()) {
 					const file = $(form).find('input[placeholder="imagem"]')[0].files[0];
 					const filereader = new FileReader();
@@ -107,11 +108,11 @@ const start = async () => {
 								notif.error('Erro', status)
 							}
 							, {
-								nome: $(this.parentElement).find('input[placeholder="nome"]').val(),
-								valor: $(this.parentElement).find('input[placeholder="valor"]').val(),
-								destaque: $(this.parentElement).find('input[placeholder="destaque"]').prop("checked"),
-								desconto: $(this.parentElement).find('input[placeholder="desconto"]').val(),
-								categoria: $(this.parentElement).find('select').val(),
+								nome: $(form).find('input[placeholder="nome"]').val(),
+								valor: $(form).find('input[placeholder="valor"]').val(),
+								destaque: $(form).find('input[placeholder="destaque"]').prop("checked"),
+								desconto: $(form).find('input[placeholder="desconto"]').val(),
+								categoria: $(form).find('select').val(),
 								imagem: {
 									base64: filereader.result.substring(filereader.result.lastIndexOf(',')),
 									nome: file.name,
@@ -285,7 +286,8 @@ const editModal = (id, nome, valor, destaque, desconto, imagem, categoria) => {
 										notif.error('Erro', status)
 									}
 									, {
-										nome: $(form).find('input[placeholder="nome"]').val(),
+                                                                            id: id,
+									nome: $(form).find('input[placeholder="nome"]').val(),
 										valor: $(form).find('input[placeholder="valor"]').val(),
 										destaque: $(form).find('input[placeholder="destaque"]').prop("checked"),
 										desconto: $(form).find('input[placeholder="desconto"]').val(),
@@ -302,6 +304,8 @@ const editModal = (id, nome, valor, destaque, desconto, imagem, categoria) => {
                                                             filereader.readAsDataURL(file);
                                                         else
                                                             filereader.onload()
+                                                        
+                                                        modal.hide();
 						} else {
 							notif.error('Erro', 'Alguns campos não estão preenchidos corretamente');
 						}

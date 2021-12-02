@@ -1,8 +1,8 @@
 <?php
 
 class Imagem {
-    public $id = null;
-    public $nome = '';
+    public int $id;
+    public string $nome;
 
     public function __construct(int $id, string $nome) {
         $this->nome = $nome;
@@ -22,7 +22,7 @@ class Imagem {
 			return new Imagem((int) $resultado['idimagem'], $resultado['nome']);
 		}
 		else
-        	return  null;
+                    return  null;
     }
     
     static public function buscarPorNome(string $nome): ?Imagem{
@@ -33,7 +33,7 @@ class Imagem {
 			return new Imagem((int) $resultado['idimagem'], $resultado['nome']);
 		}
 		else
-        	return  null;
+                    return  null;
     }
 
     public static function atualizar(Imagem $param): bool{
@@ -43,8 +43,14 @@ class Imagem {
 
     public static function deletar(int $id): bool{
         $temp = new Banco();
+        
+        
         $temp->conexao->query("DELETE from imagem where idimagem=$id;");
-
-		return $temp->conexao->affected_rows > 0;
+        if($temp->conexao->affected_rows > 0){
+            unlink("../img/" . self::buscar($id)->nome);
+            return true;
+        }
+        else
+            return false;
     }
 }
