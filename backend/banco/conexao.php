@@ -1,74 +1,87 @@
 <?php
+
 import('util/constantes.php');
 
-class Banco
-{
-	public mysqli $conexao;
-	private mysqli_stmt $stmt;
-	public string $tabela = '';
-	private int $modo;
+class Banco {
 
-	const MODO_INSERIR = 1;
+    public mysqli $conexao;
 
-	function __construct()
-	{
-		$this->conexao = mysqli_connect(HOSTNAME, USUARIO, SENHA, DATABASE);
-	}
+    const MODO_INSERIR = 1;
 
-	function __destruct()
-	{
-		mysqli_close($this->conexao);
-	}
+    function __construct() {
+        $this->conexao = mysqli_connect(HOSTNAME, USUARIO, SENHA, DATABASE);
+    }
 
-	public static function newInstance(): Banco
-	{
-		$s = new Banco();
+    function __destruct() {
+        mysqli_close($this->conexao);
+    }
 
-		return $s;
-	}
+    public static function newInstance(): Banco {
+        $s = new Banco();
 
-	public function inserir(string $onde, array $campos, array $valores): bool
-	{
+        return $s;
+    }
+    
+    public function inserir(string $onde, array $campos, array $valores): bool {
+        $strcampos = "";
+        $strvalores = "";
 
-		$valquery = "(";
-		$valvalues = "VALUES(";
+        foreach ($campos as $campo) {
+            $strcampos .= "$campo,";
+            $strvalores .= "?,";
+        }
+        
+        $strcampos[strlen($strcampos) - 1] = " ";
+        $strvalores[strlen($strvalores) - 1] = " ";
+        
+        echo "INSERT into $onde($strcampos) VALUES($strvalores)";
 
-		foreach ($campos as $campo) {
-			$valquery .= "$campo,";
-			$valvalues .= "?,";
-		}
+        $stmt = $this->conexao->prepare("INSERT into $onde($strcampos) VALUES($strvalores)");
 
-		$valquery[strlen($valquery) - 1] = ')';
-		$valvalues[strlen($valvalues) - 1] = ')';
+        $chars = "";
 
-		$this->stmt = $this->conexao->prepare("INSERT into ${onde}$valquery $valvalues");
+        foreach ($valores as $valorIterator) {
+            $chars .= self::char($valorIterator);
+        }
 
-		if ($this->stmt === null)
-			throw new Exception("Nenhum campo foi inserido");
+        $stmt->bind_param($chars, ...$valores);
+            return $stmt->execute();
+    }
+    
+    public function buscar(mixed $onde, string $extra = ""): array {
+        $strcampos = "";
+        $stronde = "";
+        $straonde = "";
 
-		$chars = "";
+        foreach ($campos as $campo) {
+            $strcampos .= "$campo,";
+            $strvalores .= "?,";
+        }
+        
+        $strcampos[strlen($strcampos) - 1] = " ";
+        $strvalores[strlen($strvalores) - 1] = " ";
+        
+        echo "INSERT into $onde($strcampos) VALUES($strvalores)";
 
-		foreach ($valores as $valorIterator) {
-			$chars .= self::char($valorIterator);
-		}
+        $stmt = $this->conexao->prepare("INSERT into $onde($strcampos) VALUES($strvalores)");
 
-		if (!$this->stmt->bind_param($chars, ...$valores))
-			throw new Exception("Algo deu errado");
+        $chars = "";
 
-		$result = $this->stmt->execute();
+        foreach ($valores as $valorIterator) {
+            $chars .= self::char($valorIterator);
+        }
 
-		return $result;
-	}
+        $stmt->bind_param($chars, ...$valores);
+            return $stmt->execute();
+    }
 
+    private static function char($test) : string{
+        if (is_int($test))
+            return 'i';
+        else if (is_float($test))
+            return 'd';
+        else
+            return 's';
+    }
 
-
-	private static function char(mixed $test)
-	{
-		if (is_int($test))
-			return 'i';
-		else if (is_float($test))
-			return 'd';
-		else
-			return 's';
-	}
 }

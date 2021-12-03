@@ -4,6 +4,7 @@ require_once './util/funcoes.php';
 
 strict();
 
+
 import('util/constantes.php');
 import('banco/categoria.php');
 import('banco/contato.php');

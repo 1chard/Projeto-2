@@ -1,13 +1,10 @@
 <?php
 
-
-
 if ($_SERVER["REQUEST_METHOD"] === 'POST') {
 
     $login = $_POST['email'] ?? "";
     $senha = $_POST['senha'] ?? "";
 
-    require_once '../backend/main.php';
     require_once '../backend/banco/usuario.php';
 
     $resultado = Usuario::logar(new Usuario(0, "", $login, $senha));
