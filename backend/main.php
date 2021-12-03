@@ -169,7 +169,8 @@ try {
     }
 } catch (Exception $e) {
     $status = 500;
-    echo $e->getMessage();
+	
+    echo $e->getMessage() . PHP_EOL . $e->getTraceAsString();
 }
 
 if ($resposta !== null) {

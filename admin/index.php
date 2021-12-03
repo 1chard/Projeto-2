@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] === 'POST') {
     require_once '../backend/main.php';
     require_once '../backend/banco/usuario.php';
 
-    $resultado = Usuario::logar(new Usuario(0, null, $login, $senha));
+    $resultado = Usuario::logar(new Usuario(0, "", $login, $senha));
 
     var_dump($resultado . "     " . criptografar($login, $senha) . "        " . $login . "      " . $senha);
     

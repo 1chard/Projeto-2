@@ -1,7 +1,9 @@
 <?php
 
 function strict() {
-    mysqli_report(MYSQLI_REPORT_ALL);
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+	error_reporting(E_ALL);
 
     set_error_handler(function ($severity, $message, $file, $line): void {
         if ( !((E_ALL & $severity)) ) {

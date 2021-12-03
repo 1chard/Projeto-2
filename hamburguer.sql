@@ -1,11 +1,6 @@
-select * from produto;
-UPDATE produto SET nome='fdafdf42341', valor='2', desconto='2', destaque=1, idimagem=10, idcategoria=5 where idimagem=8;
-
 create database if not exists hamburgueria2021;
 
 use hamburgueria2021;
-
-desc usuario;
 
 create table if not exists categoria(
 	idcategoria int unsigned primary key not null auto_increment unique,

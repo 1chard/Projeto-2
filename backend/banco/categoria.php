@@ -13,8 +13,9 @@ class Categoria
     }
 
     static public function inserir(Categoria $param): bool{
-        $temp = new Banco();
-        return $temp->conexao->query("INSERT into categoria(nome) values('$param->nome');");
+		return Banco::newInstance()->inserir("categoria", ['nome'], [$param->nome]);
+        //return $temp->conexao->query("INSERT into categoria(nome) values('$param->nome');");
+
     }
 
     static public function buscar(int $id): ?Categoria{
