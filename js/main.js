@@ -1,13 +1,14 @@
 'use strict';
 
-import Banner from './util/banner.js';
+import {ImageBanner} from './util/banner.js';
 import { temaClaro, temaEscuro } from './util/tema.js';
 import { createInputFromCallbacks } from './util/input.js';
 import notif from './util/notification.js';
 import $ from './jquery.js'
 import { parseCelular, ajax } from './util/extra.js'
 
-const banner = new Banner(document.getElementById('banner'));
+const banner = new ImageBanner(document.getElementById('banner'));
+banner.moveRight()
 
 if (window.matchMedia('screen and (prefers-color-scheme: dark)').matches) {
 	temaEscuro();
