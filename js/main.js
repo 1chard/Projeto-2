@@ -8,7 +8,7 @@ import $ from './jquery.js'
 import { parseCelular, ajax } from './util/extra.js'
 
 const banner = new ImageBanner(document.getElementById('banner'));
-banner.moveRight()
+banner.moveLeftOrEnd()
 
 if (window.matchMedia('screen and (prefers-color-scheme: dark)').matches) {
 	temaEscuro();

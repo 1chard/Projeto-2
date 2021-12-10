@@ -10,21 +10,21 @@ class Banner {
         this.$container.css("position", "absolute");
         this.$container.append(banner.children);
         this.$container.appendTo(banner);
+        this.$container.css("transform", "translateX(0px)")
     }
     moveBy(x) {
         this.#x += x;
-        this.$container.css("translate", parseInt(this.$container.css("left")) + x);
+        this.$container.css("transform", "translateX(" + (this.#x) + "px)");
     }
     moveTo(x) {
         this.#x = x;
-        this.$container.css("left", x);
+        this.$container.css("transform", `translateX(${x})`);
     }
 }
 
 class ImageBanner extends Banner{
     #main;
     #atual = 0;
-    #hold = false;
     
     constructor(banner){
         super(banner)
@@ -41,22 +41,63 @@ class ImageBanner extends Banner{
         })
     }
     
-    moveRight(timeToSleep){
-        if(!this.#hold){
-            this.#hold = true
-            
-            this.$container.css("trans")
-   
-            if(this.#atual >= this.length - 1)
-                this.moveTo(0)
-            else
-                this.moveBy(this.#main.innerWidth() * -1)
-        
-            this.$
-        }
-        
+    canMoveLeft(){
+        return this.#atual > 0;
+    }
     
-        
+    canMoveRight(){
+        return this.#atual < (this.length - 1);
+    }
+    
+    moveRight(){
+        if(this.canMoveRight()){
+            this.moveBy(this.#main.innerWidth() * -1)
+            this.#atual++;
+        }
+    }
+    
+    moveLeft(){
+        if(this.canMoveLeft()){
+            this.moveBy(this.#main.innerWidth())
+            this.#atual--;
+        }
+    }
+    
+    moveRightOrBeggining(){
+        if(this.canMoveRight()){
+            this.moveBy(this.#main.innerWidth() * -1)
+            this.#atual++;
+        }
+        else{
+            this.moveTo(0);
+            this.#atual = 0;
+        }
+    }
+    
+    moveLeftOrEnd(){
+        if(this.canMoveLeft()){
+            this.moveBy(this.#main.innerWidth())
+            this.#atual--;
+        }
+        else{
+            this.moveTo(this.#main.innerWidth() * (length - 1) * -1)
+            this.#atual = (length - 1)
+        }
+            
+    }
+}
+
+class PromisedImageBanner extends ImageBanner{
+    constructor(banner){
+        super (banner);
+    }
+    
+    waitAndMoveLeft(msToWait){
+        return new Promise( exit => {
+            this.moveLeft();
+            
+            setTimeout( () => exit(), msToWait);
+        })
     }
 }
 

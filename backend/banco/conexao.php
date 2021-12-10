@@ -22,7 +22,7 @@ class Banco {
         return $s;
     }
     
-    public function inserir(string $onde, array $campos, array $valores): bool {
+    public function inserir(string $sql, ...$param): bool {
         $strcampos = "";
         $strvalores = "";
 
