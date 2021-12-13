@@ -34,7 +34,7 @@ class ImageBanner extends Banner{
         
         this.$container.css("width", `${100 * this.length}%`)
         this.$container.css("background", "red")
-      
+
         this.$container.children().each( (i, e) => {
             e.style.width = `${100 / this.length}%`
             e.style.height = '100%'
@@ -99,6 +99,14 @@ class PromisedImageBanner extends ImageBanner{
             setTimeout( () => exit(), msToWait);
         })
     }
+
+	waitAndMoveRight(msToWait){
+        return new Promise( exit => {
+            this.moveRight();
+            
+            setTimeout( () => exit(), msToWait);
+        })
+    }
 }
 
-export {Banner, ImageBanner};
+export {Banner, ImageBanner, PromisedImageBanner};

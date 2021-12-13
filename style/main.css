@@ -1,28 +1,17 @@
-* {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
+*:root{
+	--cor-principal: #FFFFFF;
+	--cor-fundo: #F4F4F2;
+	--cor-principal-inversa: #333333;
+	--cor-principal-fonte-h1: #404040;
+	--cor-principal-fonte-h2: #00000095;
+	--cor-principal-fonte-h3-h4-p: #30303080;
+	
+	--cor-secundaria: #FFB74D;
+	--cor-secundaria-clara: #FFE97D;
+	--cor-secundaria-escura: #AC2900;
+	--cor-secundaria-fonte-h1-h2: var(--cor-principal);
+	--cor-secundaria-fonte-h3-h4-p: var(--cor-fundo);
 
-    font-weight: normal;
-    color: var(--text-color);
-    font-family: 'Roboto', sans-serif;
-}
-
-body {
-    background-color: var(--background-color);
-    min-height: 100vh;
-    min-width: 100%;
-}
-
-
-/*aqui vai a tema de cores, padrao escuro, determinado por js*/
-*:root {
-    --main-color: white;
-    --main-extra: white;
-    --background-color: white;
-    --background-extra: white;
-    --secondary-color: white;
-    --secondary-extra: white;
-    --text-color: white;
-    --text-extra: white;
+	background-color: #F4F4F2;
+	font-family: 'Roboto', sans-serif, serif;
 }
