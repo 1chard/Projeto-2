@@ -1,41 +1,52 @@
-import $ from "../jquery.js";
-
 class Banner {
     #x = 0;
 
+    /**
+     * @param {HTMLElement} banner 
+     */
     constructor(banner) {
         banner.style.position = 'relative';
 
-        this.$container = $(document.createElement('div'));
-        this.$container.css("position", "absolute");
-        this.$container.append(banner.children);
-        this.$container.appendTo(banner);
-        this.$container.css("transform", "translateX(0px)")
+        /**
+         * @type {HTMLElement}
+         */
+        this.container = $(document.createElement('div'));
+        this.container.style.position = "absolute";
+        this.container.replaceWith (...banner.children);
+        this.container.style.transform =  "translateX(0px)";
+
+        banner.replaceChild(this.container);
     }
     moveBy(x) {
         this.#x += x;
-        this.$container.css("transform", "translateX(" + (this.#x) + "px)");
+        this.container.style.transform = `translateX(${this.#x}px)`;
     }
     moveTo(x) {
         this.#x = x;
-        this.$container.css("transform", `translateX(${x})`);
+        this.container.style.transform = `translateX(${x})`;
     }
 }
 
 class ImageBanner extends Banner{
+    /**
+     * @type {HTMLElement} 
+     */
     #main;
     #atual = 0;
     
+    /**
+     * @param {HTMLElement} banner 
+     */
     constructor(banner){
         super(banner)
         
-        this.#main = $(banner)
-        this.length = this.$container.children().length;
+        this.#main = (banner)
+        this.length = this.container.childElementCount
         
-        this.$container.css("width", `${100 * this.length}%`)
-        this.$container.css("background", "red")
+        this.container.style.width = `${100 * this.length}%`
+        this.container.style.background = "red"
 
-        this.$container.children().each( (i, e) => {
+        this.container.childNodes.forEach( e => {
             e.style.width = `${100 / this.length}%`
             e.style.height = '100%'
         })
@@ -94,7 +105,7 @@ class PromisedImageBanner extends ImageBanner{
     
     waitAndMoveLeft(msToWait){
         return new Promise( exit => {
-            this.moveLeft();
+            this.moveLeftOrEnd();
             
             setTimeout( () => exit(), msToWait);
         })
@@ -102,7 +113,7 @@ class PromisedImageBanner extends ImageBanner{
 
 	waitAndMoveRight(msToWait){
         return new Promise( exit => {
-            this.moveRight();
+            this.moveRightOrBeggining();
             
             setTimeout( () => exit(), msToWait);
         })

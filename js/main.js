@@ -13,21 +13,28 @@ const colorDefault = () => {
 }
 
 document.querySelectorAll("header > .colorChooser > .container > *").forEach( a => {
-	console.log(Cookies.get())
+	const this_color = a.getAttribute("data-color")
+	const this_light = a.getAttribute("data-light")
+	const this_normal = a.getAttribute("data-normal")
+	const this_dark = a.getAttribute("data-dark")
+
 	a.colorChange = function(){
-		document.body.style.setProperty("--cor-secundaria-clara", this.getAttribute("data-light"));
-		document.body.style.setProperty("--cor-secundaria", this.getAttribute("data-normal"));
-		document.body.style.setProperty("--cor-secundaria-escura", this.getAttribute("data-dark"));
+		document.body.style.setProperty("--cor-secundaria-clara", this_light);
+		document.body.style.setProperty("--cor-secundaria", this_normal);
+		document.body.style.setProperty("--cor-secundaria-escura", this_dark);
 	}
 
 	if(Cookies.get("color") === a.getAttribute("data-color")){
-		data_light = a.getAttribute("data-light")
-		data_normal = a.getAttribute("data-normal")
-		data_dark = a.getAttribute("data-dark")
 		a.colorChange()
+		a.checked = true;
 	}
 
-	a.addEventListener("change", function(){ Cookies.set("color", this.getAttribute("data-color"), {expires: 365}) });
+	a.addEventListener("change", function(){ 
+		Cookies.set("color", this_color, {expires: 365}) 
+		data_light = this_light
+		data_normal = this_normal
+		data_dark = this_dark
+	});
 	a.addEventListener("mouseover", function(){ this.colorChange() })
 	a.addEventListener("mouseout", () => colorDefault())
 } );

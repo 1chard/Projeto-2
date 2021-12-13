@@ -24,12 +24,75 @@ header > h2{
 header > .options{
 	transform: translate(-50%, -50%);
 	left: 50%;
+	top: 50%;
+	display: flex;
+}
+
+header > .options > span{
+	position: relative;
+	padding: 15px 20px;
+	display: flex;
+}
+
+header > .options > span:hover{
+	/* font-weight: bold; */
+}
+
+header > .options > span > .more{
+	font-family: "Material Icons";
+	font-size: 1.3em;
+	align-items: center;
+	justify-content: center;
+}
+
+header > .options > span > .moreContent{
+	display: none;
+}
+
+header > .options > span:hover > .moreContent{
+	position: absolute;
+	display: flex;
+	
+	right: -1px;
+	top: 45px;
+	position: absolute;
+	background-color: var(--cor-principal-inversa);
+	min-width: 40px;
+	height: 55px;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	padding: 15px 0px;
+	border-radius: 10px;
+	z-index: 5;
+	list-style: none;
+}
+
+header > .options > span:hover > .moreContent > li{
+	padding: 0.50em 1.5em;
+	color: var(--cor-secundaria-fonte-h1-h2);
+}
+
+header > .options > span:hover > .moreContent > li:hover{
+	background-color: var(--cor-secundaria-escura);
+}
+
+header > .options > span > .moreContent::before{
+	position: absolute;
+	content: "";
+	padding: 6px;
+	background-color: var(--cor-principal-inversa);
+	right: 15px;
+	z-index: -1;
+	transform: rotate(45deg);
+	top: -5px;
 }
 
 header > .colorChooser{
 	display: flex;
 	align-items: center;
 	right: 10%;
+	padding: 5px;
 }
 
 header > .colorChooser:hover > .container{
@@ -41,7 +104,7 @@ header > .colorChooser > .container::before{
 	content: "";
 	padding: 6px;
 	background-color: var(--cor-principal-inversa);
-	right: 15px;
+	right: 20px;
 	z-index: -1;
 	transform: rotate(45deg);
 	top: -5px;
