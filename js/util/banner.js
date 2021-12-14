@@ -37,17 +37,15 @@ class ImageBanner extends Banner{
      */
     constructor(banner){
         super(banner)
-        
-        console.log(this.container.children)
 
-        this.#main = (banner)
+        this.#main = banner
         this.length = this.container.childElementCount
         
         this.container.style.width = `${100 * this.length}%`
 
         this.container.childNodes.forEach( e => {
             e.style.width = `${100 / this.length}%`
-            e.style.display = 'block'
+            e.style.height = 'inherit'
         })
     }
     
@@ -61,24 +59,25 @@ class ImageBanner extends Banner{
     
     moveRight(){
         if(this.canMoveRight()){
-            this.moveBy(this.#main.innerWidth() * -1)
+            this.moveBy(this.#main.offsetWidth * -1)
             this.#atual++;
         }
     }
     
     moveLeft(){
         if(this.canMoveLeft()){
-            this.moveBy(this.#main.innerWidth())
+            this.moveBy(this.#main.offsetWidth)
             this.#atual--;
         }
     }
     
     moveRightOrBeggining(){
         if(this.canMoveRight()){
-            this.moveBy(this.#main.innerWidth() * -1)
+            this.moveBy(this.#main.offsetWidth * -1)
             this.#atual++;
         }
         else{
+
             this.moveTo(0);
             this.#atual = 0;
         }
@@ -86,12 +85,12 @@ class ImageBanner extends Banner{
     
     moveLeftOrEnd(){
         if(this.canMoveLeft()){
-            this.moveBy(this.#main.innerWidth())
+            this.moveBy(this.#main.offsetWidth)
             this.#atual--;
         }
         else{
-            this.moveTo(this.#main.innerWidth() * (length - 1) * -1)
-            this.#atual = (length - 1)
+            this.moveBy(this.#main.offsetWidth * (this.length - 1) * -1)
+            this.#atual = (this.length - 1)
         }
             
     }

@@ -4,7 +4,8 @@ import Cookies from "./cookie.js"
 import { PromisedImageBanner } from "./util/banner.js"
 
 // Banner
-console.log(new PromisedImageBanner(document.querySelector(".banner")))
+const banner = new PromisedImageBanner(document.querySelector(".banner"))
+banner.moveLeftOrEnd()
 
 // Sistema de cores
 

@@ -225,10 +225,18 @@ header>.colorChooser::after {
 .banner > *{
     display: block;
     height: inherit;
+
+    transition: transform 0.6s 0.1s;
 }
 
 #image1{
     background-image: url(../img/banner.png);
+    background-size: 100% 100%;
+}
+
+#image1{
+    background-color: green;
+    background-size: 100% 100%;
 }
 
 /*responsavel*/
