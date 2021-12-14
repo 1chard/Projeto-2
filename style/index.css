@@ -1,160 +1,263 @@
-*{
-	padding: 0;
-	margin: 0;
-	box-sizing: border-box;
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
 }
 
-header{
-	height: 80px;
-	color: var(--cor-principal-fonte-h2);
-	background-color: var(--cor-principal);
-	position: relative;
+
+/*UTIL*/
+
+.custom[type='radio'] {
+    appearance: none;
+    border: 2px solid #8f8f9d;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: white;
 }
 
-header > *{
-	position: absolute;
-	top: 50%;
-	transform: translateY(-50%);
+.custom[type='radio']:checked {
+    border-color: var(--cor-secundaria-escura);
 }
 
-header > h2{
-	left: 10%;
+.custom[type='radio']:checked::after {
+    display: block;
+    background-color: var(--cor-secundaria-escura);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
-header > .options{
-	transform: translate(-50%, -50%);
-	left: 50%;
-	top: 50%;
-	display: flex;
+.custom[type='radio']::after {
+    content: "";
+    display: none;
+    position: relative;
 }
 
-header > .options > span{
-	position: relative;
-	padding: 15px 20px;
-	display: flex;
+*::selection {
+    color: var(--cor-secundaria-fonte-h1-h2);
+    background-color: var(--cor-secundaria);
 }
 
-header > .options > span:hover{
-	/* font-weight: bold; */
+
+/*Cabecalho*/
+
+header {
+    color: var(--cor-principal-fonte-h2);
+    background-color: var(--cor-principal);
+    position: relative;
 }
 
-header > .options > span > .more{
-	font-family: "Material Icons";
-	font-size: 1.3em;
-	align-items: center;
-	justify-content: center;
+header>.options {
+    display: flex;
 }
 
-header > .options > span > .moreContent{
-	display: none;
+header>.options>.option {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 0px;
+    margin: 0px 10px;
 }
 
-header > .options > span:hover > .moreContent{
-	position: absolute;
-	display: flex;
-	
-	right: -1px;
-	top: 45px;
-	position: absolute;
-	background-color: var(--cor-principal-inversa);
-	min-width: 40px;
-	height: 55px;
-	align-items: center;
-	justify-content: center;
-	gap: 10px;
-	padding: 15px 0px;
-	border-radius: 10px;
-	z-index: 5;
-	list-style: none;
+header>.options>.option:hover {
+    font-weight: bold;
 }
 
-header > .options > span:hover > .moreContent > li{
-	padding: 0.50em 1.5em;
-	color: var(--cor-secundaria-fonte-h1-h2);
+header>.options>.option>span {
+    font-family: "Material Icons";
+    font-size: 1.3em;
+    align-items: center;
+    justify-content: center;
 }
 
-header > .options > span:hover > .moreContent > li:hover{
-	background-color: var(--cor-secundaria-escura);
+header>.options>.option>ul {
+    display: none;
 }
 
-header > .options > span > .moreContent::before{
-	position: absolute;
-	content: "";
-	padding: 6px;
-	background-color: var(--cor-principal-inversa);
-	right: 15px;
-	z-index: -1;
-	transform: rotate(45deg);
-	top: -5px;
+header>.options>.option:hover>.moreContent {
+    position: absolute;
+    display: flex;
+    right: -15px;
+    top: 45px;
+    position: absolute;
+    background-color: var(--cor-principal-inversa);
+    min-width: 40px;
+    height: 55px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 0px;
+    border-radius: 10px;
+    z-index: 5;
+    list-style: none;
 }
 
-header > .colorChooser{
-	display: flex;
-	align-items: center;
-	right: 10%;
-	padding: 5px;
+header>.options>.option>ul::before {
+    position: absolute;
+    content: "";
+    padding: 6px;
+    background-color: var(--cor-principal-inversa);
+    right: 20px;
+    z-index: -1;
+    transform: rotate(45deg);
+    top: -5px;
 }
 
-header > .colorChooser:hover > .container{
-	display: flex;
+header>.options>.option:hover>ul>li {
+    padding: 0.50em 1.5em;
+    color: var(--cor-secundaria-fonte-h1-h2);
 }
 
-header > .colorChooser > .container::before{
-	position: absolute;
-	content: "";
-	padding: 6px;
-	background-color: var(--cor-principal-inversa);
-	right: 20px;
-	z-index: -1;
-	transform: rotate(45deg);
-	top: -5px;
+header>.options>.option:hover>ul>li:hover {
+    background-color: var(--cor-secundaria-escura);
 }
 
-header > .colorChooser > .container{
-	right: 10px;
-	top: 50px;
-	position: absolute;
-	background-color: var(--cor-principal-inversa);
-	min-width: 40px;
-	height: 55px;
-	align-items: center;
-	justify-content: center;
-	gap: 10px;
-	padding: 0px 15px;
-	border-radius: 10px;
-	z-index: 5;
-	display: none;
+header>.colorChooser {
+    display: flex;
+    align-items: center;
+    padding: 5px;
 }
 
-header > .colorChooser > .container > *{
-	appearance: none;
-	width: 45px;
-	height: 45px;
-	border-radius: 50px;
+header>.colorChooser:hover>.container {
+    display: flex;
 }
 
-header > .colorChooser > .container > *:checked{
-	border: 3px solid red;
+header>.colorChooser>.container::before {
+    position: absolute;
+    content: "";
+    padding: 6px;
+    background-color: var(--cor-principal-inversa);
+    right: 20px;
+    z-index: -1;
+    transform: rotate(45deg);
+    top: -5px;
 }
 
-header > .colorChooser::before{
-	display: block;
-	content: "";
-	width: 40px;
-	height: 40px;
-	border: 2px solid black;
-	background-color: var(--cor-secundaria-clara);
-	border-radius: 100%;
+header>.colorChooser>.container {
+    right: 10px;
+    top: 55px;
+    position: absolute;
+    background-color: var(--cor-principal-inversa);
+    min-width: 40px;
+    height: 55px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0px 15px;
+    border-radius: 10px;
+    z-index: 5;
+    display: none;
 }
 
-header > .colorChooser::after{
-	position: relative;
-	left: -10px;
-	display: block;
-	content: "arrow_drop_down";
-	font-family: "Material Icons";
-	font-size: 42px;
+header>.colorChooser>.container>* {
+    appearance: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50px;
 }
 
-/* 58.875em */
-/* 101.5em */
+header>.colorChooser>.container>*:checked {
+    border: 3px solid red;
+}
+
+header>.colorChooser::before {
+    display: block;
+    content: "";
+    width: 40px;
+    height: 40px;
+    border: 2px solid black;
+    background-color: var(--cor-secundaria-clara);
+    border-radius: 100%;
+}
+
+header>.colorChooser::after {
+    position: relative;
+    left: -10px;
+    display: block;
+    content: "arrow_drop_down";
+    font-family: "Material Icons";
+    font-size: 42px;
+}
+
+@media (min-width: 0px) {
+    header {
+        height: 120px;
+    }
+    header>* {
+        position: absolute;
+    }
+    header>h2 {
+        left: 10%;
+        top: 33%;
+        transform: translateY(-50%);
+    }
+    header>.options {
+        transform: translate(-50%, 0%);
+        left: 50%;
+        bottom: 0%;
+    }
+    header>.colorChooser {
+        right: 10%;
+        top: 33%;
+        transform: translateY(-50%);
+    }
+}
+
+@media (min-width:961px) {
+    header {
+        height: 80px;
+    }
+    header>h2 {
+        top: 50%;
+        left: 10%;
+        transform: translateY(-50%);
+    }
+    header>.options {
+        transform: translate(-50%, -50%);
+        left: 50%;
+        top: 50%;
+    }
+    header>.colorChooser {
+        right: 10%;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+
+@media (min-width:1025px) {
+    header>h2 {
+        left: calc( (-308px) + 40%)
+    }
+    header>.colorChooser {
+        right: calc( (-308px) + 40%);
+    }
+}
+
+@media (min-width:320px) {
+    /* smartphones, iPhone, portrait 480x320 phones */
+}
+
+@media (min-width:481px) {
+    /* portrait e-readers (Nook/Kindle), smaller tablets @ 600 or @ 640 wide. */
+}
+
+@media (min-width:641px) {
+    /* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones */
+}
+
+@media (min-width:961px) {
+    /* tablet, landscape iPad, lo-res laptops ands desktops */
+}
+
+@media (min-width:1025px) {
+    /* big landscape tablets, laptops, and desktops */
+}
+
+@media (min-width:1281px) {
+    /* hi-res laptops and desktops */
+}
