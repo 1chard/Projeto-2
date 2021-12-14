@@ -5,17 +5,15 @@ class Banner {
      * @param {HTMLElement} banner 
      */
     constructor(banner) {
-        banner.style.position = 'relative';
-
         /**
          * @type {HTMLElement}
          */
-        this.container = $(document.createElement('div'));
-        this.container.style.position = "absolute";
-        this.container.replaceWith (...banner.children);
+        this.container = document.createElement('div');
+        this.container.style.position = "relative";
+        this.container.append(...banner.children);
         this.container.style.transform =  "translateX(0px)";
 
-        banner.replaceChild(this.container);
+        banner.append(this.container);
     }
     moveBy(x) {
         this.#x += x;
@@ -40,15 +38,16 @@ class ImageBanner extends Banner{
     constructor(banner){
         super(banner)
         
+        console.log(this.container.children)
+
         this.#main = (banner)
         this.length = this.container.childElementCount
         
         this.container.style.width = `${100 * this.length}%`
-        this.container.style.background = "red"
 
         this.container.childNodes.forEach( e => {
             e.style.width = `${100 / this.length}%`
-            e.style.height = '100%'
+            e.style.display = 'block'
         })
     }
     
@@ -103,6 +102,10 @@ class PromisedImageBanner extends ImageBanner{
         super (banner);
     }
     
+    /**
+     * @param {number} msToWait 
+     * @returns {Promise<Void>}
+     */
     waitAndMoveLeft(msToWait){
         return new Promise( exit => {
             this.moveLeftOrEnd();
@@ -111,6 +114,10 @@ class PromisedImageBanner extends ImageBanner{
         })
     }
 
+    /**
+     * @param {number} msToWait 
+     * @returns {Promise<Void>}
+     */
 	waitAndMoveRight(msToWait){
         return new Promise( exit => {
             this.moveRightOrBeggining();

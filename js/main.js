@@ -1,6 +1,12 @@
 'use strict';
 
 import Cookies from "./cookie.js"
+import { PromisedImageBanner } from "./util/banner.js"
+
+// Banner
+console.log(new PromisedImageBanner(document.querySelector(".banner")))
+
+// Sistema de cores
 
 let data_light = document.body.style.getPropertyValue("--cor-secundaria-clara")
 let data_normal = document.body.style.getPropertyValue("--cor-secundaria")
