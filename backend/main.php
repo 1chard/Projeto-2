@@ -11,16 +11,23 @@ import('banco/contato.php');
 import('banco/usuario.php');
 import('banco/hamburguer.php');
 import('banco/imagem.php');
-import('util/urlparser.php');
+import('util/request.php');
+require_once './endparser.php';
 
 $resposta = null;
-$camposUrl = fields();
+$camposUrl = Request::$parameters;
 $status = (int) 0;
 
-$body = json_decode(file_get_contents('php://input') ?: '{}');
-
 try {
-    switch (filter_input(INPUT_SERVER, 'REQUEST_METHOD')) {
+    
+
+    session_start();
+    if(!Usuario::logar($_SESSION['email'] ?? '', $_SESSION['senha'] ?? '') && count(Request::$parameters) > 0){
+        $resposta = endParserDeslogado();
+    }
+
+
+    switch ($_SERVER['REQUEST_METHOD']) {
         case 'GET':
             switch ($camposUrl[0] ?? null) {
                 case "categoria":
@@ -82,7 +89,7 @@ try {
                     $resposta = Usuario::inserir(new Usuario(0, $body->nome, $body->email, $body->senha));
                     break;
                 case "login":
-                    $resposta = Usuario::logar(new Usuario(0, '', $body->email, $body->senha));
+                    $resposta = Usuario::logar($body->email, $body->senha);
                     break;
                 case "hamburguer":
                     $filename = sha1($body->nome . rand() . time() . microtime()) . '.' . substr($body->imagem->mimetype, strrpos($body->imagem->mimetype, '/') + 1);

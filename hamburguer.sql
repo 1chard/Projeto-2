@@ -42,3 +42,5 @@ create table if not exists produto(
     foreign key (idimagem)
     references imagem(idimagem)
 );
+
+SELECT produto.*, imagem.nome as imagem, categoria.nome as categoria from produto INNER JOIN imagem on imagem.idimagem = produto.idimagem inner join categoria where categoria.idcategoria = produto.idcategoria;

@@ -1,3 +1,14 @@
+<?php
+    require_once 'backend/util/funcoes.php';
+    require_once 'backend/banco/usuario.php';
+    require_once 'backend/util/request.php';
+
+    session_start();
+    
+    if(!Usuario::logar($_SESSION['email'] ?? '', $_SESSION['senha'] ?? ''))
+        die;
+?>
+
 <!DOCTYPE html>
 <html>
 

@@ -12,5 +12,5 @@ function strict() {
 
 
 function import(string $toImport) {
-    require_once filter_input(INPUT_SERVER, 'DOCUMENT_ROOT') . '/backend/' . $toImport;
+    require_once $_SERVER['DOCUMENT_ROOT'] . '/backend/' . $toImport;
 }

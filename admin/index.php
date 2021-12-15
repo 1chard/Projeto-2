@@ -5,16 +5,25 @@ if ($_SERVER["REQUEST_METHOD"] === 'POST') {
     $login = $_POST['email'] ?? "";
     $senha = $_POST['senha'] ?? "";
 
-    require_once '../backend/banco/usuario.php';
+    require_once '../backend/util/funcoes.php';
+    strict();
+    import('banco/usuario.php');
+    import('util/response.php');
 
-    $resultado = Usuario::logar(new Usuario(0, "", $login, $senha));
+    $resultado = Usuario::logar($login, $senha);
 
-    var_dump($resultado . "     " . criptografar($login, $senha) . "        " . $login . "      " . $senha);
+    var_dump($resultado . "     " . criptografar($senha, $login) . "        " . $login . "      " . $senha);
     
-    if ($resultado)
-        header("location: dashboard.html");
+    if ($resultado){
+        session_start();
+        $_SESSION["email"] = $login;
+        $_SESSION["senha"] = $senha;
+        header("location: dashboard.php");
+    }
     else
         echo "Login incorreto";
+
+    
 }
 ?>
 
