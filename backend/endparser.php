@@ -1,6 +1,6 @@
 <?php
 
-function endParserDeslogado()
+function getParserDeslogado()
 {
     $resposta = null;
 

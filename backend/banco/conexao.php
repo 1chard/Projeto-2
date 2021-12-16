@@ -1,87 +1,59 @@
 <?php
 
 import('util/constantes.php');
+import('util/dummyconstructor.php');
+
+
+
 
 class Banco {
 
-    public mysqli $conexao;
+    public static mysqli $conexao;
 
-    const MODO_INSERIR = 1;
+	private static function parser(string $sql, array $parametros): string {
+		foreach($parametros as &$value){
+			$pos = strpos($sql, '?');
+			if ($pos !== false) {
+				$sql = substr_replace($sql, Banco::$conexao->real_escape_string((string) $value), $pos, strlen('?'));
+			}
+		}	
 
-    function __construct() {
-        $this->conexao = mysqli_connect(HOSTNAME, USUARIO, SENHA, DATABASE);
+		unset($value);
+		return $sql;
+	}
+
+    public static function inserir(string $sql, ...$parametros): bool {
+		return Banco::$conexao->query(self::parser($sql, $parametros));
     }
 
-    function __destruct() {
-        mysqli_close($this->conexao);
-    }
+	public static function atualizar(string $sql, ...$parametros): int {
+		Banco::$conexao->query(self::parser($sql, $parametros));
 
-    public static function newInstance(): Banco {
-        $s = new Banco();
-
-        return $s;
-    }
-    
-    public function inserir(string $sql, ...$param): bool {
-        $strcampos = "";
-        $strvalores = "";
-
-        foreach ($campos as $campo) {
-            $strcampos .= "$campo,";
-            $strvalores .= "?,";
-        }
-        
-        $strcampos[strlen($strcampos) - 1] = " ";
-        $strvalores[strlen($strvalores) - 1] = " ";
-        
-        echo "INSERT into $onde($strcampos) VALUES($strvalores)";
-
-        $stmt = $this->conexao->prepare("INSERT into $onde($strcampos) VALUES($strvalores)");
-
-        $chars = "";
-
-        foreach ($valores as $valorIterator) {
-            $chars .= self::char($valorIterator);
-        }
-
-        $stmt->bind_param($chars, ...$valores);
-            return $stmt->execute();
+		return Banco::$conexao->affected_rows;
     }
     
-    public function buscar(mixed $onde, string $extra = ""): array {
-        $strcampos = "";
-        $stronde = "";
-        $straonde = "";
+    public static function listar(string $sql, ...$parametros): array {
+		$retorno = array();
+		
+		$queryResult = Banco::$conexao->query(self::parser($sql, $parametros));
 
-        foreach ($campos as $campo) {
-            $strcampos .= "$campo,";
-            $strvalores .= "?,";
-        }
-        
-        $strcampos[strlen($strcampos) - 1] = " ";
-        $strvalores[strlen($strvalores) - 1] = " ";
-        
-        echo "INSERT into $onde($strcampos) VALUES($strvalores)";
+		while($iterator = $queryResult->fetch_assoc()){
+			array_push($retorno, $iterator);
+		}
 
-        $stmt = $this->conexao->prepare("INSERT into $onde($strcampos) VALUES($strvalores)");
-
-        $chars = "";
-
-        foreach ($valores as $valorIterator) {
-            $chars .= self::char($valorIterator);
-        }
-
-        $stmt->bind_param($chars, ...$valores);
-            return $stmt->execute();
+		return $retorno;
     }
 
-    private static function char($test) : string{
-        if (is_int($test))
-            return 'i';
-        else if (is_float($test))
-            return 'd';
-        else
-            return 's';
+	public static function buscar(string $sql, ...$parametros): ?array {
+		return Banco::$conexao->query(self::parser($sql, $parametros))->fetch_assoc();
+    }
+
+	public static function deletar(string $sql, ...$parametros): int {
+		Banco::$conexao->real_query(self::parser($sql, $parametros));
+
+        return Banco::$conexao->affected_rows;
     }
 
 }
+
+Banco::$conexao = mysqli_connect(HOSTNAME, USUARIO, SENHA, DATABASE);

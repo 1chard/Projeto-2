@@ -13,26 +13,19 @@ class Categoria
     }
 
     static public function inserir(Categoria $param): bool{
-		return Banco::newInstance()->inserir("categoria", ['nome'], [$param->nome]);
-        //return $temp->conexao->query("INSERT into categoria(nome) values('$param->nome');");
-
+		return Banco::inserir("INSERT into categoria(nome) values('?');", $param->nome);
     }
 
     static public function buscar(int $id): ?Categoria{
-        $temp = new Banco();
-        $resultado = $temp->conexao->query("SELECT * from categoria where idcategoria=$id;")->fetch_assoc();
+        $resultado = Banco::buscar("SELECT * from categoria where idcategoria=?;", $id);
 
         return $resultado? new Categoria((int) $resultado['idcategoria'], $resultado['nome']) : null;
     }
 
     static public function listar(): array{
-        $temp = new Banco();
-
-        $resultado = $temp->conexao->query("SELECT * from categoria;");
-
         $retorno = array();
 
-        while ($iterator = $resultado->fetch_assoc()) {
+        foreach (Banco::listar("SELECT * from categoria;") as $iterator) {
             array_push($retorno, new Categoria((int) $iterator['idcategoria'], $iterator['nome']));
         }
 

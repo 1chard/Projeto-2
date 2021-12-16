@@ -4,7 +4,7 @@ require_once './util/funcoes.php';
 
 strict();
 
-
+import('banco/conexao.php');
 import('util/constantes.php');
 import('banco/categoria.php');
 import('banco/contato.php');
@@ -12,20 +12,20 @@ import('banco/usuario.php');
 import('banco/hamburguer.php');
 import('banco/imagem.php');
 import('util/request.php');
-require_once './endparser.php';
+import('endparser.php');
 
 $resposta = null;
 $camposUrl = Request::$parameters;
 $status = (int) 0;
 
 try {
-    
-
     session_start();
     if(!Usuario::logar($_SESSION['email'] ?? '', $_SESSION['senha'] ?? '') && count(Request::$parameters) > 0){
-        $resposta = endParserDeslogado();
+        $resposta = getParserDeslogado();
     }
+	else{
 
+	}
 
     switch ($_SERVER['REQUEST_METHOD']) {
         case 'GET':

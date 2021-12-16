@@ -22,11 +22,22 @@ class Hamburguer
         $this->valor = $valor;
     }
 
-    public static function buscar(int $id): ?Hamburguer
-    {
+    public static function buscar(int $id): ?Hamburguer{
         $temp = new Banco();
-        $resultado = $temp->conexao->query("SELECT * from produto where idproduto=$id;");
-
+        $resultado = $temp->conexao->query(<<<EOF
+		SELECT 
+		produto.*,
+		imagem.nome AS imagem,
+		categoria.nome AS categoria
+	FROM
+		produto
+			INNER JOIN
+		imagem ON imagem.idimagem = produto.idimagem
+			INNER JOIN
+		categoria ON categoria.idcategoria = produto.idcategoria;
+	WHERE
+		idproduto = $id;
+	EOF);
 
 
         if ($resultado !== false) {
@@ -45,9 +56,6 @@ class Hamburguer
         }
     }
 
-    /**
-     * @return array<Hamburguer>
-     */
     static public function listar(): array
     {
         $temp = new Banco();
@@ -61,9 +69,7 @@ class Hamburguer
                 INNER JOIN
             imagem ON imagem.idimagem = produto.idimagem
                 INNER JOIN
-            categoria
-        WHERE
-            categoria.idcategoria = produto.idcategoria;
+            categoria ON categoria.idcategoria = produto.idcategoria;
         EOF);
 
         $retorno = array();
@@ -71,13 +77,10 @@ class Hamburguer
         if ($resultado !== false) {
             while ($iterator = $resultado->fetch_assoc()) {
                 $hamburguer = new Hamburguer((int) $iterator['idproduto'], (string) $iterator['nome'], (float) $iterator['valor']);
-                $hamburguer->imagem = new Imagem((int) $iterator['idimagem'], (string) $iterator['imagem'])
+                $hamburguer->imagem = new Imagem((int) $iterator['idimagem'], (string) $iterator['imagem']);
+                $hamburguer->categoria = new Categoria((int) $iterator['idcategoria'], (string) $iterator['categoria']);
                 
-                array_push($retorno, new Hamburguer(
-                    (int) $iterator['idcategoria'],
-                    (float) $iterator['desconto'],
-                    (bool) $iterator['destaque']
-                ));
+                array_push($retorno, $hamburguer);
             }
         }
 

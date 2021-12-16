@@ -18,24 +18,19 @@ class Usuario
     }
 
     static public function inserir(Usuario $param): bool{
-        $temp = new Banco();
-        return $temp->conexao->real_query("INSERT into usuario(nome, email, senha) values('$param->nome', '$param->email', '" . criptografar($param->senha, $param->email) . "');");
+        return Banco::inserir("INSERT into usuario(nome, email, senha) values('?', '?', '?');", $param->nome, $param->email, criptografar($param->senha, $param->email));
     }
 
     static public function buscar(int $id): ?Usuario{
-        $temp = new Banco();
-        $resultado = $temp->conexao->query("SELECT * from usuario where idusuario=$id;")->fetch_assoc();
+        $resultado = Banco::buscar('SELECT * from usuario where idusuario=?;', $id);
 
         return $resultado? new Usuario((int) $resultado['idusuario'], $resultado['nome'], $resultado['email'], $resultado['senha']) : null;
     }
 
     static public function listar(): array{
-        $temp = new Banco();
-        $resultado = $temp->conexao->query("SELECT * from usuario;");
-
         $retorno = array();
 
-        while ($iterator = $resultado->fetch_assoc()) {
+        foreach (Banco::listar('SELECT * from usuario;') as $iterator) {
             array_push($retorno, new Usuario((int) $iterator['idusuario'], $iterator['nome'], $iterator['email'],  $iterator['senha']));
         }
 
@@ -43,19 +38,14 @@ class Usuario
     }
 
     public static function atualizar(Usuario $param): bool{
-        $temp = new Banco();
-        return $temp->conexao->real_query("UPDATE usuario SET nome='$param->nome', email='$param->email', senha='" . criptografar($param->senha, $param->email) . "' where idusuario=$param->id;");
+        return Banco::atualizar("UPDATE usuario SET nome='$param->nome', email='$param->email', senha='" . criptografar($param->senha, $param->email) . "' where idusuario=$param->id;");
     }
 
     public static function deletar(int $id): bool{
-        $temp = new Banco();
-        $temp->conexao->query("DELETE from usuario where idusuario=$id;");
-
-		return $temp->conexao->affected_rows > 0;
+        return Banco::deletar("DELETE from usuario where idusuario=$id;", $id) > 0;
     }
 
     public static function logar(string $email, string $senha): bool{
-        $temp = new Banco();
-        return $temp->conexao->query("SELECT idusuario from usuario where email='$email' and senha='" . criptografar($senha, $email) . "';")->fetch_assoc() !== null;
+        return Banco::buscar("SELECT idusuario from usuario where email='?' and senha='?';", $email, criptografar($senha, $email)) !== null;
     }
 }
