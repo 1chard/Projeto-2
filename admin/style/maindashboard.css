@@ -1,0 +1,131 @@
+body, html{
+    height: 100vh;
+    
+}
+
+header{
+    width: 100%;
+    height: 80px;
+    background-color: var(--cor-principal);
+    position: relative;
+}
+
+header > #logout{
+    font-family: 'Material Icons';
+    font-size: 37.5px;
+    right: 5%;
+}
+
+
+header>* {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+header > #options{
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40%;
+    
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+header > #options > *{
+    height: 55px;
+    width: 37.5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+header > #options > * > .icon{
+    font-family: 'Material Icons';
+    font-size: 37.5px;
+}
+
+main{
+    margin: 5vh;
+    width: auto;
+    box-shadow: 4px 0 20px #00000025;
+    height: calc(90vh - 80px);
+    background-color: var(--cor-principal);
+}
+
+placeholder{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    padding: 2.5rem;
+    flex-direction: column;
+}
+
+placeholder > h2{
+    display: block;
+    text-indent: 2rem;
+    color: var(--cor-principal-fonte-h2);
+    flex: 0 1 auto;
+}
+
+placeholder > h2::after{
+    content: "";
+    display: block;
+    background-color: black;
+    width: 100%;
+    height: 1px;
+}
+
+placeholder > section{
+    margin: 1em;
+    flex-grow: 1;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 5%;
+}
+
+placeholder > section > *{
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+placeholder > section > * > .icon{
+    font-family: 'Material Icons';
+    font-size: 8em;
+}
+
+placeholder > section > * > table{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+placeholder > section > * > table tr > *{
+    padding: 1px 5px;
+}
+
+placeholder > section > * > table tr > *:first-child{
+    float: left;
+    color: var(--cor-principal-fonte-h1);
+}
+
+placeholder > section > * > table tr > *:last-child{
+    float: right;
+    color: var(--cor-principal-fonte-h1);
+}
+
+placeholder > section > * > h3{
+    color: var(--cor-principal-fonte-h1);
+}
+
+@media (min-width:1025px) {
+    header>#logout {
+        right: calc( 20% - 154px);
+    }
+}

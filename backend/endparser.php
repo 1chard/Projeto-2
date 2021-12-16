@@ -11,9 +11,13 @@ function getParserDeslogado()
         case "hamburguer":
             if (isset($camposUrl[1])) {
                 $resposta = Hamburguer::buscar((int) $camposUrl[1]);
-
             } else {
-                $resposta = Hamburguer::listar();
+                if(isset(Request::$querys["q"]))
+                    $resposta = Hamburguer::listarPorNome(Request::$querys["q"]);
+                else if(isset(Request::$querys["categoria"]))
+                    $resposta = Hamburguer::listarPorCategoria((int) Request::$querys["categoria"]);
+                else 
+                    $resposta = Hamburguer::listar();
             }
             break;
     }

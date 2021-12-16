@@ -24,9 +24,10 @@ try {
         $resposta = getParserDeslogado();
     }
 	else{
-
+        $resposta = getParserDeslogado();
 	}
 
+    /*
     switch ($_SERVER['REQUEST_METHOD']) {
         case 'GET':
             switch ($camposUrl[0] ?? null) {
@@ -175,6 +176,7 @@ try {
         default:
             $status = 405;
     }
+    */
 } catch (Exception $e) {
     $status = 500;
 	
