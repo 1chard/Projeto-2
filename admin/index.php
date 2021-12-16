@@ -1,28 +1,25 @@
 <?php
 
 if ($_SERVER["REQUEST_METHOD"] === 'POST') {
-
     $login = $_POST['email'] ?? "";
     $senha = $_POST['senha'] ?? "";
 
     require_once '../backend/util/funcoes.php';
     strict();
-    import('banco/usuario.php');
+    import('banco/Usuario.php');
     import('util/response.php');
-
+	import('util/criptografia.php');
     $resultado = Usuario::logar($login, $senha);
 
-    var_dump($resultado . "     " . criptografar($senha, $login) . "        " . $login . "      " . $senha);
-    
     if ($resultado){
-        session_start();
-        $_SESSION["email"] = $login;
-        $_SESSION["senha"] = $senha;
-        header("location: dashboard.php");
+        Response::addGlobalCookie("email", $login, 86400000);
+        Response::addGlobalCookie("senha", $senha, 86400000);
+		Response::sendRediretion("/dashboard.php");
     }
     else
         echo "Login incorreto";
 
+	var_dump($resultado . "     " . encriptar($senha, $login) . "        " . $login . "      " . $senha);
     
 }
 ?>

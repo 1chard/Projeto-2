@@ -1,11 +1,10 @@
 <?php
     require_once 'backend/util/funcoes.php';
-    require_once 'backend/banco/usuario.php';
+    require_once 'backend/banco/Usuario.php';
     require_once 'backend/util/request.php';
 
-    session_start();
     
-    if(!Usuario::logar($_SESSION['email'] ?? '', $_SESSION['senha'] ?? ''))
+    if(!Usuario::logar(Request::$cookies['email'] ?? '', Request::$cookies['senha'] ?? ''))
         die;
 ?>
 

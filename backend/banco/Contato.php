@@ -1,6 +1,6 @@
 <?php
 
-import("banco/conexao.php");
+import("banco/Banco.php");
 
 class Contato
 {

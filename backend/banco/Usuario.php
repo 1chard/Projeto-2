@@ -1,6 +1,6 @@
 <?php
 
-import("banco/conexao.php");
+import("banco/Banco.php");
 import("util/criptografia.php");
 
 class Usuario
@@ -18,7 +18,7 @@ class Usuario
     }
 
     static public function inserir(Usuario $param): bool{
-        return Banco::inserir("INSERT into usuario(nome, email, senha) values('?', '?', '?');", $param->nome, $param->email, criptografar($param->senha, $param->email));
+        return Banco::inserir("INSERT into usuario(nome, email, senha) values('?', '?', '?');", $param->nome, $param->email, encriptar($param->senha, $param->email));
     }
 
     static public function buscar(int $id): ?Usuario{
@@ -38,7 +38,7 @@ class Usuario
     }
 
     public static function atualizar(Usuario $param): bool{
-        return Banco::atualizar("UPDATE usuario SET nome='$param->nome', email='$param->email', senha='" . criptografar($param->senha, $param->email) . "' where idusuario=$param->id;");
+        return Banco::atualizar("UPDATE usuario SET nome='$param->nome', email='$param->email', senha='" . encriptar($param->senha, $param->email) . "' where idusuario=$param->id;");
     }
 
     public static function deletar(int $id): bool{
@@ -46,6 +46,7 @@ class Usuario
     }
 
     public static function logar(string $email, string $senha): bool{
-        return Banco::buscar("SELECT idusuario from usuario where email='?' and senha='?';", $email, criptografar($senha, $email)) !== null;
+		
+        return Banco::buscar("SELECT idusuario from usuario where email='?' and senha='?';", $email, encriptar($senha, $email)) !== null;
     }
 }

@@ -4,13 +4,13 @@ require_once './util/funcoes.php';
 
 strict();
 
-import('banco/conexao.php');
+import('banco/Banco.php');
 import('util/constantes.php');
-import('banco/categoria.php');
-import('banco/contato.php');
-import('banco/usuario.php');
-import('banco/hamburguer.php');
-import('banco/imagem.php');
+import('banco/Categoria.php');
+import('banco/Contato.php');
+import('banco/Usuario.php');
+import('banco/Hamburguer.php');
+import('banco/Imagem.php');
 import('util/request.php');
 import('endparser.php');
 
@@ -20,7 +20,7 @@ $status = (int) 0;
 
 try {
     session_start();
-    if(!Usuario::logar($_SESSION['email'] ?? '', $_SESSION['senha'] ?? '') && count(Request::$parameters) > 0){
+    if(!Usuario::logar(Request::$cookies['email'] ?? '', Request::$cookies['senha'] ?? '') && count(Request::$parameters) > 0){
         $resposta = getParserDeslogado();
     }
 	else{

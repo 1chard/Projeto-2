@@ -3,9 +3,6 @@
 import('util/constantes.php');
 import('util/dummyconstructor.php');
 
-
-
-
 class Banco {
 
     public static mysqli $conexao;

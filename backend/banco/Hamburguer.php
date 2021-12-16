@@ -1,19 +1,18 @@
 <?php
 
-import("banco/conexao.php");
-import("banco/imagem.php");
-import('banco/categoria.php');
+import("banco/Banco.php");
+import("banco/Imagem.php");
+import('banco/Categoria.php');
 
 class Hamburguer
 {
-
     public int $id;
     public string $nome;
     public float $valor;
     public Imagem $imagem;
     public Categoria $categoria;
     public ?float $desconto;
-    public ?bool $destaque ;
+    public ?bool $destaque;
 
     public function __construct(int $id, string $nome, float $valor)
     {
